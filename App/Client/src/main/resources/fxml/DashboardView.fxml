@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.campusdocs.client.controller.DashboardViewController"
+    styleClass="root-pane"
+    prefWidth="1080" prefHeight="720"
+    xmlns="http://javafx.com/javafx">
+
+    <stylesheets>
+        <URL value="@/styles/dashboardview.css"/>
+        <URL value="@/styles/globalStyles.css"/>
+    </stylesheets>
+
+    <!-- ═══════════════════════════════════════════
+         LEFT SIDEBAR
+    ════════════════════════════════════════════ -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="220" spacing="0">
+
+            <!-- Logo -->
+            <VBox styleClass="sidebar-logo-section" spacing="4">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Circle radius="18" styleClass="logo-circle"/>
+                    <VBox spacing="1">
+                        <Label text="CampusDocs" styleClass="logo-title"/>
+                        <Label text="Portail Role" styleClass="logo-subtitle" fx:id="portalType"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Divider -->
+            <Separator styleClass="sidebar-divider"/>
+
+            <!-- Nav label -->
+            <Label text="NAVIGATION" styleClass="nav-section-label">
+                <VBox.margin><Insets top="16" left="20" bottom="8" right="0"/></VBox.margin>
+            </Label>
+
+            <!-- Main nav buttons -->
+            <VBox styleClass="nav-group" spacing="4">
+                <Button fx:id="btnDashboard" styleClass="nav-btn, nav-btn-active" maxWidth="Infinity" onAction="#handleNavDashboard">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label styleClass="nav-icon" text="&#9632;"/>
+                            <Label text="Dashboard" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="btnDemandes" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavDemandes">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label styleClass="nav-icon" text="&#9993;"/>
+                            <Label text="Demandes" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="btnActes" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavActes">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label styleClass="nav-icon" text="&#9783;"/>
+                            <Label text="Actes" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+                
+                <Button fx:id="btnRapports" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavRapports">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label styleClass="nav-icon" text="&#9783;"/>
+                            <Label text="Rapports" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+                
+                <Button fx:id="btnStats" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavStats">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label styleClass="nav-icon" text="&#9783;"/>
+                            <Label text="Statistiques" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+                
+                <Button fx:id="btnUsers" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavUsers">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label styleClass="nav-icon" text="&#9783;"/>
+                            <Label text="Gestion utilisateurs" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+                
+            </VBox>
+
+            <!-- Spacer -->
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- Divider -->
+            <Separator styleClass="sidebar-divider"/>
+
+            <!-- Bottom nav -->
+            <VBox styleClass="nav-group" spacing="4">
+                <VBox.margin><Insets top="8" bottom="16"/></VBox.margin>
+
+                <Button fx:id="btnProfile" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavProfile">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Circle radius="15" styleClass="profile-avatar"/>
+                            <VBox spacing="1">
+                                <Label text="Mon profil" styleClass="nav-label"/>
+                                <Label text="" styleClass="nav-label-sub" fx:id="navUserName"/>
+                            </VBox>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="btnLogout" styleClass="nav-btn, nav-btn-danger" maxWidth="Infinity" onAction="#handleLogout">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label styleClass="nav-icon" text="&#10132;"/>
+                            <Label text="Déconnexion" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+            </VBox>
+
+        </VBox>
+    </left>
+
+    <!-- ═══════════════════════════════════════════
+         MAIN CONTENT AREA
+    ════════════════════════════════════════════ -->
+    <center>
+        <VBox styleClass="main-content" spacing="0">
+
+            <!-- Top bar -->
+            <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="12">
+                <VBox spacing="10" >
+                    <Label fx:id="pageTitle" text="Dashboard" styleClass="page-title"/>
+                    <Label fx:id="dateLabel" text="Lundi, 17 Mars 2026" styleClass="topbar-date"/>
+                </VBox>
+                
+                <Region HBox.hgrow="ALWAYS"/>
+                
+                <HBox spacing="30" alignment="CENTER_LEFT"> 
+                    <Button >
+                        Mode
+                    </Button>
+                    <Button >
+                        Notif
+                    </Button>
+                    <Button fx:id="topBarBtnProfile" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavProfile">
+                        <graphic>
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Circle radius="15" styleClass="profile-avatar"/>
+                                 <Label text="" styleClass="profile-label" fx:id="topBarUserName"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                    
+                </HBox>
+                
+                
+            </HBox>
+
+            <!-- Dynamic content area -->
+            <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS" styleClass="content-area">
+
+
+            </StackPane>
+        </VBox>
+    </center>
+
+</BorderPane>

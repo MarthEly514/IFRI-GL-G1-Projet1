@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<VBox
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.campusdocs.client.controller.DemandeViewController"
+    styleClass="view-container"
+    spacing="0">
+
+    <stylesheets>
+        <URL value="@/styles/demandeview.css"/>
+        <URL value="@/styles/globalStyles.css"/>
+    </stylesheets>
+
+    <!-- ── Page header ── 
+    <VBox styleClass="page-header" spacing="4">
+        <Label text="Demandes administratives" styleClass="page-title"/>
+        <Label text="Gérez et suivez vos demandes de documents." styleClass="page-subtitle"/>
+    </VBox>-->
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane" hbarPolicy="NEVER">
+        <content>
+            <VBox spacing="32" styleClass="scroll-content">
+
+                <!-- ── Nouvelle demande ── -->
+                <VBox spacing="14">
+                    <Label text="Nouvelle demande" styleClass="section-title"/>
+                    <Button fx:id="btnFaireDemande" styleClass="new-demand-btn" onAction="#handleFaireDemande" maxWidth="Infinity">
+                        <graphic>
+                            <HBox alignment="CENTER" spacing="12">
+                                <Circle radius="12" styleClass="plus-circle"/>
+                                <Label text="+" styleClass="plus-icon"/>
+                                <Label text="Faire une demande" styleClass="new-demand-label"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                </VBox>
+
+                <!-- ── Mes demandes ── -->
+                <VBox spacing="14">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Mes demandes" styleClass="section-title"/>
+                        <Label fx:id="demandCountBadge" text="0" styleClass="count-badge"/>
+                    </HBox>
+
+                    <!-- Empty state -->
+                    <VBox fx:id="emptyState" alignment="CENTER" spacing="10" styleClass="empty-state">
+                        <Label text="Aucune demande pour le moment." styleClass="empty-title"/>
+                        <Label text="Cliquez sur « Faire une demande » pour commencer." styleClass="empty-sub"/>
+                    </VBox>
+
+                    <!-- Demand list -->
+                    <VBox fx:id="demandeList" spacing="10" visible="false" managed="false">
+                        <!-- Items injected by controller -->
+                    </VBox>
+                </VBox>
+
+            </VBox>
+        </content>
+    </ScrollPane>
+
+    <!-- ── Toast notification ── -->
+    <StackPane fx:id="toastContainer" styleClass="toast-container" visible="false" managed="false">
+        <HBox styleClass="toast" alignment="CENTER_LEFT" spacing="12">
+            <Circle radius="6" styleClass="toast-dot"/>
+            <Label fx:id="toastLabel" text="Demande envoyée avec succès !" styleClass="toast-text"/>
+        </HBox>
+    </StackPane>
+
+</VBox>

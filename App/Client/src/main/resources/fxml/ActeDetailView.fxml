@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.geometry.Insets?>
+
+<VBox
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.campusdocs.client.controller.ActeDetailViewController"
+    styleClass="view-container"
+    spacing="0">
+
+    <stylesheets>
+        <URL value="@/styles/acteview.css"/>
+        <URL value="@/styles/globalStyles.css"/>
+    </stylesheets>
+
+    <!-- ── Top bar ── -->
+    <HBox styleClass="form-topbar" alignment="CENTER_LEFT" spacing="16">
+        <Button fx:id="btnBack" styleClass="back-btn" onAction="#handleBack" text="&#8592; Retour"/>
+        <Label fx:id="topBarTitle" text="Aperçu du document" styleClass="form-topbar-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnDownloadTop" styleClass="action-btn" onAction="#handleDownload" text="&#8681;  Télécharger"/>
+    </HBox>
+
+    <!-- ── Content ── -->
+    <HBox VBox.vgrow="ALWAYS" spacing="0">
+
+        <!-- Left: document preview -->
+        <VBox HBox.hgrow="ALWAYS" styleClass="preview-panel" spacing="0" alignment="TOP_CENTER">
+            <Label text="Aperçu" styleClass="panel-label"/>
+
+            <!-- Placeholder document — replace StackPane with real PDF viewer -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="preview-scroll" hbarPolicy="NEVER">
+                <content>
+                    <StackPane styleClass="doc-placeholder" minHeight="800">
+                        <VBox alignment="CENTER" spacing="20" styleClass="doc-paper">
+
+                            <!-- Header band -->
+                            <VBox styleClass="doc-header-band" alignment="CENTER" spacing="6">
+                                <Label text="UNIVERSITÉ / ÉTABLISSEMENT" styleClass="doc-institution"/>
+                                <Label text="DOCUMENT OFFICIEL" styleClass="doc-official-title"/>
+                                <Label fx:id="docTypeLabel" text="ATTESTATION DE SCOLARITÉ" styleClass="doc-type-header"/>
+                            </VBox>
+
+                            <!-- Seal placeholder -->
+                            <StackPane>
+                                <Circle radius="48" styleClass="doc-seal-circle"/>
+                                <Label text="SCEAU" styleClass="doc-seal-text"/>
+                            </StackPane>
+
+                            <!-- Body lines -->
+                            <VBox styleClass="doc-body" spacing="16" alignment="TOP_LEFT">
+                                <Label text="Je soussigné, le Directeur des Études, certifie que :" styleClass="doc-body-text"/>
+                                <HBox spacing="8">
+                                    <Label text="Nom et prénom :" styleClass="doc-field-label"/>
+                                    <Label fx:id="docStudentName" text="________________________________" styleClass="doc-field-value"/>
+                                </HBox>
+                                <HBox spacing="8">
+                                    <Label text="Numéro étudiant :" styleClass="doc-field-label"/>
+                                    <Label fx:id="docStudentId" text="________________________________" styleClass="doc-field-value"/>
+                                </HBox>
+                                <HBox spacing="8">
+                                    <Label text="Filière :" styleClass="doc-field-label"/>
+                                    <Label fx:id="docFiliere" text="________________________________" styleClass="doc-field-value"/>
+                                </HBox>
+                                <HBox spacing="8">
+                                    <Label text="Année académique :" styleClass="doc-field-label"/>
+                                    <Label fx:id="docAnnee" text="________________________________" styleClass="doc-field-value"/>
+                                </HBox>
+                                <Label text="est régulièrement inscrit(e) dans notre établissement pour l'année en cours." styleClass="doc-body-text"/>
+                                <Label text="En foi de quoi, le présent document lui est délivré pour servir et valoir ce que de droit." styleClass="doc-body-text"/>
+                            </VBox>
+
+                            <!-- Signature zone -->
+                            <HBox styleClass="doc-signature-zone" alignment="CENTER_RIGHT">
+                                <VBox alignment="CENTER" spacing="4">
+                                    <Label fx:id="docDate" text="Fait le : ___________" styleClass="doc-field-label"/>
+                                    <Label text="Signature et cachet" styleClass="doc-field-label"/>
+                                    <Rectangle width="120" height="60" styleClass="doc-sig-box"/>
+                                </VBox>
+                            </HBox>
+
+                        </VBox>
+                    </StackPane>
+                </content>
+            </ScrollPane>
+        </VBox>
+
+        <!-- Right: metadata panel -->
+        <VBox styleClass="meta-panel" spacing="20" prefWidth="280">
+            <Label text="Informations" styleClass="panel-label"/>
+
+            <VBox styleClass="meta-card" spacing="14">
+                <VBox spacing="4">
+                    <Label text="TYPE DE DOCUMENT" styleClass="meta-key"/>
+                    <Label fx:id="metaDocType" text="—" styleClass="meta-val"/>
+                </VBox>
+                <Separator/>
+                <VBox spacing="4">
+                    <Label text="DATE DE DÉLIVRANCE" styleClass="meta-key"/>
+                    <Label fx:id="metaDate" text="—" styleClass="meta-val"/>
+                </VBox>
+                <Separator/>
+                <VBox spacing="4">
+                    <Label text="STATUT" styleClass="meta-key"/>
+                    <Label fx:id="metaStatus" text="Disponible" styleClass="status-badge-done"/>
+                </VBox>
+                <Separator/>
+                <VBox spacing="4">
+                    <Label text="RÉFÉRENCE" styleClass="meta-key"/>
+                    <Label fx:id="metaRef" text="—" styleClass="meta-val-mono"/>
+                </VBox>
+            </VBox>
+
+            <!-- Download button -->
+            <Button fx:id="btnDownloadMain" styleClass="action-btn" onAction="#handleDownload"
+                    maxWidth="Infinity" text="&#8681;  Télécharger le document"/>
+
+            <!-- Share button -->
+            <Button styleClass="btn-secondary" onAction="#handleShare"
+                    maxWidth="Infinity" text="&#8679;  Partager"/>
+
+        </VBox>
+
+    </HBox>
+
+</VBox>

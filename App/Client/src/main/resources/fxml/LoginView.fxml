@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.shape.Circle?>
+
+<AnchorPane 
+    id="AnchorPane" 
+    styleClass="mainFxmlClass" 
+    xmlns:fx="http://javafx.com/fxml/1" 
+    fx:controller="com.campusdocs.client.controller.LoginViewController">
+    
+    <stylesheets>
+        <URL value="@/styles/loginview.css"/>
+        <URL value="@/styles/globalStyles.css"/>
+    </stylesheets>
+    <children>
+        <GridPane 
+            AnchorPane.topAnchor="0" 
+            AnchorPane.bottomAnchor="0" 
+            AnchorPane.leftAnchor="0" 
+            AnchorPane.rightAnchor="0" 
+            fx:id="mainBorderPane" 
+            styleClass="pane" 
+            xmlns="http://javafx.com/javafx">
+            
+            <columnConstraints>
+                <ColumnConstraints percentWidth="40" /> 
+                <ColumnConstraints percentWidth="60" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="ALWAYS" />
+            </rowConstraints>
+
+            <AnchorPane GridPane.columnIndex="0" styleClass="left-pane" fx:id="leftPane" >
+                <children>
+
+                    <Circle
+                        styleClass="left-pane-overlay"
+                        radius="180"
+                        fill="rgba(255,255,255,0.12)"
+                        AnchorPane.topAnchor="-40"
+                        AnchorPane.leftAnchor="-60"
+                    />
+                    
+                    <Circle
+                        styleClass="left-pane-overlay"
+                        radius="80"
+                        fill="rgba(255,255,255,0.12)"
+                        AnchorPane.bottomAnchor="-40"
+                        AnchorPane.rightAnchor="-60"
+                    />
+
+                    <!-- "Welcome" vertical text -->
+                    <Label
+                        text="Bienvenue"
+                        styleClass="left-pane-title"
+                        AnchorPane.topAnchor="160"
+                        AnchorPane.leftAnchor="-40"
+                    />
+                    <VBox 
+                        alignment="CENTER"
+                        AnchorPane.topAnchor="100"
+                        AnchorPane.rightAnchor="0"
+                        AnchorPane.bottomAnchor="0"
+                        AnchorPane.leftAnchor="0"
+                    >
+                        <ImageView
+                            fx:id="leftPaneImage" 
+                            fitHeight="300"
+                            preserveRatio="true"
+                            
+                        >
+                            <image>
+                                <Image url="@/images/girl_holding_document.png" />
+                            </image>
+                        </ImageView>
+                        
+                    </VBox>
+
+
+                    <!-- Bottom subtitle text -->
+                    <VBox 
+                        alignment="CENTER_LEFT" 
+                        spacing="5"
+                        prefWidth="300"
+                        AnchorPane.bottomAnchor="30"
+                        AnchorPane.leftAnchor="30"
+                    >
+                        <Label text="CAMPUS DOCS" styleClass="left-pane-subtitle,title-bold"/>
+
+                        <Label text="GÉRÉZ VOS DOCUMENTS ADMINISTRATIFS AUTREMENT" 
+                              styleClass="left-pane-subtitle"
+                              wrapText="true"
+                              prefWidth="300" 
+                        />
+                    </VBox>
+
+                </children>
+            </AnchorPane>
+            
+            <VBox GridPane.columnIndex="1" alignment="CENTER" spacing="20" styleClass="right-pane">
+                    <children>
+                        <Label text="Connexion" styleClass="title" />
+                        <Label text="Entrez vos informations pour vous connecter à votre compte" styleClass="sub-title" prefWidth="300" wrapText="true"/>
+                        <TextField promptText="Email" styleClass="input-field" maxWidth="400" />
+                        <PasswordField promptText="Mot de passe" styleClass="input-field" maxWidth="400" />
+                        <Button
+                           styleClass = "create-btn, action-btn"
+                            text="Se connecter"
+                            fx:id="loginBtn" 
+                            maxWidth="400"
+                        />
+                        
+                        <HBox alignment="CENTER" spacing="5">
+                            <Label text="Vous n'avez pas de compte?"/>
+                            <Hyperlink styleClass="link,small-text" text=" S'inscrire" fx:id="signupLink" />
+                        </HBox>
+                    </children>
+                </VBox>
+        </GridPane>
+    </children>
+</AnchorPane>
+

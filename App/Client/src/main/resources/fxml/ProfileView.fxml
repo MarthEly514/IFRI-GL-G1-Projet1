@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<VBox
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.campusdocs.client.controller.ProfileViewController"
+    styleClass="profile-root"
+    spacing="0">
+
+    <stylesheets>
+        <URL value="@/styles/profileview.css"/>
+        <URL value="@/styles/globalStyles.css"/>
+    </stylesheets>
+
+    <!-- ── Page header ── -->
+    <VBox styleClass="page-header" spacing="4">
+        <Label text="Mon profil" styleClass="page-title"/>
+        <Label text="Gérez vos informations personnelles et vos préférences de sécurité." styleClass="page-subtitle"/>
+    </VBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="profile-scroll" hbarPolicy="NEVER">
+        <content>
+            <VBox spacing="20" styleClass="profile-scroll-content">
+
+                <!-- ══════════════════════════════
+                     SECTION 1 — Identité
+                ═══════════════════════════════ -->
+                <VBox styleClass="profile-section" spacing="0">
+
+                    <!-- Section header -->
+                    <HBox styleClass="section-header" alignment="CENTER_LEFT">
+                        <Label text="Informations personnelles" styleClass="section-title"/>
+                    </HBox>
+
+                    <VBox styleClass="section-body" spacing="24">
+
+                        <!-- Avatar row -->
+                        <HBox spacing="20" alignment="CENTER_LEFT">
+                            <StackPane>
+                                <Circle fx:id="avatarCircle" radius="44" styleClass="avatar-circle"/>
+                                <Label fx:id="avatarInitials" text="ED" styleClass="avatar-initials"/>
+                            </StackPane>
+                            <VBox spacing="8">
+                                <Label text="Photo de profil" styleClass="field-group-title"/>
+                                <HBox spacing="10">
+                                    <Button fx:id="btnUploadPhoto" styleClass="upload-btn" onAction="#handleUploadPhoto" text="&#8679;  Choisir une photo"/>
+                                    <Button fx:id="btnRemovePhoto" styleClass="remove-btn" onAction="#handleRemovePhoto" text="Supprimer"/>
+                                </HBox>
+                                <Label text="PNG, JPG ou GIF — max 5 Mo" styleClass="field-hint"/>
+                            </VBox>
+                        </HBox>
+
+                        <Separator styleClass="section-sep"/>
+
+                        <!-- Name row -->
+                        <HBox spacing="16">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Prénom" styleClass="field-label"/>
+                                <TextField fx:id="firstNameField" styleClass="input-field" promptText="Prénom"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Nom" styleClass="field-label"/>
+                                <TextField fx:id="lastNameField" styleClass="input-field" promptText="Nom"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Email row -->
+                        <VBox spacing="6">
+                            <Label text="Adresse email" styleClass="field-label"/>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <TextField fx:id="emailField" styleClass="input-field" promptText="email@example.com" HBox.hgrow="ALWAYS" editable="false"/>
+                                <Button fx:id="btnEditEmail" styleClass="edit-btn" onAction="#handleEditEmail" text="Modifier"/>
+                            </HBox>
+                            <Label text="Utilisée pour vous connecter à votre compte." styleClass="field-hint"/>
+                        </VBox>
+
+                        <!-- Matricule + Filière row -->
+                        <HBox spacing="16">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Numéro matricule" styleClass="field-label"/>
+                                <TextField fx:id="matriculeField" styleClass="input-field input-readonly" editable="false"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Filière" styleClass="field-label"/>
+                                <TextField fx:id="filiereField" styleClass="input-field input-readonly" editable="false"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Niveau + Année -->
+                        <HBox spacing="16">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Niveau" styleClass="field-label"/>
+                                <TextField fx:id="niveauField" styleClass="input-field input-readonly" editable="false"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Année académique" styleClass="field-label"/>
+                                <TextField fx:id="anneeField" styleClass="input-field input-readonly" editable="false"/>
+                            </VBox>
+                        </HBox>
+
+                    </VBox>
+                </VBox>
+
+                <!-- ══════════════════════════════
+                     SECTION 2 — Rôle & Statut
+                ═══════════════════════════════ -->
+                <VBox styleClass="profile-section" spacing="0">
+                    <HBox styleClass="section-header" alignment="CENTER_LEFT">
+                        <Label text="Rôle et statut" styleClass="section-title"/>
+                    </HBox>
+                    <VBox styleClass="section-body" spacing="16">
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                <Label text="Rôle" styleClass="field-label"/>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <Label fx:id="roleLabel" text="Étudiant" styleClass="role-badge-student"/>
+                                </HBox>
+                            </VBox>
+                            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                <Label text="Statut du compte" styleClass="field-label"/>
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <javafx.scene.shape.Circle radius="5" styleClass="status-dot-active"/>
+                                    <Label fx:id="statusLabel" text="Actif" styleClass="status-text-active"/>
+                                </HBox>
+                            </VBox>
+                        </HBox>
+                        <HBox spacing="16">
+                            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                <Label text="Membre depuis" styleClass="field-label"/>
+                                <Label fx:id="memberSinceLabel" text="—" styleClass="info-val"/>
+                            </VBox>
+                            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                <Label text="Dernière connexion" styleClass="field-label"/>
+                                <Label fx:id="lastLoginLabel" text="—" styleClass="info-val"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <!-- ══════════════════════════════
+                     SECTION 3 — Sécurité
+                ═══════════════════════════════ -->
+                <VBox styleClass="profile-section" spacing="0">
+                    <HBox styleClass="section-header" alignment="CENTER_LEFT">
+                        <Label text="Sécurité" styleClass="section-title"/>
+                    </HBox>
+                    <VBox styleClass="section-body" spacing="20">
+
+                        <!-- Change password -->
+                        <HBox alignment="CENTER_LEFT" spacing="0">
+                            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                <Label text="Mot de passe" styleClass="field-group-title"/>
+                                <Label text="Modifiez régulièrement votre mot de passe pour sécuriser votre compte." styleClass="field-hint"/>
+                            </VBox>
+                            <Button fx:id="btnChangePassword" styleClass="edit-btn" onAction="#handleChangePassword" text="Changer le mot de passe"/>
+                        </HBox>
+
+                        <!-- Password form (hidden by default) -->
+                        <VBox fx:id="passwordForm" spacing="14" visible="false" managed="false" styleClass="inline-form">
+                            <VBox spacing="6">
+                                <Label text="Mot de passe actuel" styleClass="field-label"/>
+                                <PasswordField fx:id="currentPwdField" styleClass="input-field" promptText="••••••••"/>
+                            </VBox>
+                            <VBox spacing="6">
+                                <Label text="Nouveau mot de passe" styleClass="field-label"/>
+                                <PasswordField fx:id="newPwdField" styleClass="input-field" promptText="••••••••"/>
+                            </VBox>
+                            <VBox spacing="6">
+                                <Label text="Confirmer le nouveau mot de passe" styleClass="field-label"/>
+                                <PasswordField fx:id="confirmPwdField" styleClass="input-field" promptText="••••••••"/>
+                            </VBox>
+                            <Label fx:id="pwdErrorLabel" text="" styleClass="error-label" visible="false" managed="false"/>
+                            <HBox spacing="10">
+                                <Button styleClass="btn-secondary" onAction="#handleCancelPassword" text="Annuler"/>
+                                <Button styleClass="action-btn" onAction="#handleSavePassword" text="Enregistrer le mot de passe"/>
+                            </HBox>
+                        </VBox>
+
+                    </VBox>
+                </VBox>
+
+                <!-- ══════════════════════════════
+                     FOOTER — Save / Cancel
+                ═══════════════════════════════ -->
+                <HBox styleClass="profile-footer" alignment="CENTER_RIGHT" spacing="12">
+                    <Button styleClass="btn-secondary" onAction="#handleCancel" text="Annuler"/>
+                    <Button styleClass="action-btn" onAction="#handleSave" text="  Enregistrer les modifications"/>
+                </HBox>
+
+            </VBox>
+        </content>
+    </ScrollPane>
+
+    <!-- ── Success toast ── -->
+    <StackPane fx:id="toastContainer" styleClass="toast-container" visible="false" managed="false">
+        <HBox styleClass="toast" alignment="CENTER_LEFT" spacing="12">
+            <javafx.scene.shape.Circle radius="6" styleClass="toast-dot"/>
+            <Label fx:id="toastLabel" text="" styleClass="toast-text"/>
+        </HBox>
+    </StackPane>
+
+</VBox>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.geometry.Insets?>
+
+<VBox
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.campusdocs.client.controller.DemandeFormViewController"
+    styleClass="form-root"
+    spacing="0">
+
+    <stylesheets>
+        <URL value="@/styles/demandeformview.css"/>
+        <URL value="@/styles/globalStyles.css"/>
+    </stylesheets>
+
+    <!-- ── Top bar with back arrow ── -->
+    <HBox styleClass="form-topbar" alignment="CENTER_LEFT" spacing="16">
+        <Button fx:id="btnBack" styleClass="back-btn" onAction="#handleBack" text="&#8592; Retour"/>
+        <Label text="Nouvelle demande" styleClass="form-topbar-title"/>
+    </HBox>
+
+    <!-- ── Stepper ── -->
+    <HBox fx:id="stepperBox" styleClass="stepper" alignment="CENTER" spacing="0">
+
+        <!-- Step 1 -->
+        <VBox alignment="CENTER" spacing="6" styleClass="step-item">
+            <StackPane>
+                <Circle radius="16" fx:id="stepCircle1" styleClass="step-circle, step-active"/>
+                <Label text="1" styleClass="step-number"/>
+            </StackPane>
+            <Label text="Type de document" styleClass="step-label, step-label-active" fx:id="stepLabel1"/>
+        </VBox>
+
+        <Line fx:id="stepLine1" styleClass="step-line" startX="0" endX="80" startY="0" endY="0"/>
+
+        <!-- Step 2 -->
+        <VBox alignment="CENTER" spacing="6" styleClass="step-item">
+            <StackPane>
+                <Circle radius="16" fx:id="stepCircle2" styleClass="step-circle"/>
+                <Label text="2" styleClass="step-number"/>
+            </StackPane>
+            <Label text="Informations" styleClass="step-label" fx:id="stepLabel2"/>
+        </VBox>
+
+        <Line fx:id="stepLine2" styleClass="step-line" startX="0" endX="80" startY="0" endY="0"/>
+
+        <!-- Step 3 -->
+        <VBox alignment="CENTER" spacing="6" styleClass="step-item">
+            <StackPane>
+                <Circle radius="16" fx:id="stepCircle3" styleClass="step-circle"/>
+                <Label text="3" styleClass="step-number"/>
+            </StackPane>
+            <Label text="Paiement" styleClass="step-label" fx:id="stepLabel3"/>
+        </VBox>
+
+        <Line fx:id="stepLine3" styleClass="step-line" startX="0" endX="80" startY="0" endY="0"/>
+
+        <!-- Step 4 -->
+        <VBox alignment="CENTER" spacing="6" styleClass="step-item">
+            <StackPane>
+                <Circle radius="16" fx:id="stepCircle4" styleClass="step-circle"/>
+                <Label text="4" styleClass="step-number"/>
+            </StackPane>
+            <Label text="Valider" styleClass="step-label" fx:id="stepLabel4"/>
+        </VBox>
+
+    </HBox>
+
+    <!-- ── Step content area ── -->
+    <StackPane fx:id="stepContent" VBox.vgrow="ALWAYS" styleClass="step-content-area">
+
+        <!-- STEP 1 — Choisir type de document -->
+        <ScrollPane fx:id="step1" fitToWidth="true" styleClass="step-scroll" hbarPolicy="NEVER">
+            <content>
+                <VBox spacing="20" styleClass="step-inner">
+                    <Label text="Choisissez le type de document" styleClass="step-title"/>
+                    <Label text="Sélectionnez un document parmi les catégories ci-dessous." styleClass="step-subtitle"/>
+
+                    <GridPane fx:id="docTypeGrid" hgap="16" vgap="16">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33.33"/>
+                            <ColumnConstraints percentWidth="33.33"/>
+                            <ColumnConstraints percentWidth="33.33"/>
+                        </columnConstraints>
+
+                        <!-- Cards injected by controller -->
+                    </GridPane>
+                </VBox>
+            </content>
+        </ScrollPane>
+
+        <!-- STEP 2 — Remplir les informations -->
+        <ScrollPane fx:id="step2" fitToWidth="true" styleClass="step-scroll" hbarPolicy="NEVER" visible="false" managed="false">
+            <content>
+                <VBox spacing="20" styleClass="step-inner">
+                    <Label text="Remplissez les informations" styleClass="step-title"/>
+                    <Label fx:id="step2Subtitle" text="Complétez les champs requis pour votre demande." styleClass="step-subtitle"/>
+                    <VBox fx:id="dynamicFormContainer" spacing="16">
+                        <!-- Dynamic form fields injected by controller based on doc type -->
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+
+        <!-- STEP 3 — Paiement -->
+        <ScrollPane fx:id="step3" fitToWidth="true" styleClass="step-scroll" hbarPolicy="NEVER" visible="false" managed="false">
+            <content>
+                <VBox spacing="24" styleClass="step-inner">
+                    <Label text="Paiement" styleClass="step-title"/>
+                    <Label text="Choisissez votre mode de paiement." styleClass="step-subtitle"/>
+
+                    <!-- Payment method toggle -->
+                    <HBox spacing="12">
+                        <Button fx:id="btnPayInApp" styleClass="pay-method-btn, pay-method-active" onAction="#handlePayInApp" text="Payer en ligne" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnPayTicket" styleClass="pay-method-btn" onAction="#handlePayTicket" text="Uploader un reçu" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <!-- Pay in app form -->
+                    <VBox fx:id="payInAppForm" spacing="16" styleClass="pay-card">
+                        <Label text="Informations de carte" styleClass="pay-card-title"/>
+                        <VBox spacing="6">
+                            <Label text="Nom du titulaire" styleClass="field-label"/>
+                            <TextField fx:id="cardHolder" promptText="Jean Dupont" styleClass="input-field"/>
+                        </VBox>
+                        <VBox spacing="6">
+                            <Label text="Numéro de carte" styleClass="field-label"/>
+                            <TextField fx:id="cardNumber" promptText="0000 0000 0000 0000" styleClass="input-field"/>
+                        </VBox>
+                        <HBox spacing="12">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Date d'expiration" styleClass="field-label"/>
+                                <TextField fx:id="cardExpiry" promptText="MM/AA" styleClass="input-field"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="CVC" styleClass="field-label"/>
+                                <TextField fx:id="cardCvc" promptText="123" styleClass="input-field"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Upload ticket form -->
+                    <VBox fx:id="payTicketForm" spacing="16" styleClass="pay-card" visible="false" managed="false">
+                        <Label text="Reçu de paiement" styleClass="pay-card-title"/>
+                        <Label text="Téléversez une photo ou un scan de votre reçu." styleClass="step-subtitle"/>
+                        <VBox fx:id="dropZone" styleClass="drop-zone" alignment="CENTER" spacing="8">
+                            <Label text="&#128206;" styleClass="drop-icon"/>
+                            <Label text="Glissez votre fichier ici" styleClass="drop-title"/>
+                            <Label text="PNG, JPG, PDF — max 5 Mo" styleClass="drop-sub"/>
+                            <Button fx:id="btnChooseFile" styleClass="choose-file-btn" onAction="#handleChooseFile" text="Parcourir"/>
+                        </VBox>
+                        <Label fx:id="selectedFileName" text="" styleClass="file-name-label"/>
+                    </VBox>
+
+                    <!-- Order summary -->
+                    <VBox styleClass="summary-mini" spacing="8">
+                        <Label text="Récapitulatif" styleClass="pay-card-title"/>
+                        <HBox>
+                            <Label text="Document" styleClass="summary-key" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="summaryDocType" text="—" styleClass="summary-val"/>
+                        </HBox>
+                        <HBox>
+                            <Label text="Frais de traitement" styleClass="summary-key" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="summaryFee" text="500 FCFA" styleClass="summary-val"/>
+                        </HBox>
+                        <Separator/>
+                        <HBox>
+                            <Label text="Total" styleClass="summary-key-bold" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="summaryTotal" text="500 FCFA" styleClass="summary-val-bold"/>
+                        </HBox>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+
+        <!-- STEP 4 — Valider demande -->
+        <ScrollPane fx:id="step4" fitToWidth="true" styleClass="step-scroll" hbarPolicy="NEVER" visible="false" managed="false">
+            <content>
+                <VBox spacing="24" styleClass="step-inner">
+                    <Label text="Aperçu de votre demande" styleClass="step-title"/>
+                    <Label text="Vérifiez les informations avant de valider." styleClass="step-subtitle"/>
+
+                    <!-- Overview card -->
+                    <VBox styleClass="overview-card" spacing="14">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Circle radius="8" styleClass="overview-dot"/>
+                            <Label fx:id="overviewDocType" text="—" styleClass="overview-doc-type"/>
+                        </HBox>
+                        <Separator/>
+                        <VBox fx:id="overviewFields" spacing="8">
+                            <!-- Injected by controller -->
+                        </VBox>
+                        <Separator/>
+                        <HBox>
+                            <Label text="Montant payé" styleClass="summary-key" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="overviewAmount" text="500 FCFA" styleClass="summary-val-bold"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Download PDF -->
+                    <Button fx:id="btnDownloadPdf" styleClass="download-btn" onAction="#handleDownloadPdf" maxWidth="Infinity">
+                        <graphic>
+                            <HBox alignment="CENTER" spacing="8">
+                                <Label text="&#8681;" styleClass="download-icon"/>
+                                <Label text="Télécharger le récapitulatif en PDF" styleClass="download-label"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+
+    </StackPane>
+
+    <!-- ── Bottom navigation ── -->
+    <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="12">
+        <Button fx:id="btnPrecedent" styleClass="btn-secondary" onAction="#handlePrecedent" text="&#8592; Précédent" disable="true"/>
+        <Button fx:id="btnSuivant"  styleClass="action-btn"    onAction="#handleSuivant"   text="Suivant &#8594;"/>
+    </HBox>
+
+</VBox>

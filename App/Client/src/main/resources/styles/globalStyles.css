@@ -1,0 +1,62 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Mar 16, 2026, 7:07:42 PM
+    Author     : ely
+*/
+
+.link {
+    -fx-text-fill: #3498db;
+    -fx-cursor: hand;
+    -fx-underline: false;
+    -fx-font-weight: bold;
+}
+
+.small-text{
+    -fx-font-size: 14px;
+}
+
+
+.title-bold {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+    
+.action-btn {
+    -fx-width: 300;
+    -fx-height: 65;
+    -fx-background-color: #3cc3bd;
+    -fx-text-fill: white;
+    -fx-padding: 10 40 10 40;
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-background-radius: 60;
+    -fx-effect: dropshadow(gaussian, #3cc3bd0f, 5, 0.2, 0, 3);
+    
+}
+
+.input-field {
+    -fx-padding: 10;
+    -fx-border-width: 0 0 2px 0;
+    -fx-border-style: solid;
+    -fx-background-color: #ffffff00;
+    -fx-border-color: transparent transparent #3cc3bd transparent;
+}
+
+
+.left-pane-title {
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(255, 255, 255, 0.85);
+    -fx-rotate: -90;
+}
+
+.left-pane-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(255, 255, 255, 0.75);
+    -fx-font-family: "Arial";
+}
+
+

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<VBox
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.campusdocs.client.controller.ActeViewController"
+    styleClass="view-container"
+    spacing="0">
+
+    <stylesheets>
+        <URL value="@/styles/acteview.css"/>
+        <URL value="@/styles/globalStyles.css"/>
+    </stylesheets>
+
+    <!-- ── Page header ── -->
+    <VBox styleClass="page-header" spacing="4">
+        <Label text="Mes actes administratifs" styleClass="page-title"/>
+        <Label text="Consultez et téléchargez vos documents officiels." styleClass="page-subtitle"/>
+    </VBox>
+
+    <!-- ── Search + Filter bar ── -->
+    <HBox styleClass="search-bar" spacing="12" alignment="CENTER_LEFT">
+        <HBox styleClass="search-field-wrap" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="8">
+            <Label text="&#128269;" styleClass="search-icon"/>
+            <TextField fx:id="searchField" promptText="Rechercher un acte..." styleClass="search-input" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        </HBox>
+        <HBox styleClass="filter-group" spacing="8" alignment="CENTER_LEFT">
+            <Label text="Trier par" styleClass="filter-label"/>
+            <ComboBox fx:id="filterCombo" styleClass="filter-combo" prefWidth="160"/>
+        </HBox>
+    </HBox>
+
+    <!-- ── Results count ── -->
+    <HBox styleClass="results-bar" alignment="CENTER_LEFT" spacing="8">
+        <Label fx:id="resultsLabel" text="6 actes disponibles" styleClass="results-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="activeFilterLabel" text="" styleClass="active-filter-tag" visible="false" managed="false"/>
+    </HBox>
+
+    <!-- ── Grid scroll ── -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane" hbarPolicy="NEVER">
+        <content>
+            <VBox spacing="0" styleClass="scroll-content">
+                <!-- Empty state -->
+                <VBox fx:id="emptyState" alignment="CENTER" spacing="10" styleClass="empty-state" visible="false" managed="false">
+                    <Label text="Aucun acte trouvé." styleClass="empty-title"/>
+                    <Label text="Essayez de modifier votre recherche ou votre filtre." styleClass="empty-sub"/>
+                </VBox>
+
+                <!-- Grid injected by controller -->
+                <FlowPane fx:id="acteGrid" hgap="16" vgap="16" styleClass="acte-grid"/>
+            </VBox>
+        </content>
+    </ScrollPane>
+
+</VBox>

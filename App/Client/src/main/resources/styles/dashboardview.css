@@ -1,0 +1,175 @@
+/* ═══════════════════════════════
+   ROOT & LAYOUT
+════════════════════════════════ */
+.root-pane {
+    -fx-background-color: #f4f6f8;
+}
+
+/* ═══════════════════════════════
+   SIDEBAR
+════════════════════════════════ */
+.sidebar {
+    -fx-background-color: #faffff;
+    -fx-border-color: #e8ecf0;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 0;
+}
+
+.sidebar-logo-section {
+    -fx-padding: 24 20 20 20;
+}
+
+.logo-circle {
+    -fx-fill: #2cc295;
+}
+
+.logo-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a2332;
+}
+
+.logo-subtitle {
+    -fx-font-size: 11px;
+    -fx-text-fill: #8a96a3;
+}
+
+.sidebar-divider {
+    -fx-padding: 0 16 0 16;
+    -fx-opacity: 0.5;
+}
+
+.nav-section-label {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #a0aab4;
+    -fx-padding: 0 0 0 20;
+}
+
+.nav-group {
+    -fx-padding: 0 12 0 12;
+}
+
+/* ═══════════════════════════════
+   NAV BUTTONS
+════════════════════════════════ */
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 10 14 10 14;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.nav-btn:hover {
+    -fx-background-color: #3cc3bd10;
+}
+
+.nav-btn-active {
+    -fx-background-color: #3cc3bd20;
+}
+
+.nav-btn-active .nav-label {
+    -fx-text-fill: #3cc3bd;
+    -fx-font-weight: bold;
+}
+
+.nav-btn-active .nav-icon {
+    -fx-text-fill: #3cc3bd;
+}
+
+.nav-btn-danger:hover {
+    -fx-background-color: #fff0f0;
+}
+
+.nav-btn-danger .nav-label {
+    -fx-text-fill: #e05252;
+}
+
+.nav-btn-danger .nav-icon {
+    -fx-text-fill: #e05252;
+}
+
+.nav-icon {
+    -fx-font-size: 14px;
+    -fx-text-fill: #8a96a3;
+    -fx-min-width: 20;
+}
+
+.nav-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #3d4f60;
+}
+
+.nav-label-sub {
+    -fx-font-size: 11px;
+    -fx-text-fill: #a0aab4;
+}
+
+.profile-avatar {
+    -fx-fill: #2cc295;
+}
+
+.profile-avatar-large {
+    -fx-fill: #2cc295;
+}
+
+/* ═══════════════════════════════
+   TOP BAR
+════════════════════════════════ */
+.topbar {
+    -fx-background-color: #faffff;
+    -fx-border-color: #e8ecf0;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 16 28 16 28;
+    -fx-min-height: 64;
+}
+
+.page-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a2332;
+}
+
+.topbar-date {
+    -fx-font-size: 13px;
+    -fx-text-fill: #a0aab4;
+}
+
+.profile-label{
+    -fx-font-size: 15px;
+    -fx-text-fill: #3d4f60;
+    -fx-font-weight: bold;
+}
+
+/* ═══════════════════════════════
+   MAIN CONTENT
+════════════════════════════════ */
+.main-content {
+    -fx-background-color: #f4f6f8;
+}
+
+.content-area {
+    -fx-padding: 28;
+    -fx-background-color: #ffffff;
+}
+
+.view-container {
+    -fx-alignment: TOP_LEFT;
+}
+
+
+
+/* ═══════════════════════════════
+   PROFILE CARD
+════════════════════════════════ */
+.profile-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14;
+    -fx-border-color: #e8ecf0;
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
+    -fx-padding: 24;
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox 
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:id="rapportsView" 
+    fx:controller="com.campusdocs.client.controller.RapportsViewController"
+    spacing="20" 
+    styleClass="view-container" 
+    stylesheets="@/styles/rapportsview.css"
+    visible="false" managed="false">
+    <Label text="Mon profil" styleClass="section-title"/>
+    <HBox styleClass="profile-card" spacing="20" alignment="CENTER_LEFT">
+        <Circle radius="36" styleClass="profile-avatar-large"/>
+        <VBox spacing="4">
+            <Label text="Étudiant CampusDocs" styleClass="welcome-title"/>
+            <Label text="etudiant@campusdocs.com" styleClass="activity-sub"/>
+            <Label text="Licence 3 - Informatique" styleClass="activity-sub"/>
+        </VBox>
+    </HBox>
+</VBox>
