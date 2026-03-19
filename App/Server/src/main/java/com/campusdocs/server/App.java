@@ -1,30 +1,29 @@
 package com.campusdocs.server;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+import com.campusdocs.server.dao.DatabaseConnection;
+import com.campusdocs.server.dao.Database;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-
-/**
- * JavaFX App
- */
-public class App extends Application {
-
-    @Override
-    public void start(Stage stage) {
-        var javaVersion = SystemInfo.javaVersion();
-        var javafxVersion = SystemInfo.javafxVersion();
-
-        var label = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-        var scene = new Scene(new StackPane(label), 640, 480);
-        stage.setScene(scene);
-        stage.show();
-    }
-
+public class App {
     public static void main(String[] args) {
-        launch();
+        try {
+            // Crée la BDD et les tables si elles n'exitent pas
+            Database.initialize();
+            
+            Connection conn = DatabaseConnection.getConnection();
+            System.out.println("✅ Connexion réussie !");
+            System.out.println("✅ Base de données : " + conn.getCatalog());
+            ResultSet rs = conn.getMetaData().getTables("gestion_actes_ifri", null, "%", new String[]{"TABLE"});
+            System.out.println("✅ Tables trouvées :");
+            while (rs.next()) {
+                System.out.println("   - " + rs.getString("TABLE_NAME"));
+            }
+            conn.close();
+            System.out.println("✅ Tous les tests sont passés !");
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur : " + e.getMessage());
+        }
     }
-
 }
