@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.campusdocs.client.controller.AgentActeViewController"
+    fx:id="rootPane"
+    styleClass="admin-root" spacing="0">
+
+    <VBox styleClass="page-header" spacing="4">
+        <Label text="Actes générés" styleClass="page-title"/>
+        <Label text="Consultez les actes officiels produits par le système." styleClass="page-subtitle"/>
+    </VBox>
+
+    <HBox styleClass="search-bar" spacing="12" alignment="CENTER_LEFT">
+        <HBox styleClass="search-field-wrap" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="8">
+            <Label text="&#128269;" styleClass="search-icon"/>
+            <TextField fx:id="searchField" promptText="Rechercher un acte..." styleClass="search-input" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        </HBox>
+        <ComboBox fx:id="typeFilter" styleClass="filter-combo" prefWidth="160"/>
+        <ComboBox fx:id="sortFilter" styleClass="filter-combo" prefWidth="180"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="admin-scroll" hbarPolicy="NEVER">
+        <content>
+            <VBox spacing="0" styleClass="admin-scroll-content">
+                <VBox styleClass="admin-section" spacing="0">
+
+                    <HBox styleClass="table-header-row" spacing="0">
+                        <Label text="RÉFÉRENCE" styleClass="table-header-label" prefWidth="160"/>
+                        <Label text="ÉTUDIANT" styleClass="table-header-label" prefWidth="200"/>
+                        <Label text="TYPE" styleClass="table-header-label" prefWidth="200"/>
+                        <Label text="DATE GÉNÉRATION" styleClass="table-header-label" prefWidth="150"/>
+                        <Label text="AGENT" styleClass="table-header-label" prefWidth="150"/>
+                        <Label text="" styleClass="table-header-label" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <VBox fx:id="actList" spacing="0"/>
+
+                    <VBox fx:id="emptyState" styleClass="empty-state" alignment="CENTER" spacing="8" visible="false" managed="false">
+                        <Label text="Aucun acte généré pour le moment." styleClass="empty-title"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </content>
+    </ScrollPane>
+</VBox>

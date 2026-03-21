@@ -10,14 +10,10 @@
 <VBox
     xmlns="http://javafx.com/javafx"
     xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="com.campusdocs.client.controller.ActeDetailViewController"
+    fx:controller="com.campusdocs.client.controller.ActeDetailsViewController"
     styleClass="view-container"
+    fx:id="rootPane"
     spacing="0">
-
-    <stylesheets>
-        <URL value="@/styles/acteview.css"/>
-        <URL value="@/styles/globalStyles.css"/>
-    </stylesheets>
 
     <!-- ── Top bar ── -->
     <HBox styleClass="form-topbar" alignment="CENTER_LEFT" spacing="16">

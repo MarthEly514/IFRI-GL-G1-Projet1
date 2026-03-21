@@ -15,7 +15,6 @@
     xmlns="http://javafx.com/javafx"
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.campusdocs.client.controller.UsagerViewController"
-    stylesheets ="@/styles/usagerview.css"
     fx:id="usagerView" 
     spacing="24" 
     styleClass="view-container">

@@ -1,0 +1,122 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+
+}
+
+
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+
+}
+
+
+/* ═══════════════════════════════
+   WELCOME BANNER
+════════════════════════════════ */
+.welcome-banner {
+    -fx-background-color: #3cc3bd;
+    -fx-background-radius: 14;
+    -fx-padding: 24 28 24 28;
+    -fx-min-height: 160;
+}
+
+.welcome-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.welcome-sub {
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(255,255,255,0.8);
+}
+
+/* ═══════════════════════════════
+   STAT CARDS
+════════════════════════════════ */
+.stat-card {
+    -fx-background-color: #faffff;
+    -fx-background-radius: 12;
+    -fx-border-color: #e8ecf0;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-padding: 18 20 18 20;
+}
+
+.stat-card-accent {
+    -fx-background-color: #e8f8f2;
+    -fx-border-color: #b8edd9;
+}
+
+.stat-label {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #a0aab4;
+}
+
+.stat-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a2332;
+}
+
+.stat-value-accent {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2cc295;
+}
+
+/* ═══════════════════════════════
+   SECTION TITLE
+════════════════════════════════ */
+.section-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a2332;
+}
+
+/* ═══════════════════════════════
+   ACTIVITY ROWS
+════════════════════════════════ */
+.activity-row {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-color: #e8ecf0;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-padding: 14 16 14 16;
+}
+
+.activity-name {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a2332;
+}
+
+.activity-sub {
+    -fx-font-size: 12px;
+    -fx-text-fill: #8a96a3;
+}
+
+.activity-date {
+    -fx-font-size: 11px;
+    -fx-text-fill: #a0aab4;
+}
+
+.activity-dot-green {
+    -fx-fill: #2cc295;
+}
+
+.activity-dot-amber {
+    -fx-fill: #f0a500;
+}
+
+.activity-dot-teal {
+    -fx-fill: #17a2b8;
+}

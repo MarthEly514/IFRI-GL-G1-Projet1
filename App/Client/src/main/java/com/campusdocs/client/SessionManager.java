@@ -1,48 +1,55 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.campusdocs.client;
-
+ 
 import com.campusdocs.client.model.User;
 
-/**
- *
- * @author ely
- */
 public class SessionManager {
-    
-
+ 
     private static SessionManager instance;
-
+ 
     private String fullName;
+    private String firstName;
+    private String lastName;
     private String email;
-    private User.Role role;
-
+    private String role;
+    private String token;   
+    private String userId; 
+ 
     private SessionManager() {}
-
+ 
     public static SessionManager getInstance() {
-        if (instance == null) {
-            instance = new SessionManager();
-        }
+        if (instance == null) instance = new SessionManager();
         return instance;
     }
-
-    // Getters
+ 
+    
+    //Getters
     public String getFullName() { return fullName; }
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
     public String getEmail()    { return email; }
-    public User.Role getRole()     { return role; }
-
-    // Setters
-    public void setFullName(String fullName) { this.fullName = fullName; }
-    public void setEmail(String email)       { this.email = email; }
-    public void setRole(User.Role role)         { this.role = role; }
-
-    // Call this on logout
+    public String getRole()     { return role; }
+    public String getToken()    { return token; }
+    public String getUserId()   { return userId; }
+    
+ 
+    //Setters
+    public void setFullName(String v) { fullName = v; }
+    public void setFirstName(String v) { firstName = v; }
+    public void setLastName(String v) { lastName = v; }
+    public void setEmail(String v)    { email = v; }
+    public void setRole(String v)     { role = v; }
+    public void setToken(String v)    { token = v; }
+    public void setUserId(String v)   { userId = v; }
+    
+ 
+    //check if the user is logged-in and his role
+    public boolean isLoggedIn()  { return token != null && !token.isEmpty(); }
+    public boolean isAdmin()     { return "Admin".equalsIgnoreCase(role); }
+    public boolean isAgent()     { return "Agent".equalsIgnoreCase(role); }
+    public boolean isStudent()   { return "Étudiant".equalsIgnoreCase(role); }
+ 
     public void clear() {
-        fullName = null;
-        email    = null;
-        role     = null;
+        fullName = null; email = null; role = null;
+        token = null;    userId = null;
     }
 }
-

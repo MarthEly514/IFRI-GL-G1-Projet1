@@ -12,14 +12,11 @@
 
 <AnchorPane 
     id="AnchorPane" 
+    fx:id="rootPane"
     styleClass="mainFxmlClass" 
     xmlns:fx="http://javafx.com/fxml/1" 
     fx:controller="com.campusdocs.client.controller.SignupViewController">
-    
-    <stylesheets>
-        <URL value="@/styles/signupview.css"/>
-        <URL value="@/styles/globalStyles.css"/>
-    </stylesheets>
+
     <children>
         <GridPane 
             AnchorPane.topAnchor="0" 
@@ -110,11 +107,12 @@
                     <children>
                         <Label text="Inscription" styleClass="title" />
                         <Label text="Créez votre compte pour accéder a votre espace" styleClass="sub-title" prefWidth="300" wrapText="true" />
-                        <TextField promptText="Nom" styleClass="input-field" maxWidth="400" />
-                        <TextField promptText="Prénom" styleClass="input-field" maxWidth="400" />
-                        <TextField promptText="Email" styleClass="input-field" maxWidth="400" />
-                        <PasswordField promptText="Mot de passe" styleClass="input-field" maxWidth="400" />
-                        <PasswordField promptText="Confirmer mot de passe" styleClass="input-field" maxWidth="400" />
+                        <TextField promptText="Nom" styleClass="input-field" maxWidth="400" fx:id="lastNameField"/>
+                        <TextField promptText="Prénom" styleClass="input-field" maxWidth="400" fx:id="firstNameField"/>
+                        <TextField promptText="Email" styleClass="input-field" maxWidth="400" fx:id="emailField"/>
+                        <PasswordField promptText="Mot de passe" styleClass="input-field" maxWidth="400" fx:id="passwordField"/>
+                        <PasswordField promptText="Confirmer mot de passe" styleClass="input-field" maxWidth="400" fx:id="confirmPasswordField"/>
+                        <Label fx:id="errorLabel" styleClass="error-label"></Label>
                         <Button
                            styleClass = "create-btn, action-btn"
                             text="S'inscrire"

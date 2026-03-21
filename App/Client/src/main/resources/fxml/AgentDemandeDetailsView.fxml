@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.campusdocs.client.controller.AgentDemandeDetailsViewController"
+    fx:id="rootPane"
+    styleClass="admin-root" spacing="0">
+    
+
+    <!-- Top bar -->
+    <HBox styleClass="form-topbar" alignment="CENTER_LEFT" spacing="16">
+        <Button styleClass="back-btn" onAction="#handleBack" text="&#8592; Retour"/>
+        <Label fx:id="topTitle" text="Détail de la demande" styleClass="form-topbar-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="statusBadge" text="En attente" styleClass="badge-pending"/>
+    </HBox>
+
+    <HBox VBox.vgrow="ALWAYS" spacing="0">
+
+        <!-- Left: demand preview -->
+        <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS" styleClass="admin-scroll" hbarPolicy="NEVER">
+            <content>
+                <VBox spacing="20" styleClass="admin-scroll-content">
+
+                    <!-- Student info card -->
+                    <VBox styleClass="admin-section" spacing="0">
+                        <HBox styleClass="admin-section-header">
+                            <Label text="Informations de l'étudiant" styleClass="admin-section-title"/>
+                        </HBox>
+                        <HBox styleClass="admin-section-body" spacing="24">
+                            <StackPane>
+                                <Circle radius="32" styleClass="stat-card-accent"/>
+                                <Label fx:id="studentInitials" text="ED" styleClass="stat-value-accent" style="-fx-font-size:16px;"/>
+                            </StackPane>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label fx:id="studentName" text="—" styleClass="admin-section-title"/>
+                                <HBox spacing="16">
+                                    <Label fx:id="studentEmail" text="—" styleClass="table-cell-muted"/>
+                                    <Label fx:id="studentMatricule" text="—" styleClass="table-cell-muted"/>
+                                </HBox>
+                                <Label fx:id="studentFiliere" text="—" styleClass="table-cell-muted"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Demand details card -->
+                    <VBox styleClass="admin-section" spacing="0">
+                        <HBox styleClass="admin-section-header">
+                            <Label text="Détails de la demande" styleClass="admin-section-title"/>
+                        </HBox>
+                        <VBox styleClass="admin-section-body" spacing="14">
+                            <HBox spacing="16">
+                                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                    <Label text="TYPE DE DOCUMENT" styleClass="field-label"/>
+                                    <Label fx:id="docType" text="—" styleClass="table-cell"/>
+                                </VBox>
+                                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                    <Label text="RÉFÉRENCE" styleClass="field-label"/>
+                                    <Label fx:id="demandRef" text="—" styleClass="table-cell-muted"/>
+                                </VBox>
+                            </HBox>
+                            <HBox spacing="16">
+                                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                    <Label text="DATE DE SOUMISSION" styleClass="field-label"/>
+                                    <Label fx:id="demandDate" text="—" styleClass="table-cell"/>
+                                </VBox>
+                                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                    <Label text="PAIEMENT" styleClass="field-label"/>
+                                    <Label fx:id="demandPayment" text="—" styleClass="table-cell"/>
+                                </VBox>
+                            </HBox>
+                            <Separator/>
+                            <VBox fx:id="demandFieldsContainer" spacing="10">
+                                <!-- Filled dynamically -->
+                            </VBox>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Document preview placeholder -->
+                    <VBox styleClass="admin-section" spacing="0">
+                        <HBox styleClass="admin-section-header">
+                            <Label text="Aperçu du document à générer" styleClass="admin-section-title"/>
+                        </HBox>
+                        <VBox styleClass="admin-section-body" alignment="CENTER" spacing="0">
+                            <VBox styleClass="doc-placeholder-agent" alignment="CENTER" spacing="16" minHeight="220">
+                                <Label text="&#128196;" style="-fx-font-size:40px;"/>
+                                <Label fx:id="previewDocType" text="ATTESTATION DE SCOLARITÉ" style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#0d2b2a;"/>
+                                <Label text="Le document sera généré après validation." style="-fx-font-size:12px;-fx-text-fill:#7a9e9c;"/>
+                            </VBox>
+                        </VBox>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+
+        <!-- Right: action panel -->
+        <VBox styleClass="agent-action-panel" spacing="20" prefWidth="290">
+            <Label text="Actions" styleClass="admin-section-title"/>
+
+            <!-- Agent note -->
+            <VBox spacing="6">
+                <Label text="Note de traitement" styleClass="field-label"/>
+                <TextArea fx:id="agentNote" promptText="Ajoutez une note optionnelle..." styleClass="input-field" prefHeight="100" wrapText="true"/>
+            </VBox>
+
+            <!-- Validate button -->
+            <Button fx:id="btnValidate" styleClass="action-btn" onAction="#handleValidate"
+                    maxWidth="Infinity" text="✓  Valider et générer l'acte"/>
+
+            <Separator/>
+
+            <!-- Reject -->
+            <VBox spacing="6">
+                <Label text="Motif de rejet (obligatoire)" styleClass="field-label"/>
+                <TextField fx:id="rejectReason" styleClass="input-field" promptText="ex: Dossier incomplet…"/>
+            </VBox>
+            <Button fx:id="btnReject" styleClass="btn-danger" onAction="#handleReject"
+                    maxWidth="Infinity" text="✕  Rejeter la demande"/>
+
+            <Separator/>
+
+            <!-- Timeline -->
+            <Label text="Historique" styleClass="field-label"/>
+            <VBox fx:id="timelineContainer" spacing="8">
+                <!-- Injected by controller -->
+            </VBox>
+
+        </VBox>
+    </HBox>
+
+    <!-- Toast -->
+    <StackPane fx:id="toastContainer" styleClass="toast-container" visible="false" managed="false">
+        <HBox styleClass="toast" alignment="CENTER_LEFT" spacing="12">
+            <Circle radius="6" styleClass="toast-dot"/>
+            <Label fx:id="toastLabel" text="" styleClass="toast-text"/>
+        </HBox>
+    </StackPane>
+</VBox>

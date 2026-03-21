@@ -6,6 +6,8 @@
 package com.campusdocs.client.controller;
 
 import com.campusdocs.client.SessionManager;
+import com.campusdocs.client.model.User;
+import com.campusdocs.client.util.CssLoader;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
@@ -24,9 +26,11 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import javafx.scene.layout.HBox;
 
 public class ProfileViewController implements Initializable {
 
+    @FXML private VBox rootPane;
     // ── Avatar ──
     @FXML private Label avatarInitials;
 
@@ -35,6 +39,8 @@ public class ProfileViewController implements Initializable {
     @FXML private TextField lastNameField;
     @FXML private TextField emailField;
     @FXML private TextField matriculeField;
+    @FXML private HBox academicLevelRow1;
+    @FXML private HBox academicLevelRow2;
     @FXML private TextField filiereField;
     @FXML private TextField niveauField;
     @FXML private TextField anneeField;
@@ -57,6 +63,9 @@ public class ProfileViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //load css
+        CssLoader.loadCssFiles(rootPane, "profileview", "globalStyles");
+
         populateFromSession();
     }
 
@@ -87,6 +96,13 @@ public class ProfileViewController implements Initializable {
         String role = session.getRole() != null ? session.getRole().toString() : "Étudiant";
         roleLabel.setText(role);
         applyRoleBadge(role);
+        
+        //hide academic level if role is not usager/etudiant
+        boolean isUsager = session.getRole().equals("Usager");
+        academicLevelRow1.setVisible(isUsager);
+        academicLevelRow1.setManaged(isUsager);
+        academicLevelRow2.setVisible(isUsager);
+        academicLevelRow2.setManaged(isUsager);
 
         // Dates
         memberSinceLabel.setText("Octobre 2021");

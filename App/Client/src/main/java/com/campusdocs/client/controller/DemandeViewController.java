@@ -7,6 +7,7 @@ package com.campusdocs.client.controller;
 
 import com.campusdocs.client.App;
 import com.campusdocs.client.model.Demande;
+import com.campusdocs.client.util.CssLoader;
 import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,7 +28,7 @@ public class DemandeViewController implements Initializable {
 
     @FXML private Button btnFaireDemande;
     @FXML private Label demandCountBadge;
-    @FXML private VBox emptyState;
+    @FXML private VBox rootPane, emptyState;
     @FXML private VBox demandeList;
     @FXML private StackPane toastContainer;
     @FXML private Label toastLabel;
@@ -37,6 +38,9 @@ public class DemandeViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //loadin css files
+        CssLoader.loadCssFiles(rootPane, "demandeview", "globalStyles");
+
         refreshList();
     }
 

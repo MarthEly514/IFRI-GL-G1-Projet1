@@ -11,7 +11,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
    ROOT
 ════════════════════════════════ */
 .profile-root {
-    -fx-background-color: #f4f6f8;
+    -fx-background-color: transparent;
 }
 
 .page-header {

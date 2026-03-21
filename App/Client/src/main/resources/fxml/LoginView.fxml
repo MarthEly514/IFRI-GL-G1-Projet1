@@ -12,14 +12,10 @@
 
 <AnchorPane 
     id="AnchorPane" 
+    fx:id="rootPane"
     styleClass="mainFxmlClass" 
     xmlns:fx="http://javafx.com/fxml/1" 
     fx:controller="com.campusdocs.client.controller.LoginViewController">
-    
-    <stylesheets>
-        <URL value="@/styles/loginview.css"/>
-        <URL value="@/styles/globalStyles.css"/>
-    </stylesheets>
     <children>
         <GridPane 
             AnchorPane.topAnchor="0" 
@@ -77,8 +73,8 @@
                             preserveRatio="true"
                             
                         >
-                            <image>
-                                <Image url="@/images/girl_holding_document.png" />
+                            <image>                             
+                                <Image url="/images/girl_holding_document.png" />
                             </image>
                         </ImageView>
                         
@@ -109,8 +105,9 @@
                     <children>
                         <Label text="Connexion" styleClass="title" />
                         <Label text="Entrez vos informations pour vous connecter à votre compte" styleClass="sub-title" prefWidth="300" wrapText="true"/>
-                        <TextField promptText="Email" styleClass="input-field" maxWidth="400" />
-                        <PasswordField promptText="Mot de passe" styleClass="input-field" maxWidth="400" />
+                        <TextField promptText="Email" styleClass="input-field" maxWidth="400" fx:id="emailField"/>
+                        <PasswordField promptText="Mot de passe" styleClass="input-field" maxWidth="400"  fx:id="passwordField"/>
+                        <Label fx:id="errorLabel" styleClass="error-label"></Label>
                         <Button
                            styleClass = "create-btn, action-btn"
                             text="Se connecter"

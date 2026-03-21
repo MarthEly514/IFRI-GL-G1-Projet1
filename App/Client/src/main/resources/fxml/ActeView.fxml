@@ -11,13 +11,9 @@
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.campusdocs.client.controller.ActeViewController"
     styleClass="view-container"
+    fx:id="rootPane"
     spacing="0">
-
-    <stylesheets>
-        <URL value="@/styles/acteview.css"/>
-        <URL value="@/styles/globalStyles.css"/>
-    </stylesheets>
-
+    
     <!-- ── Page header ── -->
     <VBox styleClass="page-header" spacing="4">
         <Label text="Mes actes administratifs" styleClass="page-title"/>

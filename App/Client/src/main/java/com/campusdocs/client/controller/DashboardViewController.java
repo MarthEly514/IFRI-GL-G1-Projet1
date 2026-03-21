@@ -1,7 +1,9 @@
 package com.campusdocs.client.controller;
 
+import com.campusdocs.client.App;
 import com.campusdocs.client.SessionManager;
 import com.campusdocs.client.model.User;
+import com.campusdocs.client.util.CssLoader;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -16,11 +18,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class DashboardViewController extends BaseViewController {
 
+    @FXML private BorderPane rootPane;
     @FXML private StackPane contentArea;
     @FXML private Button btnDashboard;
     @FXML private Button btnDemandes;
@@ -44,6 +48,7 @@ public class DashboardViewController extends BaseViewController {
     private Parent statsView;
     private Parent rapportsView;
     public String userFullName;
+    public SessionManager currentUser;
     
     //Controllers
     private UsagerViewController userViewController;
@@ -52,6 +57,9 @@ public class DashboardViewController extends BaseViewController {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
+        //loading css file
+        CssLoader.loadCssFiles(rootPane, "dashboardview", "globalStyles");
+        
         //Hides the unaccessible navButtons from basic users
         btnStats.setVisible(false);
         btnStats.setManaged(false);
@@ -59,6 +67,7 @@ public class DashboardViewController extends BaseViewController {
         btnUsers.setManaged(false);
         btnRapports.setVisible(false);
         btnRapports.setManaged(false);
+        currentUser = SessionManager.getInstance();
         
         //Checks user type before loading the view
         checkUserType();
@@ -67,7 +76,7 @@ public class DashboardViewController extends BaseViewController {
         
         //putting user data into the UI
         
-        userFullName = SessionManager.getInstance().getFullName();
+        userFullName = currentUser.getFullName();
         navUserName.setText(userFullName);
         topBarUserName.setText(userFullName);
                 
@@ -135,7 +144,7 @@ public class DashboardViewController extends BaseViewController {
     }
     
     public void refreshUserLabels() {
-        String name = SessionManager.getInstance().getFullName();
+        String name = currentUser.getFullName();
         if (navUserName != null)    navUserName.setText(name);
         if (topBarUserName != null) topBarUserName.setText(name);
     }
@@ -162,7 +171,7 @@ public class DashboardViewController extends BaseViewController {
         
         portalType.setText("Portail "+SessionManager.getInstance().getRole());
         
-        if(SessionManager.getInstance().getRole() == User.Role.Admin){
+        if(SessionManager.getInstance().getRole().equals(User.Role.Admin.toString())){
             
             btnStats.setVisible(true);
             btnStats.setManaged(true);
@@ -171,9 +180,10 @@ public class DashboardViewController extends BaseViewController {
             btnRapports.setVisible(true);
             btnRapports.setManaged(true);
             
-        }else if(SessionManager.getInstance().getRole() == User.Role.Agent){
+        }else if(SessionManager.getInstance().getRole().equals(User.Role.Agent.toString())){
             
             btnRapports.setVisible(true);
+            btnRapports.setManaged(true);
             
         }
     }
@@ -218,11 +228,36 @@ public class DashboardViewController extends BaseViewController {
     }
 
     // ── Nav handlers ──────────────────────────────
-    @FXML public void handleNavDashboard() { 
-        setActive(btnDashboard, "UsagerView", "Dashboard"); 
-        // Pass data to UserView's controller
-        if (userViewController != null) {
-            userViewController.setWelcomeTitle(userFullName);
+    @FXML 
+    public void handleNavDashboard() { 
+        if (null == currentUser.getRole()) {
+            // Session not set — redirect back to login
+            try {
+                App.setRoot("LoginView");
+                App.setTitle("CampusDocs - Connexion");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } 
+        else switch (currentUser.getRole()) {
+            case "Admin":
+                setActive(btnDashboard, "AdminView", "Dashboard");
+                // Pass data to UserView's controller
+                if (userViewController != null) {
+                    userViewController.setWelcomeTitle(userFullName);
+                }   break;
+            case "Agent":
+                setActive(btnDashboard, "AgentView", "Dashboard");
+                // Pass data to UserView's controller
+                if (userViewController != null) {
+                    userViewController.setWelcomeTitle(userFullName);
+                }   break;
+            default:
+                setActive(btnDashboard, "UsagerView", "Dashboard");
+                // Pass data to UserView's controller
+                if (userViewController != null) {
+                    userViewController.setWelcomeTitle(userFullName);
+                }   break;
         }
     }
     
@@ -234,12 +269,44 @@ public class DashboardViewController extends BaseViewController {
         dateLabel.setText(finalDate);
     }
     
-    @FXML public void handleNavDemandes()  { setActive(btnDemandes,"DemandeView","Demandes Administratives"); }
-    @FXML public void handleNavActes()     { setActive(btnActes,"ActeView","Actes Administratifs"); }
-    @FXML public void handleNavRapports()   { setActive(btnRapports,"RapportsView", "Rapports"); }
-    @FXML public void handleNavStats()   { setActive(btnStats,"StatsView","Statistiques"); }
-    @FXML public void handleNavUsers()   { setActive(btnUsers,"UsersManagementView","Gestion des utilisateurs"); }
-    @FXML public void handleNavProfile()   { setActive(btnProfile,"ProfileView","Mon profil"); }
+    @FXML public void handleNavDemandes(){ 
+        switch (currentUser.getRole()) {
+            case "Admin":
+                setActive(btnDemandes,"DemandeView","Demandes Administratives"); 
+                break;
+            case "Agent":
+                setActive(btnDemandes,"AgentDemandeView","Demandes Administratives"); 
+                break;
+            default:
+                setActive(btnDemandes,"DemandeView","Demandes Administratives"); 
+                break;
+        }
+    }
+    @FXML public void handleNavActes(){ 
+        switch (currentUser.getRole()) {
+            case "Admin":
+                setActive(btnActes,"AgentActeView","Actes Administratifs"); 
+                break;
+            case "Agent":
+                setActive(btnActes,"AgentActeView","Actes Administratifs"); 
+                break;
+            default:
+                setActive(btnActes,"ActeView","Actes Administratifs"); 
+                break;
+        }
+    }
+    @FXML public void handleNavRapports(){
+        setActive(btnRapports,"RapportsView", "Rapports"); 
+    }
+    @FXML public void handleNavStats(){ 
+        setActive(btnStats,"StatsView","Statistiques"); 
+    }
+    @FXML public void handleNavUsers(){ 
+        setActive(btnUsers,"UsersManagementView","Gestion des utilisateurs"); 
+    }
+    @FXML public void handleNavProfile(){
+        setActive(btnProfile,"ProfileView","Mon profil"); 
+    }
 
     @FXML
     private void handleLogout() {

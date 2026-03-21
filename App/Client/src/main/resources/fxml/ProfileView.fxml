@@ -11,18 +11,8 @@
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.campusdocs.client.controller.ProfileViewController"
     styleClass="profile-root"
+    fx:id="rootPane"
     spacing="0">
-
-    <stylesheets>
-        <URL value="@/styles/profileview.css"/>
-        <URL value="@/styles/globalStyles.css"/>
-    </stylesheets>
-
-    <!-- ── Page header ── -->
-    <VBox styleClass="page-header" spacing="4">
-        <Label text="Mon profil" styleClass="page-title"/>
-        <Label text="Gérez vos informations personnelles et vos préférences de sécurité." styleClass="page-subtitle"/>
-    </VBox>
 
     <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="profile-scroll" hbarPolicy="NEVER">
         <content>
@@ -81,26 +71,26 @@
                         </VBox>
 
                         <!-- Matricule + Filière row -->
-                        <HBox spacing="16">
+                        <HBox spacing="16" fx:id="academicLevelRow1">
                             <VBox spacing="6" HBox.hgrow="ALWAYS">
                                 <Label text="Numéro matricule" styleClass="field-label"/>
-                                <TextField fx:id="matriculeField" styleClass="input-field input-readonly" editable="false"/>
+                                <TextField fx:id="matriculeField" styleClass="input-field,input-readonly" editable="false"/>
                             </VBox>
                             <VBox spacing="6" HBox.hgrow="ALWAYS">
                                 <Label text="Filière" styleClass="field-label"/>
-                                <TextField fx:id="filiereField" styleClass="input-field input-readonly" editable="false"/>
+                                <TextField fx:id="filiereField" styleClass="input-field,input-readonly" editable="false"/>
                             </VBox>
                         </HBox>
 
                         <!-- Niveau + Année -->
-                        <HBox spacing="16">
+                        <HBox spacing="16" fx:id="academicLevelRow2">
                             <VBox spacing="6" HBox.hgrow="ALWAYS">
                                 <Label text="Niveau" styleClass="field-label"/>
-                                <TextField fx:id="niveauField" styleClass="input-field input-readonly" editable="false"/>
+                                <TextField fx:id="niveauField" styleClass="input-field,input-readonly" editable="false"/>
                             </VBox>
                             <VBox spacing="6" HBox.hgrow="ALWAYS">
                                 <Label text="Année académique" styleClass="field-label"/>
-                                <TextField fx:id="anneeField" styleClass="input-field input-readonly" editable="false"/>
+                                <TextField fx:id="anneeField" styleClass="input-field,input-readonly" editable="false"/>
                             </VBox>
                         </HBox>
 

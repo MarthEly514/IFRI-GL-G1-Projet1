@@ -10,19 +10,9 @@
     xmlns="http://javafx.com/javafx"
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.campusdocs.client.controller.DemandeViewController"
+    fx:id="rootPane"
     styleClass="view-container"
     spacing="0">
-
-    <stylesheets>
-        <URL value="@/styles/demandeview.css"/>
-        <URL value="@/styles/globalStyles.css"/>
-    </stylesheets>
-
-    <!-- ── Page header ── 
-    <VBox styleClass="page-header" spacing="4">
-        <Label text="Demandes administratives" styleClass="page-title"/>
-        <Label text="Gérez et suivez vos demandes de documents." styleClass="page-subtitle"/>
-    </VBox>-->
 
     <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane" hbarPolicy="NEVER">
         <content>

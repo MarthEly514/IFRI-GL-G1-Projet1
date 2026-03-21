@@ -5,6 +5,7 @@
 package com.campusdocs.client.controller;
  
 import com.campusdocs.client.model.ActeAdministratif;
+import com.campusdocs.client.util.CssLoader;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -13,9 +14,13 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.scene.layout.VBox;
  
-public class ActeDetailViewController implements Initializable {
+public class ActeDetailsViewController implements Initializable {
  
+    //rootPane
+    @FXML private VBox rootPane;
+    
     // Top bar
     @FXML private Label topBarTitle;
  
@@ -37,7 +42,8 @@ public class ActeDetailViewController implements Initializable {
  
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Data set via setActe() after load
+        CssLoader.loadCssFiles(rootPane, "acteview", "globalStyles");
+
     }
  
     public void setActe(ActeAdministratif acte) {

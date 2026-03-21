@@ -1,30 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
 <?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
 
-
-<VBox 
-    xmlns="http://javafx.com/javafx"
-    xmlns:fx="http://javafx.com/fxml/1"
-    fx:id="userManagementView" 
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.campusdocs.client.controller.UsersManagementViewController"
-    spacing="20" 
-    styleClass="view-container" 
-    stylesheets="@/styles/usersmanagementview.css"
-    visible="false" managed="false">
-    <Label text="Mon profil" styleClass="section-title"/>
-    <HBox styleClass="profile-card" spacing="20" alignment="CENTER_LEFT">
-        <Circle radius="36" styleClass="profile-avatar-large"/>
-        <VBox spacing="4">
-            <Label text="Étudiant CampusDocs" styleClass="welcome-title"/>
-            <Label text="etudiant@campusdocs.com" styleClass="activity-sub"/>
-            <Label text="Licence 3 - Informatique" styleClass="activity-sub"/>
-        </VBox>
+    fx:id="rootPane"
+    styleClass="admin-root" spacing="0">
+ 
+
+    <VBox styleClass="page-header" spacing="4">
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Gestion des utilisateurs" styleClass="page-title" HBox.hgrow="ALWAYS"/>
+            <Button styleClass="action-btn" onAction="#handleCreateAgent" text="+ Créer un compte agent"/>
+        </HBox>
+        <Label text="Gérez les comptes, rôles et accès des utilisateurs." styleClass="page-subtitle"/>
+    </VBox>
+
+    <!-- Search + filter -->
+    <HBox styleClass="search-bar" spacing="12" alignment="CENTER_LEFT">
+        <HBox styleClass="search-field-wrap" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="8">
+            <Label text="&#128269;" styleClass="search-icon"/>
+            <TextField fx:id="searchField" promptText="Rechercher un utilisateur..." styleClass="search-input" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        </HBox>
+        <ComboBox fx:id="roleFilter" styleClass="filter-combo" prefWidth="160"/>
+        <ComboBox fx:id="statusFilter" styleClass="filter-combo" prefWidth="160"/>
     </HBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="admin-scroll" hbarPolicy="NEVER">
+        <content>
+            <VBox spacing="0" styleClass="admin-scroll-content">
+                <VBox styleClass="admin-section" spacing="0">
+
+                    <HBox styleClass="table-header-row" spacing="0">
+                        <Label text="UTILISATEUR" styleClass="table-header-label" prefWidth="230"/>
+                        <Label text="RÔLE" styleClass="table-header-label" prefWidth="110"/>
+                        <Label text="STATUT" styleClass="table-header-label" prefWidth="110"/>
+                        <Label text="MEMBRE DEPUIS" styleClass="table-header-label" prefWidth="140"/>
+                        <Label text="ACTIONS" styleClass="table-header-label" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <VBox fx:id="userList" spacing="0"/>
+
+                    <VBox fx:id="emptyState" styleClass="empty-state" alignment="CENTER" spacing="8" visible="false" managed="false">
+                        <Label text="Aucun utilisateur trouvé." styleClass="empty-title"/>
+                        <Label text="Modifiez vos filtres pour afficher plus de résultats." styleClass="empty-sub"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </content>
+    </ScrollPane>
+
+    <!-- Create agent modal overlay (hidden by default) -->
+    <StackPane fx:id="modalOverlay" styleClass="modal-overlay" visible="false" managed="false">
+        <VBox styleClass="modal-card" spacing="18" maxWidth="440">
+            <Label text="Créer un compte agent" styleClass="modal-title"/>
+            <Label text="Remplissez les informations pour créer un nouveau compte agent." styleClass="modal-subtitle"/>
+            <Separator/>
+            <HBox spacing="12">
+                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                    <Label text="Prénom" styleClass="field-label"/>
+                    <TextField fx:id="agentFirstName" styleClass="input-field" promptText="Prénom"/>
+                </VBox>
+                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                    <Label text="Nom" styleClass="field-label"/>
+                    <TextField fx:id="agentLastName" styleClass="input-field" promptText="Nom"/>
+                </VBox>
+            </HBox>
+            <VBox spacing="6">
+                <Label text="Email" styleClass="field-label"/>
+                <TextField fx:id="agentEmail" styleClass="input-field" promptText="agent@campusdocs.com"/>
+            </VBox>
+            <VBox spacing="6">
+                <Label text="Mot de passe temporaire" styleClass="field-label"/>
+                <PasswordField fx:id="agentPassword" styleClass="input-field" promptText="••••••••"/>
+            </VBox>
+            <Label fx:id="modalError" text="" styleClass="badge-rejected" visible="false" managed="false"/>
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <Button styleClass="btn-secondary" onAction="#handleCancelModal" text="Annuler"/>
+                <Button styleClass="action-btn" onAction="#handleConfirmCreateAgent" text="Créer le compte"/>
+            </HBox>
+        </VBox>
+    </StackPane>
+
+    <!-- Toast -->
+    <StackPane fx:id="toastContainer" styleClass="toast-container" visible="false" managed="false">
+        <HBox styleClass="toast" alignment="CENTER_LEFT" spacing="12">
+            <Circle radius="6" styleClass="toast-dot"/>
+            <Label fx:id="toastLabel" text="" styleClass="toast-text"/>
+        </HBox>
+    </StackPane>
 </VBox>

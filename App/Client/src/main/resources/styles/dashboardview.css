@@ -173,3 +173,33 @@
     -fx-border-radius: 14;
     -fx-padding: 24;
 }
+
+
+.btn-small-teal {
+    -fx-background-color: #eaf7f6;
+    -fx-border-color: #b8e8e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 6 14 6 14;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3cc3bd;
+    -fx-cursor: hand;
+}
+.btn-small-teal:hover {
+    -fx-background-color: #3cc3bd;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #2fa8a3;
+}
+ 
+/* Activity dot red for rejected */
+.activity-dot-red {
+    -fx-fill: #d94f4f;
+}
+ 
+/* Stat sub label */
+.stat-sub {
+    -fx-font-size: 11px;
+    -fx-text-fill: #a0bab8;
+}

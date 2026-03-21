@@ -1,31 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
 <?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
 
-
-<VBox 
-    xmlns="http://javafx.com/javafx"
-    xmlns:fx="http://javafx.com/fxml/1"
-    fx:id="statsView" 
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.campusdocs.client.controller.StatsViewController"
-    spacing="20" 
-    styleClass="view-container" 
-    stylesheets="@/styles/statsview.css"
-    visible="false" managed="false">
-    <Label text="Mon profil" styleClass="section-title"/>
-    <HBox styleClass="profile-card" spacing="20" alignment="CENTER_LEFT">
-        <Circle radius="36" styleClass="profile-avatar-large"/>
-        <VBox spacing="4">
-            <Label text="Étudiant CampusDocs" styleClass="welcome-title"/>
-            <Label text="etudiant@campusdocs.com" styleClass="activity-sub"/>
-            <Label text="Licence 3 - Informatique" styleClass="activity-sub"/>
-        </VBox>
-    </HBox>
+    fx:id="rootPane"
+    styleClass="admin-root" spacing="0">
+
+    <VBox styleClass="page-header" spacing="4">
+        <Label text="Statistiques système" styleClass="page-title"/>
+        <Label text="Vue d'ensemble de l'activité de la plateforme CampusDocs." styleClass="page-subtitle"/>
+    </VBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="admin-scroll" hbarPolicy="NEVER">
+        <content>
+            <VBox spacing="20" styleClass="admin-scroll-content">
+
+                <!-- ── KPI row ── -->
+                <HBox spacing="14">
+                    <VBox styleClass="stat-card, stat-card-accent" HBox.hgrow="ALWAYS" spacing="4">
+                        <Label text="UTILISATEURS TOTAUX" styleClass="stat-label-accent"/>
+                        <Label fx:id="statTotalUsers" text="0" styleClass="stat-value-accent"/>
+                        <Label text="tous rôles confondus" styleClass="stat-sub-accent"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+                        <Label text="ÉTUDIANTS" styleClass="stat-label"/>
+                        <Label fx:id="statStudents" text="0" styleClass="stat-value"/>
+                        <Label text="comptes actifs" styleClass="stat-sub"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+                        <Label text="AGENTS" styleClass="stat-label"/>
+                        <Label fx:id="statAgents" text="0" styleClass="stat-value"/>
+                        <Label text="comptes actifs" styleClass="stat-sub"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+                        <Label text="ADMINS" styleClass="stat-label"/>
+                        <Label fx:id="statAdmins" text="0" styleClass="stat-value"/>
+                        <Label text="comptes actifs" styleClass="stat-sub"/>
+                    </VBox>
+                </HBox>
+
+                <!-- ── Demand + Acte stats ── -->
+                <HBox spacing="14">
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+                        <Label text="DEMANDES TOTALES" styleClass="stat-label"/>
+                        <Label fx:id="statTotalDemands" text="0" styleClass="stat-value"/>
+                        <HBox spacing="12">
+                            <Label fx:id="statPendingDemands" text="0 en attente" styleClass="stat-sub"/>
+                            <Label fx:id="statApprovedDemands" text="0 approuvées" styleClass="stat-sub"/>
+                        </HBox>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+                        <Label text="ACTES GÉNÉRÉS" styleClass="stat-label"/>
+                        <Label fx:id="statTotalActes" text="0" styleClass="stat-value"/>
+                        <Label text="documents officiels" styleClass="stat-sub"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+                        <Label text="TAUX D'APPROBATION" styleClass="stat-label"/>
+                        <Label fx:id="statApprovalRate" text="0%" styleClass="stat-value"/>
+                        <Label text="demandes traitées" styleClass="stat-sub"/>
+                    </VBox>
+                </HBox>
+
+                <!-- ── System log ── -->
+                <VBox styleClass="admin-section" spacing="0">
+                    <HBox styleClass="admin-section-header" alignment="CENTER_LEFT" spacing="12">
+                        <Label text="Journal système" styleClass="admin-section-title" HBox.hgrow="ALWAYS"/>
+                        <HBox spacing="8">
+                            <ComboBox fx:id="logFilterCombo" styleClass="filter-combo" prefWidth="160"/>
+                            <Button styleClass="btn-secondary" onAction="#handleClearFilter" text="Tout afficher"/>
+                        </HBox>
+                    </HBox>
+
+                    <!-- Log table header -->
+                    <HBox styleClass="table-header-row" spacing="0">
+                        <Label text="ACTION" styleClass="table-header-label" prefWidth="220"/>
+                        <Label text="UTILISATEUR" styleClass="table-header-label" prefWidth="180"/>
+                        <Label text="DÉTAIL" styleClass="table-header-label" HBox.hgrow="ALWAYS"/>
+                        <Label text="DATE / HEURE" styleClass="table-header-label" prefWidth="160"/>
+                    </HBox>
+
+                    <!-- Log list -->
+                    <VBox fx:id="logList" spacing="0">
+                        <!-- Rows injected by controller -->
+                    </VBox>
+
+                    <VBox fx:id="logEmptyState" styleClass="empty-state" alignment="CENTER" spacing="8" visible="false" managed="false">
+                        <Label text="Aucune entrée dans le journal." styleClass="empty-title"/>
+                    </VBox>
+
+                    <!-- Load more -->
+                    <HBox alignment="CENTER" styleClass="admin-section-body">
+                        <Button fx:id="btnLoadMore" styleClass="btn-secondary" onAction="#handleLoadMore" text="Charger plus d'entrées"/>
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </content>
+    </ScrollPane>
 </VBox>
 

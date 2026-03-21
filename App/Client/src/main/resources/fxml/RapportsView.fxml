@@ -1,30 +1,159 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
 <?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
 
-
-<VBox 
-    xmlns="http://javafx.com/javafx"
-    xmlns:fx="http://javafx.com/fxml/1"
-    fx:id="rapportsView" 
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.campusdocs.client.controller.RapportsViewController"
-    spacing="20" 
-    styleClass="view-container" 
-    stylesheets="@/styles/rapportsview.css"
-    visible="false" managed="false">
-    <Label text="Mon profil" styleClass="section-title"/>
-    <HBox styleClass="profile-card" spacing="20" alignment="CENTER_LEFT">
-        <Circle radius="36" styleClass="profile-avatar-large"/>
-        <VBox spacing="4">
-            <Label text="Étudiant CampusDocs" styleClass="welcome-title"/>
-            <Label text="etudiant@campusdocs.com" styleClass="activity-sub"/>
-            <Label text="Licence 3 - Informatique" styleClass="activity-sub"/>
-        </VBox>
-    </HBox>
+    fx:id="rootPane"
+    styleClass="admin-root" spacing="0">
+    <fx:define>
+        <ToggleGroup fx:id="reportTypeGroup"/>
+    </fx:define>
+
+    <VBox styleClass="page-header" spacing="4">
+        <Label text="Rapports" styleClass="page-title"/>
+        <Label text="Générez et exportez des rapports complets sur l'activité du système." styleClass="page-subtitle"/>
+    </VBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="admin-scroll" hbarPolicy="NEVER">
+        <content>
+            <VBox spacing="20" styleClass="admin-scroll-content">
+
+                <!--  Report configurator    -->
+                <VBox styleClass="admin-section" spacing="0">
+                    <HBox styleClass="admin-section-header">
+                        <Label text="Configurer le rapport" styleClass="admin-section-title"/>
+                    </HBox>
+                    <VBox styleClass="admin-section-body" spacing="20">
+
+                        <!-- Type -->
+                        <VBox spacing="8">
+                            <Label text="TYPE DE RAPPORT" styleClass="field-label"/>
+                            <HBox spacing="10">
+                                <ToggleButton fx:id="toggleAll" styleClass="report-type-btn" text="Rapport complet" selected="true" toggleGroup="$reportTypeGroup"/>
+                                <ToggleButton fx:id="toggleDemands" styleClass="report-type-btn" text="Demandes uniquement" toggleGroup="$reportTypeGroup"/>
+                                <ToggleButton fx:id="toggleActes" styleClass="report-type-btn" text="Actes uniquement" toggleGroup="$reportTypeGroup"/>
+                                <ToggleButton fx:id="toggleUsers" styleClass="report-type-btn" text="Utilisateurs" toggleGroup="$reportTypeGroup"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Period -->
+                        <HBox spacing="16">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="PÉRIODE ā€” DE" styleClass="field-label"/>
+                                <DatePicker fx:id="dateFrom" styleClass="input-field" maxWidth="Infinity"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="PÉRIODE ā€” Ć€" styleClass="field-label"/>
+                                <DatePicker fx:id="dateTo" styleClass="input-field" maxWidth="Infinity"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="FILTRER PAR RÔLE" styleClass="field-label"/>
+                                <ComboBox fx:id="roleFilter" styleClass="filter-combo" maxWidth="Infinity"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Include options -->
+                        <VBox spacing="8">
+                            <Label text="INCLURE DANS LE RAPPORT" styleClass="field-label"/>
+                            <HBox spacing="16">
+                                <CheckBox fx:id="includeStats" text="Statistiques globales" selected="true" styleClass="report-check"/>
+                                <CheckBox fx:id="includeLog" text="Journal système" selected="true" styleClass="report-check"/>
+                                <CheckBox fx:id="includeUsers" text="Liste des utilisateurs" styleClass="report-check"/>
+                                <CheckBox fx:id="includeActes" text="Liste des actes" styleClass="report-check"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Export buttons -->
+                        <HBox spacing="12">
+                            <Button styleClass="action-btn" onAction="#handleExportPdf" text="&#8681;  Exporter en PDF"/>
+                            <Button styleClass="btn-secondary" onAction="#handleExportCsv" text="&#8681;  Exporter en CSV"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button styleClass="btn-secondary" onAction="#handlePreview" text="&#128065;  Prévisualiser"/>
+                        </HBox>
+
+                    </VBox>
+                </VBox>
+
+                <!-- ā”€ā”€ Preview area ā”€ā”€ -->
+                <VBox fx:id="previewSection" styleClass="admin-section" spacing="0" visible="false" managed="false">
+                    <HBox styleClass="admin-section-header" alignment="CENTER_LEFT">
+                        <Label text="Prévisualisation du rapport" styleClass="admin-section-title" HBox.hgrow="ALWAYS"/>
+                        <Button styleClass="btn-secondary" onAction="#handleClosePreview" text="Fermer"/>
+                    </HBox>
+                    <VBox styleClass="admin-section-body" spacing="16">
+
+                        <!-- Report header -->
+                        <VBox styleClass="report-preview-header" spacing="4" alignment="CENTER">
+                            <Label text="CAMPUSDOCS" styleClass="report-institution"/>
+                            <Label text="RAPPORT SYSTĆME" styleClass="report-main-title"/>
+                            <Label fx:id="reportPeriodLabel" text="Période : ā€”" styleClass="report-period"/>
+                            <Label fx:id="reportGenDate" text="" styleClass="report-period"/>
+                        </VBox>
+
+                        <Separator/>
+
+                        <!-- Stats summary in report -->
+                        <Label text="1. Statistiques générales" styleClass="report-section-title"/>
+                        <HBox spacing="12">
+                            <VBox styleClass="report-stat-cell" HBox.hgrow="ALWAYS" spacing="2">
+                                <Label text="Utilisateurs" styleClass="report-stat-label"/>
+                                <Label fx:id="rptUsers" text="ā€”" styleClass="report-stat-val"/>
+                            </VBox>
+                            <VBox styleClass="report-stat-cell" HBox.hgrow="ALWAYS" spacing="2">
+                                <Label text="Demandes" styleClass="report-stat-label"/>
+                                <Label fx:id="rptDemands" text="ā€”" styleClass="report-stat-val"/>
+                            </VBox>
+                            <VBox styleClass="report-stat-cell" HBox.hgrow="ALWAYS" spacing="2">
+                                <Label text="Actes gĆ©nĆ©rĆ©s" styleClass="report-stat-label"/>
+                                <Label fx:id="rptActes" text="ā€”" styleClass="report-stat-val"/>
+                            </VBox>
+                            <VBox styleClass="report-stat-cell" HBox.hgrow="ALWAYS" spacing="2">
+                                <Label text="Taux approbation" styleClass="report-stat-label"/>
+                                <Label fx:id="rptRate" text="ā€”" styleClass="report-stat-val"/>
+                            </VBox>
+                        </HBox>
+
+                        <Separator/>
+
+                        <!-- Log table in report -->
+                        <Label text="2. Journal des activités (extrait)" styleClass="report-section-title"/>
+                        <VBox fx:id="reportLogContainer" spacing="0">
+                            <!-- Rows injected -->
+                        </VBox>
+
+                        <HBox alignment="CENTER">
+                            <Label text="[Rapport complet disponible après export]" styleClass="table-cell-muted"/>
+                        </HBox>
+
+                    </VBox>
+                </VBox>
+
+                <!-- ā”€ā”€ Recent exports ā”€ā”€ -->
+                <VBox styleClass="admin-section" spacing="0">
+                    <HBox styleClass="admin-section-header">
+                        <Label text="Exports rĆ©cents" styleClass="admin-section-title"/>
+                    </HBox>
+                    <VBox fx:id="recentExports" spacing="0">
+                        <!-- Rows injected -->
+                    </VBox>
+                    <VBox fx:id="noExports" styleClass="empty-state" alignment="CENTER" spacing="8">
+                        <Label text="Aucun export rĆ©cent." styleClass="empty-title"/>
+                    </VBox>
+                </VBox>
+
+            </VBox>
+        </content>
+    </ScrollPane>
+
+    <!-- Toast -->
+    <StackPane fx:id="toastContainer" styleClass="toast-container" visible="false" managed="false">
+        <HBox styleClass="toast" alignment="CENTER_LEFT" spacing="12">
+            <Circle radius="6" styleClass="toast-dot"/>
+            <Label fx:id="toastLabel" text="" styleClass="toast-text"/>
+        </HBox>
+    </StackPane>
 </VBox>

@@ -10,11 +10,36 @@ package com.campusdocs.client.model;
  */
 public class User {
 
-    
+    private String id;
     private String nom;
-    private String prénom;
+    private String prenom;
     private String email;
     private Role role;
+    private String status;
+
+    public User(String id, String name, String email, Role role, String status) {
+        this.id = id; this.nom = name; this.email = email;
+        this.role = role; this.status = status;
+    }
+ 
+    public String getId()          { return id; }
+    public String getName()        { return nom; }
+    public String getEmail()       { return email; }
+    public Role getRole()        { return role; }
+    public String getStatus()      { return status; }
+    public void   setStatus(String s) { this.status = s; }
+ 
+    public String getRoleBadgeClass() {
+        if (role.toString().equals("Admin"))  return "badge-admin";
+        if (role.toString().equals("Agent"))  return "badge-agent";
+        return "badge-student";
+    }
+ 
+    public String getStatusBadgeClass() {
+        return status.equals("Actif") ? "badge-active" : "badge-inactive";
+    }
+
+
 
     public enum Role {
         Admin,
@@ -23,16 +48,17 @@ public class User {
     }
 
     // Constructor
-    public User(String nom, String prénom, String email, Role role) {
+    public User(String nom, String prenom, String email, Role role) {
         this.nom = nom;
-        this.prénom = prénom;
+        this.prenom = prenom;
         this.email = email;
         this.role = role;
     }
 
     // Getters and setters
-    public String getNom() {
-        return nom;
+    
+    public String getFullName() {
+        return nom + " " + prenom;
     }
     /**
      * @param nom the nom to set
@@ -45,21 +71,14 @@ public class User {
      * @return the prenom
      */
     public String getPrenom() {
-        return prénom;
+        return prenom;
     }
 
     /**
      * @param prénom the prenom to set
      */
     public void setPrenom(String prenom) {
-        this.prénom = prenom;
-    }
-
-    /**
-     * @return the email
-     */
-    public String getEmail() {
-        return email;
+        this.prenom = prenom;
     }
 
     /**
@@ -69,12 +88,6 @@ public class User {
         this.email = email;
     }
 
-    /**
-     * @return the role
-     */
-    public Role getRole() {
-        return role;
-    }
 
     /**
      * @param role the role to set

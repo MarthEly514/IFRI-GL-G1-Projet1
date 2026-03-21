@@ -5,12 +5,19 @@
 package com.campusdocs.client.controller;
 
 import com.campusdocs.client.App;
+import com.campusdocs.client.SessionManager;
+import com.campusdocs.client.api.ApiException;
 import com.campusdocs.client.model.ActeAdministratif;
+import com.campusdocs.client.service.ActeService;
+import com.campusdocs.client.util.CssLoader;
+import com.campusdocs.client.util.TaskRunner;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -30,6 +37,7 @@ import java.util.stream.Collectors;
 
 public class ActeViewController implements Initializable {
 
+    @FXML private VBox rootPane;
     @FXML private TextField searchField;
     @FXML private ComboBox<String> filterCombo;
     @FXML private Label resultsLabel;
@@ -37,21 +45,14 @@ public class ActeViewController implements Initializable {
     @FXML private FlowPane acteGrid;
     @FXML private VBox emptyState;
 
-    // Sample data — replace with real API/DB call
-    private final List<ActeAdministratif> allActes = Arrays.asList(
-        new ActeAdministratif("ACT-2024-001", "Attestation de scolarité",   "📄", "2024-03-10", "Scolarité",    "Disponible"),
-        new ActeAdministratif("ACT-2024-002", "Relevé de notes S5",         "📋", "2024-02-28", "Notes",        "Disponible"),
-        new ActeAdministratif("ACT-2024-003", "Certificat de résidence",    "📝", "2024-01-15", "Résidence",    "Disponible"),
-        new ActeAdministratif("ACT-2023-004", "Attestation de scolarité",   "📄", "2023-11-05", "Scolarité",    "Disponible"),
-        new ActeAdministratif("ACT-2023-005", "Relevé de notes S4",         "📋", "2023-09-20", "Notes",        "Disponible"),
-        new ActeAdministratif("ACT-2024-006", "Rapport de stage validé",    "📊", "2024-03-01", "Stage",        "Disponible")
-    );
-
+    // Loaded from API — starts empty
+    private List<ActeAdministratif> allActes = new ArrayList<>();
     private List<ActeAdministratif> filteredActes = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Setup filter combo
+        CssLoader.loadCssFiles(rootPane, "acteview", "globalStyles");
+
         filterCombo.setItems(FXCollections.observableArrayList(
             "Date (récent → ancien)",
             "Date (ancien → récent)",
@@ -61,20 +62,49 @@ public class ActeViewController implements Initializable {
         ));
         filterCombo.getSelectionModel().selectFirst();
 
-        // Live search listener
+        // Listeners — only fire after data is loaded
         searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
-
-        // Filter change listener
         filterCombo.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
 
-        applyFilters();
+        // Show loading state then fetch
+        showLoading();
+        loadActes();
     }
+
+    // ─────────────────────────────────────────
+    // API CALL
+    // ─────────────────────────────────────────
+
+    private void loadActes() {
+        TaskRunner.run(
+            () -> ActeService.getMyActes(),
+
+            actes -> {
+                // Back on JavaFX thread
+                allActes = new ArrayList<>(Arrays.asList(actes));
+                hideLoading();
+                applyFilters();
+            },
+
+            ex -> {
+                hideLoading();
+                Throwable cause = ex.getCause();
+                String message = (cause instanceof ApiException)
+                    ? ((ApiException) cause).getMessage()
+                    : "Erreur de chargement des actes.";
+                showError(message);
+            }
+        );
+    }
+
+    // ─────────────────────────────────────────
+    // FILTER & SORT
+    // ─────────────────────────────────────────
 
     private void applyFilters() {
         String query  = searchField.getText().trim().toLowerCase();
         String filter = filterCombo.getValue();
 
-        // Filter by search query
         filteredActes = allActes.stream()
             .filter(a ->
                 a.getName().toLowerCase().contains(query) ||
@@ -83,22 +113,28 @@ public class ActeViewController implements Initializable {
             )
             .collect(Collectors.toList());
 
-        // Sort
         if (filter != null) {
-            if (filter.equals("Date (récent → ancien)")) {
-                filteredActes.sort(Comparator.comparing(ActeAdministratif::getDate).reversed());
-            } else if (filter.equals("Date (ancien → récent)")) {
-                filteredActes.sort(Comparator.comparing(ActeAdministratif::getDate));
-            } else if (filter.equals("Nom (A → Z)")) {
-                filteredActes.sort(Comparator.comparing(ActeAdministratif::getName));
-            } else if (filter.equals("Nom (Z → A)")) {
-                filteredActes.sort(Comparator.comparing(ActeAdministratif::getName).reversed());
-            } else if (filter.equals("Type")) {
-                filteredActes.sort(Comparator.comparing(ActeAdministratif::getType));
+            switch (filter) {
+                case "Date (récent → ancien)":
+                    filteredActes.sort(Comparator.comparing(ActeAdministratif::getDate).reversed());
+                    break;
+                case "Date (ancien → récent)":
+                    filteredActes.sort(Comparator.comparing(ActeAdministratif::getDate));
+                    break;
+                case "Nom (A → Z)":
+                    filteredActes.sort(Comparator.comparing(ActeAdministratif::getName));
+                    break;
+                case "Nom (Z → A)":
+                    filteredActes.sort(Comparator.comparing(ActeAdministratif::getName).reversed());
+                    break;
+                case "Type":
+                    filteredActes.sort(Comparator.comparing(ActeAdministratif::getType));
+                    break;
+                default:
+                    break;
             }
         }
 
-        // Update active filter tag
         if (!query.isEmpty()) {
             activeFilterLabel.setText("Recherche : \"" + query + "\"");
             activeFilterLabel.setVisible(true);
@@ -111,13 +147,17 @@ public class ActeViewController implements Initializable {
         rebuildGrid();
     }
 
+    // ─────────────────────────────────────────
+    // GRID
+    // ─────────────────────────────────────────
+
     private void rebuildGrid() {
         acteGrid.getChildren().clear();
 
         if (filteredActes.isEmpty()) {
             emptyState.setVisible(true);
             emptyState.setManaged(true);
-            resultsLabel.setText("Aucun résultat");
+            resultsLabel.setText(allActes.isEmpty() ? "Aucun acte disponible" : "Aucun résultat");
         } else {
             emptyState.setVisible(false);
             emptyState.setManaged(false);
@@ -132,7 +172,7 @@ public class ActeViewController implements Initializable {
         VBox card = new VBox(0);
         card.getStyleClass().add("acte-card");
 
-        // ── Image / icon area ──
+        // ── Icon area ──
         VBox imageArea = new VBox();
         imageArea.getStyleClass().add("acte-card-image-area");
         imageArea.setAlignment(javafx.geometry.Pos.CENTER);
@@ -160,30 +200,33 @@ public class ActeViewController implements Initializable {
 
         body.getChildren().addAll(title, date);
 
-        // ── Footer buttons ──
+        // ── Footer ──
         HBox footer = new HBox(8);
         footer.getStyleClass().add("acte-card-footer");
         footer.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-        javafx.scene.control.Button btnView = new javafx.scene.control.Button("Voir");
+        Button btnView = new Button("Voir");
         btnView.getStyleClass().add("acte-card-btn-view");
         HBox.setHgrow(btnView, Priority.ALWAYS);
         btnView.setMaxWidth(Double.MAX_VALUE);
         btnView.setOnAction(e -> openActeDetail(acte));
+//        btnView.setVisible(SessionManager.getInstance().getRole().equalsIgnoreCase("Agent"));
+        btnView.setVisible(false);
 
-        javafx.scene.control.Button btnDownload = new javafx.scene.control.Button("↓");
+        Button btnDownload = new Button("↓");
         btnDownload.getStyleClass().add("acte-card-btn-download");
         btnDownload.setOnAction(e -> downloadActe(acte));
 
         footer.getChildren().addAll(btnView, btnDownload);
-
         card.getChildren().addAll(imageArea, body, footer);
-
-        // Click on card also opens detail
         card.setOnMouseClicked(e -> openActeDetail(acte));
 
         return card;
     }
+
+    // ─────────────────────────────────────────
+    // ACTIONS
+    // ─────────────────────────────────────────
 
     private void openActeDetail(ActeAdministratif acte) {
         try {
@@ -191,7 +234,7 @@ public class ActeViewController implements Initializable {
                 App.class.getResource("/fxml/ActeDetailView.fxml")
             );
             Parent view = loader.load();
-            ActeDetailViewController controller = loader.getController();
+            ActeDetailsViewController controller = loader.getController();
             controller.setActe(acte);
 
             DashboardViewController dashboard = DashboardViewControllerRegistry.getInstance();
@@ -204,7 +247,45 @@ public class ActeViewController implements Initializable {
     }
 
     private void downloadActe(ActeAdministratif acte) {
-        // TODO: wire to real file download
-        System.out.println("Downloading: " + acte.getName());
+        // TODO: call ActeService.downloadActe(acte.getRef()) when server supports it
+        System.out.println("Download requested for: " + acte.getRef());
+    }
+
+    // ─────────────────────────────────────────
+    // LOADING / ERROR STATES
+    // ─────────────────────────────────────────
+
+    private void showLoading() {
+        acteGrid.getChildren().clear();
+        emptyState.setVisible(false);
+        emptyState.setManaged(false);
+        resultsLabel.setText("Chargement...");
+    }
+
+    private void hideLoading() {
+        // applyFilters() will repopulate the grid
+    }
+
+    private void showError(String message) {
+        acteGrid.getChildren().clear();
+        emptyState.setVisible(true);
+        emptyState.setManaged(true);
+        resultsLabel.setText("Erreur");
+
+        // Reuse emptyState labels if accessible, or add a temporary label
+        Label errLabel = new Label(message);
+        errLabel.getStyleClass().add("empty-sub");
+
+        // Add a retry button
+        Button retry = new Button("Réessayer");
+        retry.getStyleClass().add("btn-small");
+        retry.setOnAction(e -> {
+            emptyState.setVisible(false);
+            emptyState.setManaged(false);
+            showLoading();
+            loadActes();
+        });
+
+        acteGrid.getChildren().addAll(errLabel, retry);
     }
 }

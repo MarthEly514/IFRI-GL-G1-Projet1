@@ -5,11 +5,13 @@
 package com.campusdocs.client.controller;
 
 import com.campusdocs.client.SessionManager;
+import com.campusdocs.client.util.CssLoader;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 
 /**
  * FXML Controller class
@@ -19,9 +21,12 @@ import javafx.scene.control.Label;
 public class UsagerViewController implements Initializable {
 
     @FXML private Label welcomeTitle;
+    @FXML private VBox usagerView;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //load css
+        CssLoader.loadCssFiles(usagerView, "adminshared", "globalStyles", "usagerview");
         // Set initial value from session
         String name = SessionManager.getInstance().getFullName();
         if (name != null) {

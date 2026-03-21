@@ -4,70 +4,52 @@
  */
 package com.campusdocs.client.controller;
 
-import com.campusdocs.client.SessionManager;
-import com.campusdocs.client.model.User;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
+import com.campusdocs.client.SessionManager;
+import com.campusdocs.client.api.ApiException;
+import com.campusdocs.client.service.AuthService;
+import com.campusdocs.client.util.CssLoader;
+import com.campusdocs.client.util.TaskRunner;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.animation.ScaleTransition;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import javafx.util.Duration;
-
-/**
- * FXML Controller class
- *
- * @author ely
- */
-public class LoginViewController extends BaseViewController{
-
-    @FXML
-    private Button loginBtn;
-    
-    @FXML
-    private Hyperlink signupLink;
-    
-    @FXML
-    private AnchorPane leftPane;
-    
-    @FXML
-    private ImageView leftPaneImage;
-    
-
-//    @FXML
-//    private BorderPane mainBorderPane;
-    
-    /**
-     * Initializes the controller class.
-     */
+ 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.scene.layout.AnchorPane;
+ 
+public class LoginViewController extends BaseViewController {
+ 
+    @FXML private AnchorPane rootPane;
+    @FXML private TextField emailField;
+    @FXML private PasswordField passwordField;
+    @FXML private Button loginBtn;
+    @FXML private Hyperlink signupLink;
+    @FXML private Label errorLabel;
+ 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        addScaleAnimation(loginBtn);
-        addShadowAnimation(loginBtn);
-                
-        leftPaneImage.fitWidthProperty().bind(leftPane.widthProperty());
-
-
-        loginBtn.setOnAction(e -> {
-            try {
-                SessionManager.getInstance().setFullName("Jean Dupont");
-                SessionManager.getInstance().setRole(User.Role.Admin);
-                navigate("DashboardView", "CampusDocs - Dashboard");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
-
+            
+        CssLoader.loadCssFiles(rootPane, "loginview", "globalStyles");
+        
+        addHoverAnimation(loginBtn);
+        errorLabel.setVisible(false);
+        errorLabel.setManaged(false);
+ 
+        loginBtn.setOnAction(e -> handleLogin());
+ 
         signupLink.setOnAction(e -> {
             try {
                 navigate("SignupView", "CampusDocs - Inscription");
@@ -76,8 +58,96 @@ public class LoginViewController extends BaseViewController{
             }
         });
     }
+ 
+    private void handleLogin() {
+        String email    = emailField.getText().trim();
+        String password = passwordField.getText();
+ 
+        // Basic validation
+        if (email.isEmpty() || password.isEmpty()) {
+            showError("Veuillez remplir tous les champs.");
+            return;
+        }
+        
+        //TEST_MODE To delete on prod
+        
+//        navigateToDashboard();
+        
+ 
+        setLoading(true);
+ 
+        TaskRunner.run(
+            // Background thread — call API
+            () -> { 
+                AuthService.login(email, password);       
+                return null; 
+            },
+ 
+            // Success — back on JavaFX thread
+            ignored -> {
+                setLoading(false);
+                navigateToDashboard();
+            },
+ 
+            // Error — back on JavaFX thread
+            ex -> {
+                setLoading(false);
+                if (ex instanceof ApiException) {
+                    ApiException apiEx = (ApiException) ex;
+                    if (apiEx.isUnauthorized()) {
+                        showError("Email ou mot de passe incorrect.");
+                    } else if (apiEx.isNetworkError()) {
+                        showError("Impossible de joindre le serveur. Vérifiez votre connexion.");
+                    } else {
+                        showError(apiEx.getMessage());
+                    }
+                } else {
+                    showError("Une erreur inattendue s'est produite.");
+                }
+            }
+        );
+    }
+ 
+    private void navigateToDashboard() {
+        try {
+            String role = SessionManager.getInstance().getRole();
+            System.out.println(role);
+            String title;
+            if ("Admin".equalsIgnoreCase(role)) {
+                title = "CampusDocs - Administration";
+            } else if ("Agent".equalsIgnoreCase(role)) {
+                title = "CampusDocs - Agent";
+            } else {
+                title = "CampusDocs - Espace étudiant";
+            }
+            navigate("DashboardView", title);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            showError("Erreur de navigation.");
+        }
+    }
+ 
+    private void setLoading(boolean loading) {
+        loginBtn.setDisable(loading);
+        loginBtn.setText(loading ? "Connexion en cours..." : "Se connecter");
+    }
+ 
+    private void showError(String message) {
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
+        errorLabel.setManaged(true);
+    }
+ 
+    private void addHoverAnimation(Button btn) {
+        ScaleTransition scaleIn  = new ScaleTransition(Duration.millis(200), btn);
+        scaleIn.setToX(1.02); scaleIn.setToY(1.02);
+        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(200), btn);
+        scaleOut.setToX(1.0); scaleOut.setToY(1.0);
+        btn.setOnMouseEntered(e -> { scaleOut.stop(); scaleIn.play(); });
+        btn.setOnMouseExited(e ->  { scaleIn.stop();  scaleOut.play(); });
+    }
     
-
+    
     private void addScaleAnimation(Button btn) {
         ScaleTransition scaleIn = new ScaleTransition(Duration.millis(500), btn);
         scaleIn.setToX(1.001);
@@ -120,5 +190,4 @@ public class LoginViewController extends BaseViewController{
             timeline.play();
         });
     }
-    
 }

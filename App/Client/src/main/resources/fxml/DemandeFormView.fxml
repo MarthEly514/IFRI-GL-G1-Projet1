@@ -12,12 +12,8 @@
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.campusdocs.client.controller.DemandeFormViewController"
     styleClass="form-root"
+    fx:id="rootPane"
     spacing="0">
-
-    <stylesheets>
-        <URL value="@/styles/demandeformview.css"/>
-        <URL value="@/styles/globalStyles.css"/>
-    </stylesheets>
 
     <!-- ── Top bar with back arrow ── -->
     <HBox styleClass="form-topbar" alignment="CENTER_LEFT" spacing="16">

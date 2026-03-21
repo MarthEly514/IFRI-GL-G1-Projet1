@@ -5,7 +5,11 @@
 
 package com.campusdocs.client.controller;
 
+import com.campusdocs.client.api.ApiException;
 import com.campusdocs.client.model.Demande;
+import com.campusdocs.client.service.DemandeService;
+import com.campusdocs.client.util.CssLoader;
+import com.campusdocs.client.util.TaskRunner;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -22,6 +26,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class DemandeFormViewController implements Initializable {
+    
+    @FXML private VBox rootPane;
 
     // ── Stepper UI ──
     @FXML private Circle stepCircle1, stepCircle2, stepCircle3, stepCircle4;
@@ -71,6 +77,10 @@ public class DemandeFormViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
+        //load CSS
+        CssLoader.loadCssFiles(rootPane, "demandeformview", "globalStyles");
+        
         buildDocTypeGrid();
         updateStepperUI();
         updateFooterButtons();
@@ -355,22 +365,56 @@ public class DemandeFormViewController implements Initializable {
     }
 
     private void submitDemande() {
-        String docName = DOC_TYPES.stream()
+        setLoading(true);
+
+        // Build request from collected form values
+        DemandeService.DemandeRequest request = new DemandeService.DemandeRequest();
+        request.documentType = DOC_TYPES.stream()
             .filter(d -> d.key.equals(selectedDocType))
-            .findFirst().map(d -> d.name).orElse("Document");
+            .findFirst().map(d -> d.name).orElse("");
+        request.motif = formValues.getOrDefault("motif", "");
+        request.annee = formValues.getOrDefault("annee", "");
 
-        Demande demande = new Demande(
-            docName,
-            LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
-            "EN_COURS"
+        TaskRunner.run(
+            () -> {
+                try{
+                    return DemandeService.submitDemande(request);
+                }
+                catch(ApiException e){
+                    throw new RuntimeException(e);
+                }
+            },
+
+            demande -> {
+                setLoading(false);
+                DashboardViewController dashboard = DashboardViewControllerRegistry.getInstance();
+                if (dashboard != null) {
+                    dashboard.loadSubView("DemandeView", "Mes demandes");
+                    dashboard.getDemandeViewController().onDemandeSubmitted(demande);
+                }
+            },
+
+            ex -> {
+                setLoading(false);
+                // Show error — stay on current step
+                if (ex instanceof ApiException) {
+                    showStepError(((ApiException) ex).getMessage());
+                } else {
+                    showStepError("Erreur réseau. Réessayez.");
+                }
+            }
         );
+    }
 
-        // Navigate back and notify DemandeViewController
-        DashboardViewController dashboard = DashboardViewControllerRegistry.getInstance();
-        if (dashboard != null) {
-            dashboard.loadSubView("DemandeView", "Mes demandes");
-            dashboard.getDemandeViewController().onDemandeSubmitted(demande);
-        }
+    private void setLoading(boolean loading) {
+        btnSuivant.setDisable(loading);
+        btnSuivant.setText(loading ? "Envoi en cours..." : "Valider ✓");
+    }
+
+    private void showStepError(String message) {
+        // I will add an error label in step 4 FXML with fx:id="submitErrorLabel"
+        // For now, print to console — replace with a proper label later
+        System.err.println("Submit error: " + message);
     }
 
     // ─────────────────────────────────────────

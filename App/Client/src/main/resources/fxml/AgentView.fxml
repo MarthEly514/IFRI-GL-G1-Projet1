@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.campusdocs.client.controller.AgentViewController"
+    fx:id="rootPane"
+    spacing="24"
+    styleClass="view-container">
+    
+    
+
+    <!-- ── Welcome banner ── -->
+    <HBox styleClass="welcome-banner" alignment="CENTER_LEFT" spacing="0">
+        <VBox spacing="6" HBox.hgrow="ALWAYS">
+            <Label fx:id="welcomeTitle" text="Bonjour, Agent !" styleClass="welcome-title"/>
+            <Label text="Tableau de bord agent — CampusDocs." styleClass="welcome-sub"/>
+        </VBox>
+        <VBox alignment="CENTER_RIGHT" spacing="4">
+            <Label fx:id="currentDateLabel" text="" styleClass="welcome-sub"/>
+            <Label text="Agent administratif" styleClass="welcome-sub"/>
+        </VBox>
+    </HBox>
+
+    <!-- ── KPI row ── -->
+    <VBox spacing="12">
+        <Label text="Vue d'ensemble" styleClass="section-title"/>
+        <HBox spacing="16">
+            <VBox styleClass="stat-card, stat-card-accent" HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="DEMANDES EN ATTENTE" styleClass="stat-label"/>
+                <Label fx:id="statPendingDemands" text="—" styleClass="stat-value-accent"/>
+                <Label text="à traiter" styleClass="stat-sub"/>
+            </VBox>
+            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="DEMANDES TOTALES" styleClass="stat-label"/>
+                <Label fx:id="statTotalDemands" text="—" styleClass="stat-value"/>
+                <Label text="toutes périodes" styleClass="stat-sub"/>
+            </VBox>
+            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="ACTES GÉNÉRÉS" styleClass="stat-label"/>
+                <Label fx:id="statActes" text="—" styleClass="stat-value"/>
+                <Label text="documents officiels" styleClass="stat-sub"/>
+            </VBox>
+            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="TAUX D'APPROBATION" styleClass="stat-label"/>
+                <Label fx:id="statApprovalRate" text="—" styleClass="stat-value"/>
+                <Label text="demandes traitées" styleClass="stat-sub"/>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <!-- ── Today's summary row ── -->
+    <HBox spacing="16">
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="TRAITÉES AUJOURD'HUI" styleClass="stat-label"/>
+            <Label fx:id="statTodayProcessed" text="—" styleClass="stat-value"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="REJETÉES AUJOURD'HUI" styleClass="stat-label"/>
+            <Label fx:id="statTodayRejected" text="—" styleClass="stat-value"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="VALIDÉES CE MOIS" styleClass="stat-label"/>
+            <Label fx:id="statMonthApproved" text="—" styleClass="stat-value"/>
+        </VBox>
+    </HBox>
+
+    <!-- ── Recent demands ── -->
+    <VBox spacing="12">
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Dernières demandes reçues" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+            <Button styleClass="btn-small-teal" onAction="#handleViewAllDemandes" text="Voir tout →"/>
+        </HBox>
+        <VBox fx:id="recentDemandesContainer" spacing="8">
+            <!-- Injected by controller -->
+        </VBox>
+    </VBox>
+
+    <!-- ── Recent actes ── -->
+    <VBox spacing="12">
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Derniers actes générés" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+            <Button styleClass="btn-small-teal" onAction="#handleViewAllActes" text="Voir tout →"/>
+        </HBox>
+        <VBox fx:id="recentActesContainer" spacing="8">
+            <!-- Injected by controller -->
+        </VBox>
+    </VBox>
+
+</VBox>

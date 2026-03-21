@@ -13,12 +13,10 @@
     fx:controller="com.campusdocs.client.controller.DashboardViewController"
     styleClass="root-pane"
     prefWidth="1080" prefHeight="720"
+    fx:id="rootPane"
     xmlns="http://javafx.com/javafx">
 
-    <stylesheets>
-        <URL value="@/styles/dashboardview.css"/>
-        <URL value="@/styles/globalStyles.css"/>
-    </stylesheets>
+    
 
     <!-- ═══════════════════════════════════════════
          LEFT SIDEBAR

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.campusdocs.client.controller.AgentDemandeViewController"
+    fx:id="rootPane"
+    styleClass="admin-root" spacing="0">
+
+
+    <VBox styleClass="page-header" spacing="4">
+        <Label text="Gestion des demandes" styleClass="page-title"/>
+        <Label text="Examinez et traitez les demandes soumises par les étudiants." styleClass="page-subtitle"/>
+    </VBox>
+
+    <!-- Search + filter -->
+    <HBox styleClass="search-bar" spacing="12" alignment="CENTER_LEFT">
+        <HBox styleClass="search-field-wrap" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="8">
+            <Label text="&#128269;" styleClass="search-icon"/>
+            <TextField fx:id="searchField" promptText="Rechercher par nom, type..." styleClass="search-input" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        </HBox>
+        <ComboBox fx:id="statusFilter" styleClass="filter-combo" prefWidth="170"/>
+        <ComboBox fx:id="typeFilter" styleClass="filter-combo" prefWidth="170"/>
+    </HBox>
+
+    <!-- Summary badges -->
+    <HBox styleClass="search-bar" spacing="10" alignment="CENTER_LEFT">
+        <Label fx:id="totalLabel" text="0 demandes" styleClass="table-cell-muted"/>
+        <Label text="•" styleClass="table-cell-muted"/>
+        <Label fx:id="pendingLabel" text="0 en attente" styleClass="badge-pending"/>
+        <Label fx:id="approvedLabel" text="0 approuvées" styleClass="badge-approved"/>
+        <Label fx:id="rejectedLabel" text="0 rejetées" styleClass="badge-rejected"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="admin-scroll" hbarPolicy="NEVER">
+        <content>
+            <VBox spacing="0" styleClass="admin-scroll-content">
+                <VBox styleClass="admin-section" spacing="0">
+
+                    <!-- Table header -->
+                    <HBox styleClass="table-header-row" spacing="0">
+                        <Label text="ÉTUDIANT" styleClass="table-header-label" prefWidth="200"/>
+                        <Label text="TYPE DE DOCUMENT" styleClass="table-header-label" prefWidth="200"/>
+                        <Label text="DATE" styleClass="table-header-label" prefWidth="130"/>
+                        <Label text="STATUT" styleClass="table-header-label" prefWidth="120"/>
+                        <Label text="" styleClass="table-header-label" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <VBox fx:id="demandeList" spacing="0"/>
+
+                    <VBox fx:id="emptyState" styleClass="empty-state" alignment="CENTER" spacing="8" visible="false" managed="false">
+                        <Label text="Aucune demande trouvée." styleClass="empty-title"/>
+                        <Label text="Modifiez vos filtres pour afficher plus de résultats." styleClass="empty-sub"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </content>
+    </ScrollPane>
+</VBox>
