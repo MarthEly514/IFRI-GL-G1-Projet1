@@ -1,0 +1,60 @@
+package com.campusdocs.server.controllers;
+
+import com.campusdocs.server.models.User;
+import com.campusdocs.server.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+@CrossOrigin(origins = "*")
+public class UserController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    // GET tous les users
+    @GetMapping
+    public List<User> getAll() {
+        return userRepository.findAll();
+    }
+
+    // GET par id
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getById(@PathVariable int id) {
+        return userRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // POST créer un user
+    @PostMapping
+    public User create(@RequestBody User user) {
+        return userRepository.save(user);
+    }
+
+    // PUT modifier un user
+    @PutMapping("/{id}")
+    public ResponseEntity<User> update(@PathVariable int id, @RequestBody User updated) {
+        return userRepository.findById(id).map(user -> {
+            user.setNom(updated.getNom());
+            user.setPrenom(updated.getPrenom());
+            user.setEmail(updated.getEmail());
+            user.setRole(updated.getRole());
+            user.setActif(updated.isActif());
+            return ResponseEntity.ok(userRepository.save(user));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    // DELETE supprimer un user
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable int id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+}
