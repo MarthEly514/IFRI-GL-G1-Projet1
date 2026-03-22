@@ -1,7 +1,9 @@
 package com.campusdocs.server.controllers;
 
+import com.campusdocs.server.models.AgentAdministratif;
 import com.campusdocs.server.models.User;
 import com.campusdocs.server.repositories.UserRepository;
+import com.campusdocs.server.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     // GET tous les users
     @GetMapping
@@ -57,4 +62,24 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @PostMapping("/agent")
+    public ResponseEntity<AgentAdministratif> creerAgent(@RequestBody AgentAdministratif agent) {
+        AgentAdministratif nouvelAgent = userService.creerAgent(agent);
+        return ResponseEntity.ok(nouvelAgent);
+    }
+    @GetMapping("/agents")
+    public ResponseEntity<List<AgentAdministratif>> getAgents() {
+        return ResponseEntity.ok(userService.getAgents());
+    }
+
+    @PatchMapping("/{id}/toggle")
+    public ResponseEntity<User> toggleActif(@PathVariable int id) {
+        try {
+            return ResponseEntity.ok(userService.toggleActif(id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

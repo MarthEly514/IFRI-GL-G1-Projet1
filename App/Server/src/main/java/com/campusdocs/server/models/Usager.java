@@ -11,6 +11,8 @@ public class Usager extends User {
     private String filiere;
     private String niveau;
 
+    public Usager() {}
+
     public Usager(String nom, String prenom, String email, String password, LocalDateTime dateCreation, boolean actif, String role, long matricule, String filiere, String niveau) {
         super(nom, prenom, email, password, dateCreation, actif, role);
         this.matricule = matricule; this.filiere = filiere; this.niveau = niveau;
