@@ -17,6 +17,7 @@ public class User {
     @Column(unique = true, nullable = false)
     protected String email;
     protected String password;
+    protected String passwordSalt;
     protected String role;
     protected boolean actif;
     protected LocalDateTime dateCreation;
@@ -55,6 +56,8 @@ public class User {
     public void setEmail(String email) { this.email = email; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public String getPasswordSalt() {return passwordSalt;}
+    public void setPasswordSalt(String passwordSalt) { this.passwordSalt = passwordSalt;}
     public LocalDateTime getDateCreation() { return dateCreation; }
     public void setDateCreation(LocalDateTime dateCreation) { this.dateCreation = dateCreation; }
     public boolean isActif() { return actif; }
