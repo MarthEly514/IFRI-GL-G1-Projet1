@@ -1,14 +1,9 @@
-package com.campusdocs.server.models;
+package com.campusdocs.server.dto.response;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "demande")
-public class Demande {
+public class DemandeResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String ref;
     private String type;
@@ -21,11 +16,33 @@ public class Demande {
     private LocalDateTime date;
     private LocalDateTime dateTraitement;
     private int userId;
+    private String nomEtudiant;
+    private String prenomEtudiant;
     private int agentId;
-    public Demande() {}
 
+    public DemandeResponse() {}
 
-    // Getters et Setters
+    public DemandeResponse(int id, String ref, String type, String motif, String annee,
+                           String details, String statut, String rejectReason, String agentNote,
+                           LocalDateTime date, LocalDateTime dateTraitement,
+                           int userId, String nomEtudiant, String prenomEtudiant, int agentId) {
+        this.id = id;
+        this.ref = ref;
+        this.type = type;
+        this.motif = motif;
+        this.annee = annee;
+        this.details = details;
+        this.statut = statut;
+        this.rejectReason = rejectReason;
+        this.agentNote = agentNote;
+        this.date = date;
+        this.dateTraitement = dateTraitement;
+        this.userId = userId;
+        this.nomEtudiant = nomEtudiant;
+        this.prenomEtudiant = prenomEtudiant;
+        this.agentId = agentId;
+    }
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getRef() { return ref; }
@@ -50,6 +67,10 @@ public class Demande {
     public void setDateTraitement(LocalDateTime dateTraitement) { this.dateTraitement = dateTraitement; }
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
+    public String getNomEtudiant() { return nomEtudiant; }
+    public void setNomEtudiant(String nomEtudiant) { this.nomEtudiant = nomEtudiant; }
+    public String getPrenomEtudiant() { return prenomEtudiant; }
+    public void setPrenomEtudiant(String prenomEtudiant) { this.prenomEtudiant = prenomEtudiant; }
     public int getAgentId() { return agentId; }
     public void setAgentId(int agentId) { this.agentId = agentId; }
 }
