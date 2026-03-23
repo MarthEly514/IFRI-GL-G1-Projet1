@@ -17,6 +17,11 @@ public class UserService {
     public static User[] getAllUsers() throws ApiException {
         return ApiClient.get("/users", User[].class);
     }
+    
+    // GET /api/users/{id}
+    public static User getUserById(int id) throws ApiException {
+        return ApiClient.get("/users/" + id, User.class);
+    }
  
     // Admin: create agent account
     public static User createAgent(CreateAgentRequest request) throws ApiException {
@@ -24,13 +29,12 @@ public class UserService {
     }
  
     // Admin: toggle user active/inactive
-    public static void toggleUserStatus(String userId, boolean active) throws ApiException {
-        ToggleStatusRequest body = new ToggleStatusRequest(active);
-        ApiClient.put("/users/" + userId + "/status", body, Void.class);
+    public static User toggleUserStatus(int userId) throws ApiException {
+        return ApiClient.patch("/users/" + userId + "/toggle", null, User.class);
     }
  
     // Admin: delete user
-    public static void deleteUser(String userId) throws ApiException {
+    public static void deleteUser(int userId) throws ApiException {
         ApiClient.delete("/users/" + userId);
     }
     
@@ -47,6 +51,11 @@ public class UserService {
         ApiClient.put("/users/me", request, Void.class);
     }
 
+    // Update profile (id)
+    public static User updateProfile(int userId, UpdateProfileRequest request) throws ApiException {
+        return ApiClient.put("/users/" + userId, request, User.class);
+    }
+    
     // Change password
     public static void changePassword(ChangePasswordRequest request) throws ApiException {
         ApiClient.put("/users/me/password", request, Void.class);
@@ -54,27 +63,27 @@ public class UserService {
  
     // ── DTOs ──
     public static class CreateAgentRequest {
-        public String firstName;
-        public String lastName;
+        public String nom;        
+        public String prenom;    
         public String email;
-        public String password;
+        public String motDePasse;
     }
     
     public static class UpdateProfileRequest {
-        public String firstName;
-        public String lastName;
+        public String nom;
+        public String prenom;
         public String email;
 
-        public UpdateProfileRequest(String firstName, String lastName, String email) {
-            this.firstName = firstName;
-            this.lastName  = lastName;
-            this.email     = email;
+        public UpdateProfileRequest(String nom, String prenom, String email) {
+            this.nom    = nom;
+            this.prenom = prenom;
+            this.email  = email;
         }
     }
 
     public static class ChangePasswordRequest {
-        public String currentPassword;
         public String newPassword;
+        public String currentPassword;
 
         public ChangePasswordRequest(String currentPassword, String newPassword) {
             this.currentPassword = currentPassword;

@@ -122,6 +122,24 @@ public class ApiClient {
             throw networkError(e);
         }
     }
+    
+    public static <T> T patch(String endpoint, Object body, Class<T> responseType) throws ApiException {
+        try {
+            String json = GSON.toJson(body);
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + endpoint))
+                .header("Content-Type", "application/json")
+                .header("Authorization", bearerToken())
+                .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
+                .build();
+            HttpResponse<String> response = HTTP.send(request, HttpResponse.BodyHandlers.ofString());
+            return handleResponse(response, responseType);
+        } catch (ApiException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ApiException("Erreur réseau : " + e.getMessage(), 0);
+        }
+    }
 
     // ─────────────────────────────────────────
     // Response handler

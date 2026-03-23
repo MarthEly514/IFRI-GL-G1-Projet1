@@ -14,7 +14,7 @@ public class SessionManager {
     private String email;
     private String role;
     private String token;   
-    private String userId; 
+    private int userId; 
     private String filiere; 
     private String matricule; 
     private String niveau; 
@@ -34,7 +34,7 @@ public class SessionManager {
  
     
     //Getters
-    public String getUserId()   { return userId; }
+    public int getUserId()   { return userId; }
     public String getFullName() { return fullName; }
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
@@ -51,7 +51,7 @@ public class SessionManager {
     
  
     //Setters
-    public void setUserId(String v)   { userId = v; }
+    public void setUserId(int v)   { userId = v; }
     public void setFullName(String v) { fullName = v; }
     public void setFirstName(String v) { firstName = v; }
     public void setLastName(String v) { lastName = v; }
@@ -75,6 +75,6 @@ public class SessionManager {
  
     public void clear() {
         fullName = null; email = null; role = null;
-        token = null;    userId = null;
+        token = null;    userId = 0;
     }
 }

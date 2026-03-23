@@ -156,11 +156,11 @@ public class UsersManagementViewController implements Initializable {
     }
  
     private void toggleUserStatus(User u, Button btn) {
-        String newStatus = u.isActif() ? "INACTIF" : "ACTIF";
+        int userId = u.getId();  // parse String → int
 
         TaskRunner.run(
-            () -> { UserService.toggleUserStatus(u.getId(), !u.isActif()); return null; },
-            ignored -> {
+            () -> UserService.toggleUserStatus(userId),
+            updatedUser -> {
                 u.toggleStatus();
                 btn.setText(u.isActif() ? "Désactiver" : "Activer");
                 btn.getStyleClass().removeAll("btn-warn", "btn-small");
@@ -173,11 +173,13 @@ public class UsersManagementViewController implements Initializable {
     }
 
     private void deleteUser(User u) {
+        int userId = u.getId();
+
         TaskRunner.run(
-            () -> { UserService.deleteUser(u.getId()); return null; },
+            () -> { UserService.deleteUser(userId); return null; },
             ignored -> {
                 allUsers = allUsers.stream()
-                    .filter(x -> !x.getId().equals(u.getId()))
+                    .filter(x -> !(x.getId() == (u.getId())))
                     .collect(Collectors.toList());
                 showToast("Compte de " + u.getNom() + " supprimé.");
                 applyFilters();
@@ -208,10 +210,10 @@ public class UsersManagementViewController implements Initializable {
         }
 
         UserService.CreateAgentRequest request = new UserService.CreateAgentRequest();
-        request.firstName = fn;
-        request.lastName  = ln;
+        request.prenom = fn;
+        request.nom  = ln;
         request.email     = em;
-        request.password  = pw;
+        request.motDePasse  = pw;
 
         TaskRunner.run(
             () -> UserService.createAgent(request),

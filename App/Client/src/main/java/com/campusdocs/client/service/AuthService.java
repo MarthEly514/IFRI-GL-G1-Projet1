@@ -26,14 +26,14 @@ public class AuthService {
     }
 
     public static class SignupRequest {
-        String firstName;
-        String lastName;
+        String prenom;
+        String nom;
         String email;
         String password;
 
         public SignupRequest(String firstName, String lastName, String email, String password) {
-            this.firstName = firstName;
-            this.lastName  = lastName;
+            this.prenom = firstName;
+            this.nom  = lastName;
             this.email     = email;
             this.password  = password;
         }
@@ -42,9 +42,10 @@ public class AuthService {
     public static class LoginResponse {
         String token;
         String role;
-        String fullName;
+        String nom;
+        String prenom;
         String email;
-        String userId;
+        int userId;
     }
 
     public static class SignupResponse {
@@ -60,7 +61,7 @@ public class AuthService {
 
         SessionManager session = SessionManager.getInstance();
         session.setToken(response.token);
-        session.setFullName(response.fullName);
+        session.setFullName(response.prenom + " " + response.nom);
         session.setEmail(response.email);
         session.setRole(response.role);
         session.setUserId(response.userId);

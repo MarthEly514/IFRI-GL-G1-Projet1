@@ -16,7 +16,7 @@ public class Usager extends User {
         this.niveau = niveau;
     }
     
-    public Usager(String id, String nom, String prenom, String email,String role, String status, String memberSince, long matricule, String filiere, String niveau) {
+    public Usager(int id, String nom, String prenom, String email,String role, String status, String memberSince, long matricule, String filiere, String niveau) {
         super(id, nom, prenom, email, role, status, memberSince);
         this.matricule = matricule;
         this.filiere = filiere;

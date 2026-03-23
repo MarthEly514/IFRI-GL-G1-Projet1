@@ -17,7 +17,7 @@ public class AgentAdministratif extends User{
     }
     
     // with id
-    public AgentAdministratif(String id, String nom, String prenom, String email,String role, String status, String memberSince, String service) {
+    public AgentAdministratif(int id, String nom, String prenom, String email,String role, String status, String memberSince, String service) {
         super(id, nom, prenom, email, role, status, memberSince);
         this.service = service;
     }
