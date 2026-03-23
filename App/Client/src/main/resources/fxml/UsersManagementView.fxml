@@ -6,7 +6,7 @@
 <?import javafx.geometry.Insets?>
 
 <StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="com.campusdocs.client.controller.UsersManagementViewController">
+    fx:controller="com.campusdocs.client.controller.UsersManagementViewController" fx:id="mainPane">
 
     <!-- ── Main content ── -->
     <VBox fx:id="rootPane" styleClass="admin-root" spacing="0">
@@ -64,8 +64,8 @@
     </VBox>
 
     <!-- ✅ Modal overlay — second child of StackPane, renders on top -->
-    <StackPane fx:id="modalOverlay" styleClass="modal-overlay" visible="false" managed="false">
-        <VBox styleClass="modal-card" spacing="18" maxWidth="440" StackPane.alignment="CENTER">
+    <StackPane fx:id="modalOverlay" styleClass="modal-overlay" visible="false" managed="false" alignment="CENTER" >
+        <VBox styleClass="modal-card" spacing="18" maxWidth="440" alignment="CENTER">
             <Label text="Créer un compte agent" styleClass="modal-title"/>
             <Label text="Remplissez les informations pour créer un nouveau compte agent."
                    styleClass="modal-subtitle"/>

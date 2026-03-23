@@ -7,7 +7,9 @@ package com.campusdocs.client.controller;
 
 import com.campusdocs.client.App;
 import com.campusdocs.client.model.Demande;
+import com.campusdocs.client.service.DemandeService;
 import com.campusdocs.client.util.CssLoader;
+import com.campusdocs.client.util.TaskRunner;
 import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,21 +29,63 @@ import javafx.scene.layout.StackPane;
 public class DemandeViewController implements Initializable {
 
     @FXML private Button btnFaireDemande;
-    @FXML private Label demandCountBadge;
     @FXML private VBox rootPane, emptyState;
     @FXML private VBox demandeList;
     @FXML private StackPane toastContainer;
     @FXML private Label toastLabel;
 
     // Holds demands loaded from backend (or local state for now)
-    private final List<Demande> demandes = new ArrayList<>();
+    private final List<Demande> demandesArray = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //loadin css files
         CssLoader.loadCssFiles(rootPane, "demandeview", "globalStyles");
 
-        refreshList();
+//        refreshList();
+        loadDemandes();
+    }
+    
+    private void loadDemandes(){
+                // Show loading placeholder
+        demandeList.getChildren().clear();
+        demandeList.getChildren().add(buildLoadingLabel("Chargement..."));
+
+        TaskRunner.run(
+            () -> DemandeService.getMyDemandes(),
+            demandes -> {
+                demandeList.getChildren().clear();
+
+                if (demandes == null || demandes.length == 0) {
+                    emptyState.setVisible(true);
+                    emptyState.setManaged(true);
+                    demandeList.setVisible(false);
+                    demandeList.setManaged(false);
+//                    demandeList.getChildren()
+//                        .add(buildEmptyLabel("Aucune demande récente."));
+                    return;
+                }
+                
+                emptyState.setVisible(false);
+                emptyState.setManaged(false);
+                demandeList.setVisible(true);
+                demandeList.setManaged(true);
+                demandeList.getChildren().clear();
+
+                int count = demandes.length;
+                for (int i = 0; i < count; i++) {
+                    demandesArray.add(demandes[i]);
+                    demandeList.getChildren()
+                        .add(buildDemandCard(demandes[i]));
+                }
+            },
+            ex -> {
+                demandeList.getChildren().clear();
+                demandeList.getChildren()
+                    .add(buildEmptyLabel("Erreur de chargement."));
+                System.err.println("Recent demandes error: " + ex.getMessage());
+            }
+        );
     }
 
     @FXML
@@ -55,15 +99,13 @@ public class DemandeViewController implements Initializable {
 
     // Called by DashboardViewController after a successful form submission
     public void onDemandeSubmitted(Demande demande) {
-        demandes.add(demande);
+        demandesArray.add(demande);
         refreshList();
         showToast("Demande envoyée avec succès !");
     }
 
     private void refreshList() {
-        demandCountBadge.setText(String.valueOf(demandes.size()));
-
-        if (demandes.isEmpty()) {
+        if (demandesArray.isEmpty()) {
             emptyState.setVisible(true);
             emptyState.setManaged(true);
             demandeList.setVisible(false);
@@ -74,10 +116,23 @@ public class DemandeViewController implements Initializable {
             demandeList.setVisible(true);
             demandeList.setManaged(true);
             demandeList.getChildren().clear();
-            for (Demande d : demandes) {
+            for (Demande d : demandesArray) {
                 demandeList.getChildren().add(buildDemandCard(d));
             }
         }
+    }
+    
+    private Label buildLoadingLabel(String text) {
+        Label l = new Label(text);
+        l.getStyleClass().add("activity-sub");
+        l.setStyle("-fx-opacity: 0.6;");
+        return l;
+    }
+    
+    private Label buildEmptyLabel(String text) {
+        Label l = new Label(text);
+        l.getStyleClass().add("activity-sub");
+        return l;
     }
 
     private HBox buildDemandCard(Demande d) {

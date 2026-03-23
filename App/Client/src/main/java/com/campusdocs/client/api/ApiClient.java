@@ -140,6 +140,87 @@ public class ApiClient {
             throw new ApiException("Erreur réseau : " + e.getMessage(), 0);
         }
     }
+    
+    
+    // ─────────────────────────────────────────
+    // GET BYTES (for PDF, images, etc.)
+    // ─────────────────────────────────────────
+    public static byte[] getBytes(String endpoint) throws ApiException {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + endpoint))
+                .header("Accept", "application/pdf, application/octet-stream, */*")
+                .header("Authorization", bearerToken())
+                .GET()
+                .build();
+
+            HttpResponse<byte[]> response = HTTP.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            return handleByteResponse(response);
+
+        } catch (ApiException e) {
+            throw e;
+        } catch (Exception e) {
+            throw networkError(e);
+        }
+    }
+    
+    
+     // ─────────────────────────────────────────
+    // Response handler for byte array responses (PDF, images, etc.)
+    // ─────────────────────────────────────────
+    private static byte[] handleByteResponse(HttpResponse<byte[]> response) throws ApiException {
+        int status = response.statusCode();
+        byte[] body = response.body();
+
+        if (DEV_MODE) {
+            System.out.println("[ApiClient] " + status + " <- " + response.uri());
+            System.out.println("[ApiClient] bytes received: " + (body != null ? body.length : 0));
+        }
+
+        if (status == 200 || status == 201) {
+            if (body == null || body.length == 0) {
+                throw new ApiException("Réponse vide reçue du serveur.", status);
+            }
+            return body;
+        }
+
+        if (status == 401) {
+            // Token expired — clear session to force re-login
+            SessionManager.getInstance().clear();
+            throw new ApiException("Session expirée. Veuillez vous reconnecter.", 401);
+        }
+
+        if (status == 403) {
+            throw new ApiException("Accès refusé. Vous n'avez pas les droits nécessaires.", 403);
+        }
+
+        if (status == 404) {
+            throw new ApiException("Ressource introuvable.", 404);
+        }
+
+        if (status == 500) {
+            throw new ApiException("Erreur interne du serveur. Réessayez plus tard.", 500);
+        }
+
+        if (status == 502 || status == 503 || status == 504) {
+            throw new ApiException("Le serveur est temporairement indisponible.", status);
+        }
+
+        // For non-success status codes, try to parse error message from response body
+        if (body != null && body.length > 0) {
+            try {
+                String errorBody = new String(body);
+                String errorMsg = parseErrorMessage(errorBody, "Erreur inattendue (code " + status + ")");
+                throw new ApiException(errorMsg, status);
+            } catch (Exception e) {
+                throw new ApiException("Erreur inattendue (code " + status + ")", status);
+            }
+        }
+
+        throw new ApiException("Erreur inattendue (code " + status + ")", status);
+    }
+    
+    
 
     // ─────────────────────────────────────────
     // Response handler

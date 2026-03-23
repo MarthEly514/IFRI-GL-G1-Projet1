@@ -12,10 +12,10 @@ import com.campusdocs.client.model.Piece;
  
 public class DemandeService {
     
-    public static Piece[] getPieces(String demandeId) throws ApiException {
+    public static Piece[] getPieces(int demandeId) throws ApiException {
         return ApiClient.get("/demandes/" + demandeId + "/pieces", Piece[].class);
     }
- 
+    
     // Student: get own demandes
     public static Demande[] getMyDemandes() throws ApiException {
         return ApiClient.get("/demandes/me", Demande[].class);
@@ -32,28 +32,29 @@ public class DemandeService {
     }
  
     // Agent: get one demande by id
-    public static AgentDemande getDemandeById(String id) throws ApiException {
+    public static AgentDemande getDemandeById(int id) throws ApiException {
         return ApiClient.get("/demandes/" + id, AgentDemande.class);
     }
  
     // Agent: validate a demande → triggers acte generation on server
-    public static void validateDemande(String id, String note) throws ApiException {
+    public static void validateDemande(int id, String note) throws ApiException {
         ValidateRequest body = new ValidateRequest(note);
         ApiClient.put("/demandes/" + id + "/validate", body, Void.class);
     }
  
     // Agent: reject a demande
-    public static void rejectDemande(String id, String reason) throws ApiException {
+    public static void rejectDemande(int id, String reason) throws ApiException {
         RejectRequest body = new RejectRequest(reason);
         ApiClient.put("/demandes/" + id + "/reject", body, Void.class);
     }
  
     // ── DTOs ──
     public static class DemandeRequest {
-        public String documentType;
+        public String type;
         public String motif;
         public String annee;
-        // Add fields matching your server's expected body
+        public String details;
+        
     }
  
     private static class ValidateRequest {

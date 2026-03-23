@@ -120,7 +120,7 @@ public class AgentDemandeDetailsViewController implements Initializable {
             agentNote.setDisable(true);
         }
         
-        loadPieces(d.getRef());
+        loadPieces(d.getId());
     }
  
     private void addFieldRow(String key, String value) {
@@ -157,7 +157,7 @@ public class AgentDemandeDetailsViewController implements Initializable {
         timelineContainer.getChildren().add(item);
     }
     
-    private void loadPieces(String demandeId) {
+    private void loadPieces(int demandeId) {
         piecesEmptyState.setVisible(false);
         piecesEmptyState.setManaged(false);
         piecesContainer.setVisible(false);
@@ -242,7 +242,7 @@ public class AgentDemandeDetailsViewController implements Initializable {
         TaskRunner.run(
             () -> {
                 DemandeService.validateDemande(
-                    currentDemande.getRef(), agentNote.getText().trim());
+                    currentDemande.getId(), agentNote.getText().trim());
                 return null;
             },
             ignored -> {
@@ -276,7 +276,7 @@ public class AgentDemandeDetailsViewController implements Initializable {
         btnReject.setText("Traitement...");
  
         TaskRunner.run(
-            () -> { DemandeService.rejectDemande(currentDemande.getRef(), reason); return null; },
+            () -> { DemandeService.rejectDemande(currentDemande.getId(), reason); return null; },
             ignored -> {
                 String now = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"));

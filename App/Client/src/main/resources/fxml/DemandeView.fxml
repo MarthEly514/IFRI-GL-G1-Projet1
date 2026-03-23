@@ -46,7 +46,6 @@
                 <VBox spacing="14">
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <Label text="Mes demandes" styleClass="section-title"/>
-                        <Label fx:id="demandCountBadge" text="0" styleClass="count-badge"/>
                     </HBox>
 
                     <!-- Empty state -->

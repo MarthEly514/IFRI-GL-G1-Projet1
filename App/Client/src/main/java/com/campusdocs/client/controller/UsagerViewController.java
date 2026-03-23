@@ -21,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+import java.lang.reflect.Method;
 
 public class UsagerViewController implements Initializable {
 
@@ -40,12 +41,13 @@ public class UsagerViewController implements Initializable {
     // Hold loaded data to merge into activity list
     private Demande[] loadedDemandes = null;
     private ActeAdministratif[]    loadedActes    = null;
+    SessionManager user = SessionManager.getInstance();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         CssLoader.loadCssFiles(usagerView, "adminshared", "globalStyles", "usagerview");
 
-        String name = SessionManager.getInstance().getFullName();
+        String name = user.getFullName();
         if (name != null) {
             welcomeTitle.setText("Bonjour, " + name + " !");
         }
@@ -62,7 +64,7 @@ public class UsagerViewController implements Initializable {
         welcomeTitle.setText("Bonjour, " + name + " !");
     }
 
-    private void loadDemandes() {
+    public void loadDemandes() { ///should be private
         statDemandesEnCours.setText("...");
         statDemandesTotales.setText("...");
 
@@ -95,7 +97,7 @@ public class UsagerViewController implements Initializable {
         statActesTotaux.setText("...");
 
         TaskRunner.run(
-            () -> ActeService.getMyActes(),
+            () -> ActeService.getActesByUsager(user.getUserId()),
             actes -> {
                 loadedActes = actes;
                 statActesDisponibles.setText(String.valueOf(actes.length));

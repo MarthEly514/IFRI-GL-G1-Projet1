@@ -28,7 +28,7 @@ public class UsersManagementViewController implements Initializable {
     @FXML private TextField searchField;
     @FXML private ComboBox<String> roleFilter, statusFilter;
     @FXML private VBox rootPane, userList, emptyState;
-    @FXML private StackPane modalOverlay, toastContainer;
+    @FXML private StackPane mainPane, modalOverlay, toastContainer;
     @FXML private Label toastLabel, modalError;
     @FXML private TextField agentFirstName, agentLastName, agentEmail;
     @FXML private PasswordField agentPassword;
@@ -38,7 +38,7 @@ public class UsersManagementViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //load css
-        CssLoader.loadCssFiles(rootPane, "adminshared", "globalStyles", "usersmanagementview");
+        CssLoader.loadCssFiles(mainPane, "adminshared", "globalStyles", "usersmanagementview");
         
 //        allUsers = Arrays.asList(
 //            new User("U001", "Dupont Jean",    "jean@test.com",    "Usager", "Actif"),

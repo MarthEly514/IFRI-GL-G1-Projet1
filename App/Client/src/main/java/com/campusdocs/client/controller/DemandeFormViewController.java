@@ -20,8 +20,11 @@ import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -398,18 +401,15 @@ public class DemandeFormViewController implements Initializable {
         if (file == null) return; // user cancelled
 
         btnDownloadPdf.setDisable(true);
-        btnDownloadPdf.setText("Génération...");
 
         TaskRunner.run(
             () -> { generatePdf(file); return null; },
             ignored -> {
                 btnDownloadPdf.setDisable(false);
-                btnDownloadPdf.setText("↓  Télécharger le récapitulatif PDF");
                 
             },
             ex -> {
                 btnDownloadPdf.setDisable(false);
-                btnDownloadPdf.setText("↓  Télécharger le récapitulatif PDF");
                 System.err.println("PDF error: " + ex.getMessage());
             }
         );
@@ -713,11 +713,12 @@ public class DemandeFormViewController implements Initializable {
     private void submitDemande() {
         setLoading(true);
         DemandeService.DemandeRequest request = new DemandeService.DemandeRequest();
-        request.documentType = DOC_TYPES.stream()
+        request.type = DOC_TYPES.stream()
             .filter(d -> d.key.equals(selectedDocType))
             .findFirst().map(d -> d.name).orElse("");
         request.motif = formValues.getOrDefault("motif", "");
         request.annee = formValues.getOrDefault("annee", "");
+        request.details = "Non spécifié";
 
         TaskRunner.run(
             () -> {
@@ -725,12 +726,20 @@ public class DemandeFormViewController implements Initializable {
                 catch (ApiException e) { throw new RuntimeException(e); }
             },
             demande -> {
+            try {
                 setLoading(false);
                 DashboardViewController db = DashboardViewControllerRegistry.getInstance();
                 if (db != null) {
                     db.loadSubView("DemandeView", "Mes demandes");
                     db.getDemandeViewController().onDemandeSubmitted(demande);
                 }
+                
+                UsagerViewController usvc = new UsagerViewController();
+                usvc.loadDemandes();
+            } catch (Exception ex) {
+                Logger.getLogger(DemandeFormViewController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
             },
             ex -> {
                 setLoading(false);

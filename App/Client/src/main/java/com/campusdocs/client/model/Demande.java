@@ -3,14 +3,15 @@ package com.campusdocs.client.model;
 public class Demande {
 
     // Field names must match exactly what the server JSON sends
-    private String id;
-    private String type;           // matches server "type"
-    private String date;           // formatted date string for display
-    private String statut;         // matches server "statut"
+    private int id;
+    private String type;           
+    private String date;          
+    private String statut;         
     private String dateTraitement;
     private String commentaire;
     private String userId;
     private String ref;            // ex: DEM-2026-001
+    
 
     // ── No-arg constructor required by Gson ──
     public Demande() {}
@@ -23,8 +24,8 @@ public class Demande {
     }
 
     // ── Getters ──
-    public String getId()             { return id; }
-    public String getDocumentType()   { return type; }   // alias for UI compatibility
+    public int getId()             { return id; }
+    public String getDocumentType()   { return type; }   
     public String getType()           { return type; }
     public String getDate()           { return date; }
     public String getStatut()         { return statut; }
