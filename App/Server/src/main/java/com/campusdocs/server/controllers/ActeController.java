@@ -3,7 +3,11 @@ package com.campusdocs.server.controllers;
 import com.campusdocs.server.models.Demande;
 import com.campusdocs.server.models.Piece;
 import com.campusdocs.server.models.Usager;
+import com.campusdocs.server.models.ActeAdministratif;
+import com.campusdocs.server.repositories.ActeRepository;
 import com.campusdocs.server.repositories.UserRepository;
+import com.campusdocs.server.repositories.DemandeRepository;
+import com.campusdocs.server.security.JwtUtils;
 import com.campusdocs.server.services.ActeService;
 import com.campusdocs.server.services.pdfService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,15 @@ public class ActeController {
 
     @Autowired
     private ActeService acteService;
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private ActeRepository acteRepository;
+
+    @Autowired
+    private DemandeRepository demandeRepository;
 
     // ── Génération PDF ──
 
@@ -163,5 +176,28 @@ public class ActeController {
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getStats() {
         return ResponseEntity.ok(acteService.getStats());
+    }
+
+    // Get /api/actes/me - Actes consultables par l'étudiant connecté
+    // GET /api/actes/me - Actes consultables par l'étudiant connecté
+    @GetMapping("/me")
+    public ResponseEntity<?> getMesActes(
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.substring(7);
+            int userId = jwtUtils.getUserIdFromToken(token);
+            List<ActeAdministratif> actes = acteRepository.findAll()
+                    .stream()
+                    .filter(a -> {
+                        // Retrouver la demande liée pour vérifier le userId
+                        return demandeRepository.findById(a.getDemandeId())
+                                .map(d -> d.getUserId() == userId)
+                                .orElse(false);
+                    })
+                    .collect(java.util.stream.Collectors.toList());
+            return ResponseEntity.ok(actes);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

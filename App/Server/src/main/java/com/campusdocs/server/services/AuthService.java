@@ -5,11 +5,13 @@ import com.campusdocs.server.dto.request.SignupRequest;
 import com.campusdocs.server.dto.response.ApiResponse;
 import com.campusdocs.server.dto.response.LoginResponse;
 import com.campusdocs.server.models.User;
+import com.campusdocs.server.repositories.UsagerRepository;
 import com.campusdocs.server.repositories.UserRepository;
 import com.campusdocs.server.security.JwtUtils;
 import com.campusdocs.server.security.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.campusdocs.server.models.Usager;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -22,6 +24,9 @@ public class AuthService {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private UsagerRepository usagerRepository;
 
     // ── Connexion ──
     public LoginResponse login(LoginRequest request) {
@@ -81,19 +86,24 @@ public class AuthService {
         String salt = PasswordUtils.generateSalt();
         String hashedPassword = PasswordUtils.hashPassword(request.getPassword(), salt);
 
-        // 3. Créer l'utilisateur
-        User user = new User();
-        user.setNom(request.getNom());
-        user.setPrenom(request.getPrenom());
-        user.setEmail(request.getEmail());
-        user.setPassword(hashedPassword);
-        user.setPasswordSalt(salt);
-        user.setRole("ETUDIANT");
-        user.setActif(true);
-        user.setDateCreation(LocalDateTime.now());
+        // 3. Créer l'usager
+        Usager  usager = new Usager();
+        usager.setNom(request.getNom());
+        usager.setPrenom(request.getPrenom());
+        usager.setEmail(request.getEmail());
+        usager.setPassword(hashedPassword);
+        usager.setPasswordSalt(salt);
+        usager.setRole("ETUDIANT");
+        usager.setActif(true);
+        usager.setDateCreation(LocalDateTime.now());
+
+        // Valeurs par défaut ( à adapter )
+        usager.setMatricule(0L);
+        usager.setFiliere("Non renseignée");
+        usager.setNiveau("Non renseignée");
 
         // 4. Sauvegarder en base
-        userRepository.save(user);
+        userRepository.save(usager);
 
         return new ApiResponse(true, "Compte créé avec succès");
     }
