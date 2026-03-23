@@ -15,15 +15,46 @@ public class StatsController {
     @Autowired
     private StatsService statsService;
 
-    // GET statistiques globales
+
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getStatistiques() {
         return ResponseEntity.ok(statsService.getStatistiques());
     }
 
-    // GET dashboard
     @GetMapping("/dashboard")
     public ResponseEntity<Map<String, Object>> getDashboard() {
         return ResponseEntity.ok(statsService.getDashboard());
+    }
+
+    // ── NOUVELLES ──
+
+    // Stats pour AdminView
+    @GetMapping("/stats/admin")
+    public ResponseEntity<Map<String, Object>> getAdminDashboard() {
+        return ResponseEntity.ok(statsService.getAdminDashboard());
+    }
+
+    // Stats pour AgentView
+    @GetMapping("/stats/agent")
+    public ResponseEntity<Map<String, Object>> getAgentDashboard() {
+        return ResponseEntity.ok(statsService.getAgentDashboard());
+    }
+
+    // Stats pour StatsView
+    @GetMapping("/stats/systeme")
+    public ResponseEntity<Map<String, Object>> getStatsView() {
+        return ResponseEntity.ok(statsService.getStatsView());
+    }
+
+    // Stats pour UsagerView (stats personnelles)
+    @GetMapping("/stats/usager/{usagerId}")
+    public ResponseEntity<Map<String, Object>> getUsagerStats(@PathVariable int usagerId) {
+        return ResponseEntity.ok(statsService.getUsagerStats(usagerId));
+    }
+
+    // Stats pour RapportsView
+    @GetMapping("/stats/rapport")
+    public ResponseEntity<Map<String, Object>> getRapportStats() {
+        return ResponseEntity.ok(statsService.getRapportStats());
     }
 }
