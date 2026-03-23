@@ -4,8 +4,12 @@
  */
 package com.campusdocs.client.controller;
  
+import com.campusdocs.client.SessionManager;
 import com.campusdocs.client.model.ActeAdministratif;
+import com.campusdocs.client.service.ActeService;
+import com.campusdocs.client.service.DemandeService;
 import com.campusdocs.client.util.CssLoader;
+import com.campusdocs.client.util.TaskRunner;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,20 +33,15 @@ public class AgentActeViewController implements Initializable {
     @FXML private ComboBox<String> typeFilter, sortFilter;
     @FXML private VBox actList, emptyState;
     @FXML private VBox rootPane;
+
  
     private List<ActeAdministratif> allActes;
+
  
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //load css files
         CssLoader.loadCssFiles(rootPane, "adminshared", "globalStyles");
-
-        
-        allActes = Arrays.asList(
-            new ActeAdministratif("ACT-2026-001", "Attestation de scolarité", "📄", "2026-03-19", "Scolarité", "Disponible"),
-            new ActeAdministratif("ACT-2026-002", "Relevé de notes S5",       "📋", "2026-03-18", "Notes",     "Disponible"),
-            new ActeAdministratif("ACT-2026-003", "Certificat de résidence",  "📝", "2026-03-17", "Résidence", "Disponible")
-        );
  
         typeFilter.setItems(FXCollections.observableArrayList("Tous les types", "Scolarité", "Notes", "Résidence", "Diplôme"));
         typeFilter.getSelectionModel().selectFirst();
@@ -52,8 +51,14 @@ public class AgentActeViewController implements Initializable {
         searchField.textProperty().addListener((obs, o, n) -> applyFilters());
         typeFilter.valueProperty().addListener((obs, o, n) -> applyFilters());
         sortFilter.valueProperty().addListener((obs, o, n) -> applyFilters());
+        
+        loadActes();
  
-        applyFilters();
+        if (allActes != null) {
+            applyFilters();
+        } else {
+            System.err.println("allActes is null - cannot apply filters");
+        }
     }
  
     private void applyFilters() {
@@ -89,10 +94,36 @@ public class AgentActeViewController implements Initializable {
  
         javafx.scene.control.Button btnView = new javafx.scene.control.Button("Voir");
         btnView.getStyleClass().add("btn-small");
+        btnView.setVisible(SessionManager.getInstance().getRole().equalsIgnoreCase("Agent"));
         // No download button for agent/admin — view only
  
         row.getChildren().addAll(ref, student, type, date, agent, spacer, btnView);
         return row;
+    }
+    
+    private void loadActes() {
+        // Show loading state
+        actList.getChildren().clear();
+        emptyState.setVisible(false);
+        emptyState.setManaged(false);
+        Label loading = new Label("Chargement des demandes...");
+        loading.getStyleClass().add("table-cell-muted");
+        actList.getChildren().add(loading);
+
+        TaskRunner.run(
+            () -> ActeService.getAllActes(),
+            actes -> {
+                allActes = Arrays.asList(actes);
+                applyFilters();
+            },
+            ex -> {
+                actList.getChildren().clear();
+                Label error = new Label("Erreur de chargement : " + ex.getMessage());
+                error.getStyleClass().add("badge-rejected");
+                actList.getChildren().add(error);
+                System.err.println("Demandes load error: " + ex.getMessage());
+            }
+        );
     }
 }
 

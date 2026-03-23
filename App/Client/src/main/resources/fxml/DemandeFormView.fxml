@@ -6,6 +6,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.image.*?>
 
 <VBox
     xmlns="http://javafx.com/javafx"
@@ -30,10 +31,9 @@
                 <Circle radius="16" fx:id="stepCircle1" styleClass="step-circle, step-active"/>
                 <Label text="1" styleClass="step-number"/>
             </StackPane>
-            <Label text="Type de document" styleClass="step-label, step-label-active" fx:id="stepLabel1"/>
+            <Label text="Type" styleClass="step-label, step-label-active" fx:id="stepLabel1"/>
         </VBox>
-
-        <Line fx:id="stepLine1" styleClass="step-line" startX="0" endX="80" startY="0" endY="0"/>
+        <Line fx:id="stepLine1" styleClass="step-line" startX="0" endX="60" startY="0" endY="0"/>
 
         <!-- Step 2 -->
         <VBox alignment="CENTER" spacing="6" styleClass="step-item">
@@ -43,21 +43,19 @@
             </StackPane>
             <Label text="Informations" styleClass="step-label" fx:id="stepLabel2"/>
         </VBox>
+        <Line fx:id="stepLine2" styleClass="step-line" startX="0" endX="60" startY="0" endY="0"/>
 
-        <Line fx:id="stepLine2" styleClass="step-line" startX="0" endX="80" startY="0" endY="0"/>
-
-        <!-- Step 3 -->
+        <!-- Step 3 — NEW: Justificatifs -->
         <VBox alignment="CENTER" spacing="6" styleClass="step-item">
             <StackPane>
                 <Circle radius="16" fx:id="stepCircle3" styleClass="step-circle"/>
                 <Label text="3" styleClass="step-number"/>
             </StackPane>
-            <Label text="Paiement" styleClass="step-label" fx:id="stepLabel3"/>
+            <Label text="Justificatifs" styleClass="step-label" fx:id="stepLabel3"/>
         </VBox>
+        <Line fx:id="stepLine3" styleClass="step-line" startX="0" endX="60" startY="0" endY="0"/>
 
-        <Line fx:id="stepLine3" styleClass="step-line" startX="0" endX="80" startY="0" endY="0"/>
-
-        <!-- Step 4 -->
+        <!-- Step 4 — Validate -->
         <VBox alignment="CENTER" spacing="6" styleClass="step-item">
             <StackPane>
                 <Circle radius="16" fx:id="stepCircle4" styleClass="step-circle"/>
@@ -103,73 +101,27 @@
                 </VBox>
             </content>
         </ScrollPane>
-
-        <!-- STEP 3 — Paiement -->
-        <ScrollPane fx:id="step3" fitToWidth="true" styleClass="step-scroll" hbarPolicy="NEVER" visible="false" managed="false">
+        
+        <!-- STEP 3 — Justificatifs -->
+        <ScrollPane fx:id="step3" fitToWidth="true" styleClass="step-scroll"
+                    hbarPolicy="NEVER" visible="false" managed="false">
             <content>
-                <VBox spacing="24" styleClass="step-inner">
-                    <Label text="Paiement" styleClass="step-title"/>
-                    <Label text="Choisissez votre mode de paiement." styleClass="step-subtitle"/>
+                <VBox spacing="20" styleClass="step-inner">
 
-                    <!-- Payment method toggle -->
-                    <HBox spacing="12">
-                        <Button fx:id="btnPayInApp" styleClass="pay-method-btn, pay-method-active" onAction="#handlePayInApp" text="Payer en ligne" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
-                        <Button fx:id="btnPayTicket" styleClass="pay-method-btn" onAction="#handlePayTicket" text="Uploader un reçu" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
-                    </HBox>
+                    <Label text="Pièces justificatives" styleClass="step-title"/>
+                    <Label fx:id="justifSubtitle"
+                           text="Téléversez les documents requis pour votre demande."
+                           styleClass="step-subtitle"/>
 
-                    <!-- Pay in app form -->
-                    <VBox fx:id="payInAppForm" spacing="16" styleClass="pay-card">
-                        <Label text="Informations de carte" styleClass="pay-card-title"/>
-                        <VBox spacing="6">
-                            <Label text="Nom du titulaire" styleClass="field-label"/>
-                            <TextField fx:id="cardHolder" promptText="Jean Dupont" styleClass="input-field"/>
-                        </VBox>
-                        <VBox spacing="6">
-                            <Label text="Numéro de carte" styleClass="field-label"/>
-                            <TextField fx:id="cardNumber" promptText="0000 0000 0000 0000" styleClass="input-field"/>
-                        </VBox>
-                        <HBox spacing="12">
-                            <VBox spacing="6" HBox.hgrow="ALWAYS">
-                                <Label text="Date d'expiration" styleClass="field-label"/>
-                                <TextField fx:id="cardExpiry" promptText="MM/AA" styleClass="input-field"/>
-                            </VBox>
-                            <VBox spacing="6" HBox.hgrow="ALWAYS">
-                                <Label text="CVC" styleClass="field-label"/>
-                                <TextField fx:id="cardCvc" promptText="123" styleClass="input-field"/>
-                            </VBox>
-                        </HBox>
-                    </VBox>
+                    <!-- Error label — shown when required files are missing -->
+                    <Label fx:id="justifErrorLabel"
+                           text=""
+                           styleClass="error-label"
+                           visible="false" managed="false"
+                           wrapText="true"/>
 
-                    <!-- Upload ticket form -->
-                    <VBox fx:id="payTicketForm" spacing="16" styleClass="pay-card" visible="false" managed="false">
-                        <Label text="Reçu de paiement" styleClass="pay-card-title"/>
-                        <Label text="Téléversez une photo ou un scan de votre reçu." styleClass="step-subtitle"/>
-                        <VBox fx:id="dropZone" styleClass="drop-zone" alignment="CENTER" spacing="8">
-                            <Label text="&#128206;" styleClass="drop-icon"/>
-                            <Label text="Glissez votre fichier ici" styleClass="drop-title"/>
-                            <Label text="PNG, JPG, PDF — max 5 Mo" styleClass="drop-sub"/>
-                            <Button fx:id="btnChooseFile" styleClass="choose-file-btn" onAction="#handleChooseFile" text="Parcourir"/>
-                        </VBox>
-                        <Label fx:id="selectedFileName" text="" styleClass="file-name-label"/>
-                    </VBox>
-
-                    <!-- Order summary -->
-                    <VBox styleClass="summary-mini" spacing="8">
-                        <Label text="Récapitulatif" styleClass="pay-card-title"/>
-                        <HBox>
-                            <Label text="Document" styleClass="summary-key" HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="summaryDocType" text="—" styleClass="summary-val"/>
-                        </HBox>
-                        <HBox>
-                            <Label text="Frais de traitement" styleClass="summary-key" HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="summaryFee" text="500 FCFA" styleClass="summary-val"/>
-                        </HBox>
-                        <Separator/>
-                        <HBox>
-                            <Label text="Total" styleClass="summary-key-bold" HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="summaryTotal" text="500 FCFA" styleClass="summary-val-bold"/>
-                        </HBox>
-                    </VBox>
+                    <!-- Upload slots injected by controller -->
+                    <VBox fx:id="justifContainer" spacing="12"/>
 
                 </VBox>
             </content>
@@ -203,7 +155,15 @@
                     <Button fx:id="btnDownloadPdf" styleClass="download-btn" onAction="#handleDownloadPdf" maxWidth="Infinity">
                         <graphic>
                             <HBox alignment="CENTER" spacing="8">
-                                <Label text="&#8681;" styleClass="download-icon"/>
+                                <ImageView
+                                fx:id="leftPaneImage" 
+                                fitHeight="24"
+                                preserveRatio="true"
+                                >
+                                    <image>                             
+                                        <Image url="/icons/download_light.png" />
+                                    </image>
+                                </ImageView>
                                 <Label text="Télécharger le récapitulatif en PDF" styleClass="download-label"/>
                             </HBox>
                         </graphic>

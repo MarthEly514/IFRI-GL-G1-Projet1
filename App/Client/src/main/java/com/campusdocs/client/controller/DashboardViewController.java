@@ -18,6 +18,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -26,6 +28,7 @@ public class DashboardViewController extends BaseViewController {
 
     @FXML private BorderPane rootPane;
     @FXML private StackPane contentArea;
+    @FXML private ImageView logoImage;
     @FXML private Button btnDashboard;
     @FXML private Button btnDemandes;
     @FXML private Button btnActes;
@@ -38,6 +41,17 @@ public class DashboardViewController extends BaseViewController {
     @FXML private Label dateLabel;
     @FXML private Label navUserName;
     @FXML private Label topBarUserName;
+    
+    //icons
+    @FXML private ImageView iconDashboard;
+    @FXML private ImageView iconDemandes;
+    @FXML private ImageView iconActes;
+    @FXML private ImageView iconProfile;
+    @FXML private ImageView iconStats;
+    @FXML private ImageView iconUsers;
+    @FXML private ImageView iconRapports;
+
+    private Map<Button, Image[]> buttonIcons;
 
     // Cache: null means not loaded yet
     private Parent usagerView;
@@ -69,6 +83,11 @@ public class DashboardViewController extends BaseViewController {
         btnRapports.setManaged(false);
         currentUser = SessionManager.getInstance();
         
+        //loading icons and images
+        Image logo = new Image(getClass().getResourceAsStream("/icons/logo.png"));
+
+        logoImage.setImage(logo);
+        
         //Checks user type before loading the view
         checkUserType();
         
@@ -82,6 +101,9 @@ public class DashboardViewController extends BaseViewController {
                 
         //setting the current date
         setDate();
+        
+        setupButtonIcons();
+        setupButtonIconViews();  
         
         // Only load the default view at startup
         handleNavDashboard();
@@ -108,6 +130,64 @@ public class DashboardViewController extends BaseViewController {
         } catch (IOException e) {
             e.printStackTrace();
             return new VBox();
+        }
+    }
+    
+    private void setupButtonIcons() {
+        buttonIcons = new HashMap<>();
+
+        buttonIcons.put(btnDashboard, new Image[]{
+            loadImage("/icons/dashboard.png"),
+            loadImage("/icons/dashboard_black.png")
+        });
+        buttonIcons.put(btnDemandes, new Image[]{
+            loadImage("/icons/demandes.png"),
+            loadImage("/icons/demandes_black.png")
+        });
+        buttonIcons.put(btnActes, new Image[]{
+            loadImage("/icons/actes.png"),
+            loadImage("/icons/actes_black.png")
+        });
+        buttonIcons.put(btnProfile, new Image[]{
+            loadImage("/icons/profile.png"),
+            loadImage("/icons/profile_black.png")
+        });
+        buttonIcons.put(btnStats, new Image[]{
+            loadImage("/icons/stats.png"),
+            loadImage("/icons/stats_black.png")
+        });
+        buttonIcons.put(btnUsers, new Image[]{
+            loadImage("/icons/users.png"),
+            loadImage("/icons/users_black.png")
+        });
+        buttonIcons.put(btnRapports, new Image[]{
+            loadImage("/icons/rapport.png"),
+            loadImage("/icons/rapport_black.png")
+        });
+        
+        
+    }
+
+    // Maps each button to its ImageView
+    private Map<Button, ImageView> buttonIconViews;
+
+    private void setupButtonIconViews() {
+        buttonIconViews = new HashMap<>();
+        buttonIconViews.put(btnDashboard, iconDashboard);
+        buttonIconViews.put(btnDemandes,  iconDemandes);
+        buttonIconViews.put(btnActes,     iconActes);
+        buttonIconViews.put(btnProfile,   iconProfile);
+        buttonIconViews.put(btnStats,     iconStats);
+        buttonIconViews.put(btnUsers,     iconUsers);
+        buttonIconViews.put(btnRapports,  iconRapports);
+    }
+
+    private Image loadImage(String path) {
+        try {
+            return new Image(getClass().getResourceAsStream(path));
+        } catch (Exception e) {
+            System.err.println("Image not found: " + path);
+            return null;
         }
     }
     
@@ -171,7 +251,7 @@ public class DashboardViewController extends BaseViewController {
         
         portalType.setText("Portail "+SessionManager.getInstance().getRole());
         
-        if(SessionManager.getInstance().getRole().equals(User.Role.Admin.toString())){
+        if(SessionManager.getInstance().getRole().equalsIgnoreCase("Admin")){
             
             btnStats.setVisible(true);
             btnStats.setManaged(true);
@@ -180,39 +260,47 @@ public class DashboardViewController extends BaseViewController {
             btnRapports.setVisible(true);
             btnRapports.setManaged(true);
             
-        }else if(SessionManager.getInstance().getRole().equals(User.Role.Agent.toString())){
-            
-            btnRapports.setVisible(true);
-            btnRapports.setManaged(true);
-            
         }
     }
 
     private void setActive(Button btn, String fxml, String title) {
-        // Lazy load: check cache first
         Parent view = getCached(fxml);
         if (view == null) {
-            view = loadView(fxml);         // load for the first time
-            setCached(fxml, view);         // save to cache
-            contentArea.getChildren().add(view); // add to StackPane once
+            view = loadView(fxml);
+            setCached(fxml, view);
+            contentArea.getChildren().add(view);
         }
 
-        // Hide all currently loaded views
         contentArea.getChildren().forEach(n -> {
             n.setVisible(false);
             n.setManaged(false);
         });
 
-        // Deactivate all buttons
-        for (Button b : new Button[]{btnDashboard, btnDemandes, btnActes, btnProfile, btnStats, btnUsers, btnRapports}) {
+        //Deactivate all buttons + reset their icons
+        Button[] allBtns = {btnDashboard, btnDemandes, btnActes,
+                            btnProfile, btnStats, btnUsers, btnRapports};
+
+        for (Button b : allBtns) {
             b.getStyleClass().remove("nav-btn-active");
+
+            // Set inactive icon
+            ImageView iconView = buttonIconViews.get(b);
+            Image[]   icons    = buttonIcons.get(b);
+            if (iconView != null && icons != null && icons[1] != null) {
+                iconView.setImage(icons[1]); // index 1 = inactive (black)
+            }
         }
 
-        // Show selected view
         view.setVisible(true);
         view.setManaged(true);
         btn.getStyleClass().add("nav-btn-active");
         pageTitle.setText(title);
+
+        ImageView activeIconView = buttonIconViews.get(btn);
+        Image[]   activeIcons    = buttonIcons.get(btn);
+        if (activeIconView != null && activeIcons != null && activeIcons[0] != null) {
+            activeIconView.setImage(activeIcons[0]); 
+        }
     }
 
     // ── Cache helpers ─────────────────────────────
@@ -239,14 +327,14 @@ public class DashboardViewController extends BaseViewController {
                 e.printStackTrace();
             }
         } 
-        else switch (currentUser.getRole()) {
-            case "Admin":
+        else switch (currentUser.getRole().toUpperCase()) {
+            case "ADMIN":
                 setActive(btnDashboard, "AdminView", "Dashboard");
                 // Pass data to UserView's controller
                 if (userViewController != null) {
                     userViewController.setWelcomeTitle(userFullName);
                 }   break;
-            case "Agent":
+            case "AGENT":
                 setActive(btnDashboard, "AgentView", "Dashboard");
                 // Pass data to UserView's controller
                 if (userViewController != null) {
@@ -270,11 +358,11 @@ public class DashboardViewController extends BaseViewController {
     }
     
     @FXML public void handleNavDemandes(){ 
-        switch (currentUser.getRole()) {
-            case "Admin":
-                setActive(btnDemandes,"DemandeView","Demandes Administratives"); 
+        switch (currentUser.getRole().toUpperCase()) {
+            case "ADMIN":
+                setActive(btnDemandes,"AgentDemandeView","Demandes Administratives"); 
                 break;
-            case "Agent":
+            case "AGENT":
                 setActive(btnDemandes,"AgentDemandeView","Demandes Administratives"); 
                 break;
             default:
@@ -283,11 +371,11 @@ public class DashboardViewController extends BaseViewController {
         }
     }
     @FXML public void handleNavActes(){ 
-        switch (currentUser.getRole()) {
-            case "Admin":
+        switch (currentUser.getRole().toUpperCase()) {
+            case "ADMIN":
                 setActive(btnActes,"AgentActeView","Actes Administratifs"); 
                 break;
-            case "Agent":
+            case "AGENT":
                 setActive(btnActes,"AgentActeView","Actes Administratifs"); 
                 break;
             default:

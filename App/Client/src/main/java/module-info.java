@@ -4,10 +4,12 @@ module com.campusdocs.client {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.base;
+    requires java.desktop;
     
     requires java.net.http;          
     requires com.google.gson;        
     requires java.sql;
+    requires itextpdf;
 
     opens com.campusdocs.client to javafx.fxml;
     opens com.campusdocs.client.controller to javafx.fxml;

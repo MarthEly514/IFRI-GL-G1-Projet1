@@ -17,7 +17,7 @@ import java.time.Duration;
 public class ApiClient {
 
     // ── Environment switch ────────────────────────────────────────────
-    private static final boolean DEV_MODE = true; 
+    private static final boolean DEV_MODE = false; 
 
     private static final String DEV_URL  = "https://campusdocs.free.beeceptor.com";
     private static final String PROD_URL = "http://localhost:8080/api"; 

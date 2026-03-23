@@ -27,7 +27,10 @@
             <!-- Logo -->
             <VBox styleClass="sidebar-logo-section" spacing="4">
                 <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Circle radius="18" styleClass="logo-circle"/>
+                    <VBox alignment="CENTER" >
+                        <ImageView fx:id="logoImage" fitHeight="20" preserveRatio="true"/>
+                    </VBox>
+                    
                     <VBox spacing="1">
                         <Label text="CampusDocs" styleClass="logo-title"/>
                         <Label text="Portail Role" styleClass="logo-subtitle" fx:id="portalType"/>
@@ -48,7 +51,14 @@
                 <Button fx:id="btnDashboard" styleClass="nav-btn, nav-btn-active" maxWidth="Infinity" onAction="#handleNavDashboard">
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label styleClass="nav-icon" text="&#9632;"/>
+                            <ImageView
+                                fx:id="iconDashboard"
+                                fitHeight="20"
+                                preserveRatio="true">
+                                <image>                             
+                                    <Image url="/icons/dashboard_black.png" />
+                                </image>
+                            </ImageView>
                             <Label text="Dashboard" styleClass="nav-label"/>
                         </HBox>
                     </graphic>
@@ -57,7 +67,14 @@
                 <Button fx:id="btnDemandes" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavDemandes">
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label styleClass="nav-icon" text="&#9993;"/>
+                            <ImageView
+                                fx:id="iconDemandes"
+                                fitHeight="20"
+                                preserveRatio="true">
+                                <image>                             
+                                    <Image url="/icons/demandes_black.png" />
+                                </image>
+                            </ImageView>
                             <Label text="Demandes" styleClass="nav-label"/>
                         </HBox>
                     </graphic>
@@ -66,7 +83,14 @@
                 <Button fx:id="btnActes" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavActes">
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label styleClass="nav-icon" text="&#9783;"/>
+                            <ImageView
+                                fx:id="iconActes"
+                                fitHeight="20"
+                                preserveRatio="true">
+                                <image>                             
+                                    <Image url="/icons/actes_black.png" />
+                                </image>
+                            </ImageView>
                             <Label text="Actes" styleClass="nav-label"/>
                         </HBox>
                     </graphic>
@@ -75,7 +99,14 @@
                 <Button fx:id="btnRapports" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavRapports">
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label styleClass="nav-icon" text="&#9783;"/>
+                            <ImageView
+                                fx:id="iconRapports"
+                                fitHeight="20"
+                                preserveRatio="true">
+                                <image>                             
+                                    <Image url="/icons/rapport_black.png" />
+                                </image>
+                            </ImageView>
                             <Label text="Rapports" styleClass="nav-label"/>
                         </HBox>
                     </graphic>
@@ -84,7 +115,14 @@
                 <Button fx:id="btnStats" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavStats">
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label styleClass="nav-icon" text="&#9783;"/>
+                            <ImageView
+                                fx:id="iconStats"
+                                fitHeight="20"
+                                preserveRatio="true">
+                                <image>                             
+                                    <Image url="/icons/stats_black.png" />
+                                </image>
+                            </ImageView>
                             <Label text="Statistiques" styleClass="nav-label"/>
                         </HBox>
                     </graphic>
@@ -93,7 +131,14 @@
                 <Button fx:id="btnUsers" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavUsers">
                     <graphic>
                         <HBox alignment="CENTER_LEFT" spacing="10">
-                            <Label styleClass="nav-icon" text="&#9783;"/>
+                            <ImageView
+                                fx:id="iconUsers"
+                                fitHeight="20"
+                                preserveRatio="true">
+                                <image>                             
+                                    <Image url="/icons/users_black.png" />
+                                </image>
+                            </ImageView>
                             <Label text="Gestion utilisateurs" styleClass="nav-label"/>
                         </HBox>
                     </graphic>
@@ -151,12 +196,20 @@
                 
                 <Region HBox.hgrow="ALWAYS"/>
                 
-                <HBox spacing="30" alignment="CENTER_LEFT"> 
-                    <Button >
-                        Mode
-                    </Button>
-                    <Button >
-                        Notif
+                <HBox spacing="25" alignment="CENTER_LEFT"> 
+                    <Button styleClass="nav-btn">
+                        <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <ImageView
+                                fx:id="iconMode"
+                                fitHeight="30"
+                                preserveRatio="true">
+                                <image>                             
+                                    <Image url="/icons/darkmode_black.png" />
+                                </image>
+                            </ImageView>
+                        </HBox>
+                        </graphic>
                     </Button>
                     <Button fx:id="topBarBtnProfile" styleClass="nav-btn" maxWidth="Infinity" onAction="#handleNavProfile">
                         <graphic>

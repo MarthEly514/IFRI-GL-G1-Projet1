@@ -70,18 +70,42 @@
                                     <Label fx:id="demandDate" text="—" styleClass="table-cell"/>
                                 </VBox>
                                 <VBox spacing="4" HBox.hgrow="ALWAYS">
-                                    <Label text="PAIEMENT" styleClass="field-label"/>
-                                    <Label fx:id="demandPayment" text="—" styleClass="table-cell"/>
+                                        <Label text="PAIEMENT" styleClass="field-label"/>
+                                        <Label fx:id="demandPayment" text="—" styleClass="table-cell"/>
+                                        <Button styleClass="btn-small-teal" onAction="#handleViewPayment" text="Voir preuve"/>
                                 </VBox>
                             </HBox>
+                            
+                            
                             <Separator/>
                             <VBox fx:id="demandFieldsContainer" spacing="10">
                                 <!-- Filled dynamically -->
                             </VBox>
                         </VBox>
                     </VBox>
+                    
+                    <!-- Pièces justificatives -->
+                    <VBox styleClass="admin-section" spacing="0">
+                        <HBox styleClass="admin-section-header" alignment="CENTER_LEFT">
+                            <Label text="Pièces justificatives" styleClass="admin-section-title" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="piecesCountBadge" text="0 fichier(s)" styleClass="badge-approved"/>
+                        </HBox>
+                        <VBox styleClass="admin-section-body" spacing="10">
 
-                    <!-- Document preview placeholder -->
+                            <!-- Empty state -->
+                            <VBox fx:id="piecesEmptyState" alignment="CENTER" spacing="6" styleClass="empty-state"
+                                  minHeight="80" visible="true" managed="true">
+                                <Label text="Aucune pièce justificative jointe." styleClass="empty-title"/>
+                                <Label text="L'usager n'a pas téléversé de documents." styleClass="empty-sub"/>
+                            </VBox>
+
+                            <!-- Pieces list — injected by controller -->
+                            <VBox fx:id="piecesContainer" spacing="8" visible="false" managed="false"/>
+
+                        </VBox>
+                    </VBox>
+
+                    <!-- Document preview -->
                     <VBox styleClass="admin-section" spacing="0">
                         <HBox styleClass="admin-section-header">
                             <Label text="Aperçu du document à générer" styleClass="admin-section-title"/>

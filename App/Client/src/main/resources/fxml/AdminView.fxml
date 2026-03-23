@@ -10,14 +10,9 @@
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.campusdocs.client.controller.AdminViewController"
     fitToWidth="true"
+    fx:id="rootPane"
     styleClass="admin-scroll"
     hbarPolicy="NEVER">
-
-    <stylesheets>
-        <URL value="@/styles/dashboardview.css"/>
-        <URL value="@/styles/adminshared.css"/>
-        <URL value="@/styles/globalStyles.css"/>
-    </stylesheets>
 
     <content>
         <VBox spacing="24" styleClass="admin-scroll-content" style="-fx-padding: 0;">
@@ -38,7 +33,6 @@
             <VBox spacing="12">
                 <HBox alignment="CENTER_LEFT">
                     <Label text="Utilisateurs" styleClass="section-title" HBox.hgrow="ALWAYS"/>
-                    <Button styleClass="btn-small-teal" onAction="#handleViewUsers" text="Gérer →"/>
                 </HBox>
                 <HBox spacing="16">
                     <VBox styleClass="stat-card, stat-card-accent" HBox.hgrow="ALWAYS" spacing="4">
@@ -67,13 +61,13 @@
                         <Label text="désactivés" styleClass="stat-sub"/>
                     </VBox>
                 </HBox>
+                <Button styleClass="btn-small-teal" onAction="#handleViewUsers" text="Gérer les utilisateurs"/>
             </VBox>
 
             <!-- ── Section: Demandes ── -->
             <VBox spacing="12">
                 <HBox alignment="CENTER_LEFT">
                     <Label text="Demandes administratives" styleClass="section-title" HBox.hgrow="ALWAYS"/>
-                    <Button styleClass="btn-small-teal" onAction="#handleViewDemandes" text="Voir tout →"/>
                 </HBox>
                 <HBox spacing="16">
                     <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
@@ -102,13 +96,13 @@
                         <Label text="sur total traité" styleClass="stat-sub"/>
                     </VBox>
                 </HBox>
+                <Button styleClass="btn-small-teal" onAction="#handleViewDemandes" text="Voir tout"/>
             </VBox>
 
             <!-- ── Section: Actes & Documents ── -->
             <VBox spacing="12">
                 <HBox alignment="CENTER_LEFT">
                     <Label text="Actes et documents" styleClass="section-title" HBox.hgrow="ALWAYS"/>
-                    <Button styleClass="btn-small-teal" onAction="#handleViewActes" text="Voir tout →"/>
                 </HBox>
                 <HBox spacing="16">
                     <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
@@ -127,6 +121,7 @@
                         <Label text="par les usagers" styleClass="stat-sub"/>
                     </VBox>
                 </HBox>
+                <Button styleClass="btn-small-teal" onAction="#handleViewActes" text="Voir tout"/>
             </VBox>
 
             <!-- ── Bottom row: Recent log + New accounts ── -->
@@ -134,9 +129,9 @@
 
                 <!-- Recent activity log -->
                 <VBox styleClass="admin-section" HBox.hgrow="ALWAYS" spacing="0">
-                    <HBox styleClass="admin-section-header" alignment="CENTER_LEFT">
-                        <Label text="Activité récente" styleClass="admin-section-title" HBox.hgrow="ALWAYS"/>
-                        <Button styleClass="btn-small-teal" onAction="#handleViewStats" text="Journal complet →"/>
+                    <HBox styleClass="admin-section-header" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" spacing="10"  >
+                        <Label text="Activité récente" styleClass="admin-section-title"/>
+                        <Button styleClass="btn-small-teal" onAction="#handleViewStats" text="Journal complet"/>
                     </HBox>
                     <VBox fx:id="recentLogsContainer" spacing="0" styleClass="admin-section-body">
                         <!-- Injected by controller -->

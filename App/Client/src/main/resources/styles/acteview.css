@@ -34,7 +34,7 @@
 ════════════════════════════════ */
 .search-bar {
     -fx-padding: 0 28 14 28;
-    -fx-background-color: #f4f6f8;
+    -fx-background-color: transparent;
 }
 
 .search-field-wrap {

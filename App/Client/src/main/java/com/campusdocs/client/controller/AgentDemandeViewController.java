@@ -6,8 +6,14 @@
 package com.campusdocs.client.controller;
  
 import com.campusdocs.client.App;
+import com.campusdocs.client.SessionManager;
+import com.campusdocs.client.api.ApiClient;
+import com.campusdocs.client.api.ApiException;
 import com.campusdocs.client.model.AgentDemande;
+import com.campusdocs.client.model.Demande;
+import com.campusdocs.client.service.DemandeService;
 import com.campusdocs.client.util.CssLoader;
+import com.campusdocs.client.util.TaskRunner;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,17 +47,17 @@ public class AgentDemandeViewController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         //loading css files
         CssLoader.loadCssFiles(rootPane, "agentdemanddetailsview", "adminshared","globalStyles");
+ 
+        // Sample data — replace with API call
+//        allDemandes = Arrays.asList(
+//            new AgentDemande("DEM-001", "Dupont Jean",   "jean@test.com", "Attestation de scolarité", "19 Mar 2026", "EN_ATTENTE"),
+//            new AgentDemande("DEM-002", "Koné Awa",      "awa@test.com",  "Relevé de notes S5",       "18 Mar 2026", "EN_ATTENTE"),
+//            new AgentDemande("DEM-003", "Mbaye Fatou",   "f@test.com",    "Certificat de résidence",  "17 Mar 2026", "APPROUVEE"),
+//            new AgentDemande("DEM-004", "Traoré Moussa", "m@test.com",    "Diplôme",                  "16 Mar 2026", "REJETEE"),
+//            new AgentDemande("DEM-005", "Sow Ibrahim",   "i@test.com",    "Attestation de scolarité", "15 Mar 2026", "EN_ATTENTE")
+//        );
 
         
-        // Sample data — replace with API call
-        allDemandes = Arrays.asList(
-            new AgentDemande("DEM-001", "Dupont Jean",   "jean@test.com", "Attestation de scolarité", "19 Mar 2026", "EN_ATTENTE"),
-            new AgentDemande("DEM-002", "Koné Awa",      "awa@test.com",  "Relevé de notes S5",       "18 Mar 2026", "EN_ATTENTE"),
-            new AgentDemande("DEM-003", "Mbaye Fatou",   "f@test.com",    "Certificat de résidence",  "17 Mar 2026", "APPROUVEE"),
-            new AgentDemande("DEM-004", "Traoré Moussa", "m@test.com",    "Diplôme",                  "16 Mar 2026", "REJETEE"),
-            new AgentDemande("DEM-005", "Sow Ibrahim",   "i@test.com",    "Attestation de scolarité", "15 Mar 2026", "EN_ATTENTE")
-        );
- 
         statusFilter.setItems(FXCollections.observableArrayList("Tous les statuts", "En attente", "Approuvées", "Rejetées"));
         statusFilter.getSelectionModel().selectFirst();
         typeFilter.setItems(FXCollections.observableArrayList("Tous les types", "Attestation de scolarité", "Relevé de notes", "Diplôme", "Certificat de résidence"));
@@ -60,8 +66,16 @@ public class AgentDemandeViewController implements Initializable {
         searchField.textProperty().addListener((obs, o, n) -> applyFilters());
         statusFilter.valueProperty().addListener((obs, o, n) -> applyFilters());
         typeFilter.valueProperty().addListener((obs, o, n) -> applyFilters());
+        
+        loadDemandes();
+        
+        
  
-        applyFilters();
+        if (allDemandes != null) {
+            applyFilters();
+        } else {
+            System.err.println("allDemandes is null - cannot apply filters");
+        }
     }
  
     private void applyFilters() {
@@ -115,15 +129,54 @@ public class AgentDemandeViewController implements Initializable {
         javafx.scene.control.Button btnVoir = new javafx.scene.control.Button("Voir");
         btnVoir.getStyleClass().add("btn-small");
         btnVoir.setOnAction(e -> openDetail(d));
+        btnVoir.setVisible(SessionManager.getInstance().getRole().equalsIgnoreCase("Agent"));
+
  
         row.getChildren().addAll(name, type, date, badge, spacer, btnVoir);
         return row;
     }
+    
+    private void loadDemandes() {
+        // Show loading state
+        demandeList.getChildren().clear();
+        emptyState.setVisible(false);
+        emptyState.setManaged(false);
+        Label loading = new Label("Chargement des demandes...");
+        loading.getStyleClass().add("table-cell-muted");
+        demandeList.getChildren().add(loading);
+
+        TaskRunner.run(
+            () -> DemandeService.getAllDemandes(),
+            demandes -> {
+                allDemandes = Arrays.asList(demandes);
+                applyFilters();
+            },
+            ex -> {
+                demandeList.getChildren().clear();
+                Label error = new Label("Erreur de chargement : " + ex.getMessage());
+                error.getStyleClass().add("badge-rejected");
+                demandeList.getChildren().add(error);
+                System.err.println("Demandes load error: " + ex.getMessage());
+            }
+        );
+    }
+    
  
     private void openDetail(AgentDemande demande) {
-        DashboardViewController dashboard = getDashboardController();
-        if (dashboard != null) {
-            dashboard.loadSubView("AgentDemandeDetailsView", "Demandes à traiter");
+        try {
+        FXMLLoader loader = new FXMLLoader(
+            App.class.getResource("/fxml/AgentDemandeDetailsView.fxml")
+        );
+        Parent view = loader.load();
+
+        AgentDemandeDetailsViewController ctrl = loader.getController();
+        ctrl.setDemande(demande); 
+
+        DashboardViewControllerRegistry.getInstance()
+            .loadRawView(view, "Demande — " + demande.getRef());
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

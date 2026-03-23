@@ -1,49 +1,57 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.campusdocs.client.model;
 
-/**
- *
- * @author ely
- */
-
 public class Demande {
- 
-    private final String documentType;
-    private final String date;
-    private final String status; // "EN_COURS", "DISPONIBLE", "REJETEE"
- 
-    public Demande(String documentType, String date, String status) {
-        this.documentType = documentType;
-        this.date         = date;
-        this.status       = status;
+
+    // Field names must match exactly what the server JSON sends
+    private String id;
+    private String type;           // matches server "type"
+    private String date;           // formatted date string for display
+    private String statut;         // matches server "statut"
+    private String dateTraitement;
+    private String commentaire;
+    private String userId;
+    private String ref;            // ex: DEM-2026-001
+
+    // ── No-arg constructor required by Gson ──
+    public Demande() {}
+
+    // ── Constructor for local creation (before API response) ──
+    public Demande(String type, String date, String statut) {
+        this.type   = type;
+        this.date   = date;
+        this.statut = statut;
     }
- 
-    public String getDocumentType() { return documentType; }
-    public String getDate()         { return date; }
-    public String getStatus()       { return status; }
- 
+
+    // ── Getters ──
+    public String getId()             { return id; }
+    public String getDocumentType()   { return type; }   // alias for UI compatibility
+    public String getType()           { return type; }
+    public String getDate()           { return date; }
+    public String getStatut()         { return statut; }
+    public String getDateTraitement() { return dateTraitement; }
+    public String getCommentaire()    { return commentaire; }
+    public String getUserId()         { return userId; }
+    public String getRef()            { return ref; }
+
+    // ── UI helpers ──
     public String getStatusLabel() {
-        switch (status) {
-            case "DISPONIBLE": 
-                return "Disponible";
-            case "REJETEE":
-                return "Rejetée";
-            default: 
-                return "En cours";
-        }
+        if ("APPROUVEE".equalsIgnoreCase(statut) || "DISPONIBLE".equalsIgnoreCase(statut))
+            return "Approuvée";
+        if ("REJETEE".equalsIgnoreCase(statut))
+            return "Rejetée";
+        return "En cours";
     }
- 
+
     public String getStatusStyleClass() {
-        switch (status) {
-            case "DISPONIBLE":
-                return "status-badge-done";
-            case "REJETEE":
-                return "status-badge-rejected";
-            default:
-                return "status-badge-pending";
-        }
+        if ("APPROUVEE".equalsIgnoreCase(statut) || "DISPONIBLE".equalsIgnoreCase(statut))
+            return "status-badge-done";
+        if ("REJETEE".equalsIgnoreCase(statut))
+            return "status-badge-rejected";
+        return "status-badge-pending";
+    }
+
+    @Override
+    public String toString() {
+        return "Demande{id=" + id + ", type='" + type + "', statut='" + statut + "'}";
     }
 }

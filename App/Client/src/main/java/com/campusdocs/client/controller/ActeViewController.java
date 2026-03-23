@@ -278,7 +278,7 @@ public class ActeViewController implements Initializable {
 
         // Add a retry button
         Button retry = new Button("Réessayer");
-        retry.getStyleClass().add("btn-small");
+        retry.getStyleClass().add("action-btn");
         retry.setOnAction(e -> {
             emptyState.setVisible(false);
             emptyState.setManaged(false);

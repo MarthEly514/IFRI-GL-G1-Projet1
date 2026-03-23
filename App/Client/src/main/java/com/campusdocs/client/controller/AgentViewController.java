@@ -66,58 +66,109 @@ public class AgentViewController implements Initializable {
         loadRecentDemandes();
         loadRecentActes();
     }
- 
+    
+    
+    
     private void loadStats() {
         TaskRunner.run(
             () -> StatsService.getStats(),
             stats -> {
+                if (stats == null) {
+                    showLoadError("Impossible de charger les statistiques.");
+                    return;
+                }
                 statTotalDemands.setText(String.valueOf(stats.totalDemandes));
                 statPendingDemands.setText(String.valueOf(stats.pendingDemandes));
                 statActes.setText(String.valueOf(stats.totalActes));
                 statApprovalRate.setText(stats.approvalRate + "%");
-                // Simulated today/month stats — replace with dedicated API fields
-                statTodayProcessed.setText("—");
-                statTodayRejected.setText("—");
+                statTodayProcessed.setText(String.valueOf(stats.approvedDemandes));
+                statTodayRejected.setText(String.valueOf(stats.rejectedDemandes));
                 statMonthApproved.setText(String.valueOf(stats.approvedDemandes));
             },
-            ex -> System.err.println("Agent stats error: " + ex.getMessage())
+            ex -> {
+                showLoadError("Erreur stats : " + ex.getMessage());
+                System.err.println("Stats error: " + ex.getMessage());
+            }
         );
     }
- 
+
     private void loadRecentDemandes() {
+        // Show loading placeholder
+        recentDemandesContainer.getChildren().clear();
+        recentDemandesContainer.getChildren().add(buildLoadingLabel("Chargement..."));
+
         TaskRunner.run(
             () -> DemandeService.getAllDemandes(),
             demandes -> {
                 recentDemandesContainer.getChildren().clear();
-                // Show only first 4
+
+                if (demandes == null || demandes.length == 0) {
+                    recentDemandesContainer.getChildren()
+                        .add(buildEmptyLabel("Aucune demande récente."));
+                    return;
+                }
+
+                // Show only the 4 most recent
                 int count = Math.min(demandes.length, 4);
                 for (int i = 0; i < count; i++) {
-                    recentDemandesContainer.getChildren().add(buildDemandeRow(demandes[i]));
-                }
-                if (demandes.length == 0) {
-                    recentDemandesContainer.getChildren().add(buildEmptyLabel("Aucune demande récente."));
+                    recentDemandesContainer.getChildren()
+                        .add(buildDemandeRow(demandes[i]));
                 }
             },
-            ex -> System.err.println("Recent demandes error: " + ex.getMessage())
+            ex -> {
+                recentDemandesContainer.getChildren().clear();
+                recentDemandesContainer.getChildren()
+                    .add(buildEmptyLabel("Erreur de chargement."));
+                System.err.println("Recent demandes error: " + ex.getMessage());
+            }
         );
     }
- 
+
     private void loadRecentActes() {
+        // Show loading placeholder
+        recentActesContainer.getChildren().clear();
+        recentActesContainer.getChildren().add(buildLoadingLabel("Chargement..."));
+
         TaskRunner.run(
             () -> ActeService.getAllActes(),
             actes -> {
                 recentActesContainer.getChildren().clear();
+
+                if (actes == null || actes.length == 0) {
+                    recentActesContainer.getChildren()
+                        .add(buildEmptyLabel("Aucun acte récent."));
+                    return;
+                }
+
                 int count = Math.min(actes.length, 4);
                 for (int i = 0; i < count; i++) {
-                    recentActesContainer.getChildren().add(buildActeRow(actes[i]));
-                }
-                if (actes.length == 0) {
-                    recentActesContainer.getChildren().add(buildEmptyLabel("Aucun acte récent."));
+                    recentActesContainer.getChildren()
+                        .add(buildActeRow(actes[i]));
                 }
             },
-            ex -> System.err.println("Recent actes error: " + ex.getMessage())
+            ex -> {
+                recentActesContainer.getChildren().clear();
+                recentActesContainer.getChildren()
+                    .add(buildEmptyLabel("Erreur de chargement."));
+                System.err.println("Recent actes error: " + ex.getMessage());
+            }
         );
     }
+
+    // ── Add these two helper methods ──────────────────────────────────────
+
+    private Label buildLoadingLabel(String text) {
+        Label l = new Label(text);
+        l.getStyleClass().add("activity-sub");
+        l.setStyle("-fx-opacity: 0.6;");
+        return l;
+    }
+
+    private void showLoadError(String message) {
+        System.err.println(message);
+        // Optionally show a toast if you have one in AgentView
+    }
+
  
     private HBox buildDemandeRow(AgentDemande d) {
         HBox row = new HBox(12);
@@ -174,13 +225,13 @@ public class AgentViewController implements Initializable {
     @FXML
     private void handleViewAllDemandes() {
         DashboardViewControllerRegistry.getInstance()
-            .loadSubView("AgentDemandeView", "Gestion des demandes");
+            .handleNavDemandes();
     }
  
     @FXML
     private void handleViewAllActes() {
         DashboardViewControllerRegistry.getInstance()
-            .loadSubView("AgentActView", "Actes générés");
+            .handleNavActes();
     }
     
 }

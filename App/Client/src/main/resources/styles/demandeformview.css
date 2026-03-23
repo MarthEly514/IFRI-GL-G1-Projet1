@@ -352,9 +352,8 @@
    DOWNLOAD BUTTON
 ════════════════════════════════ */
 .download-btn {
-    -fx-background-color: #3cc3bd30;
-    -fx-border-color: #3cc3bd;
-    -fx-border-width: 2;
+    -fx-background-color: #3cc3bd;
+    -fx-border-color: transparent;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
     -fx-padding: 14;
@@ -362,18 +361,13 @@
 }
 
 .download-btn:hover {
-    -fx-background-color: #3cc3bd;
-}
-
-.download-icon {
-    -fx-font-size: 18px;
-    -fx-text-fill: #3cc3bd;
+    -fx-background-color: #25a87f;
 }
 
 .download-label {
     -fx-font-size: 13px;
     -fx-font-weight: bold;
-    -fx-text-fill: #3cc3bd;
+    -fx-text-fill: white;
 }
 
 /* ═══════════════════════════════

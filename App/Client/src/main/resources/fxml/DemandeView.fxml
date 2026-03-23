@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.image.*?>
 
 <VBox
     xmlns="http://javafx.com/javafx"
@@ -24,8 +25,17 @@
                     <Button fx:id="btnFaireDemande" styleClass="new-demand-btn" onAction="#handleFaireDemande" maxWidth="Infinity">
                         <graphic>
                             <HBox alignment="CENTER" spacing="12">
-                                <Circle radius="12" styleClass="plus-circle"/>
-                                <Label text="+" styleClass="plus-icon"/>
+                                <StackPane alignment="CENTER" >
+                                    <Circle radius="12" styleClass="plus-circle"/>
+                                    <ImageView
+                                        fx:id="iconDemandes"
+                                        fitHeight="20"
+                                        preserveRatio="true">
+                                        <image>                             
+                                            <Image url="/icons/plus_light.png" />
+                                        </image>
+                                    </ImageView>
+                                </StackPane>  
                                 <Label text="Faire une demande" styleClass="new-demand-label"/>
                             </HBox>
                         </graphic>

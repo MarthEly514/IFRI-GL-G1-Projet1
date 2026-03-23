@@ -54,36 +54,44 @@ public class AuthService {
 
     // ── Login ────────────────────────────────────────────────────────
 
+    public static void login(String email, String password) throws ApiException {
+        LoginRequest body = new LoginRequest(email, password);
+        LoginResponse response = ApiClient.post("/auth/login", body, LoginResponse.class);
+
+        SessionManager session = SessionManager.getInstance();
+        session.setToken(response.token);
+        session.setFullName(response.fullName);
+        session.setEmail(response.email);
+        session.setRole(response.role);
+        session.setUserId(response.userId);
+    }
+    
+    
+    //TESTING_ONLY
 //    public static void login(String email, String password) throws ApiException {
 //        LoginRequest body = new LoginRequest(email, password);
 //        LoginResponse response = ApiClient.post("/auth/login", body, LoginResponse.class);
 //
+        //General + ADMIN
 //        SessionManager session = SessionManager.getInstance();
-//        session.setToken(response.token);
-//        session.setFirstName(response.firstName);
-//        session.setLastName(response.lastName);
-////  removed  session.setFullName(response.fullName);
-//        session.setFullName(response.firstName+" "+response.lastName);
-//        session.setEmail(response.email);response.lastName
-//        session.setRole(response.role);
-//        session.setUserId(response.userId);
+//        session.setToken("token");
+//        session.setFullName("Allana Green");
+//        session.setEmail(email);
+//        session.setRole("Admin");
+//        session.setUserId("0");
+//        
+//        //USAGER
+//        if(session.getRole().equalsIgnoreCase("Usager")){
+//            session.setFiliere("Intelligence Artificielle");
+//            session.setMatricule("10080225");
+//            session.setNiveau("Licence 3");
+//        }
+//        
+//        //AGENT 
+//        if(session.getRole().equalsIgnoreCase("Agent")){
+//            session.setService("Secretaire adjoint");
+//        }    
 //    }
-    
-    
-    //TESTING_ONLY
-    public static void login(String email, String password) throws ApiException {
-//        LoginRequest body = new LoginRequest(email, password);
-//        LoginResponse response = ApiClient.post("/auth/login", body, LoginResponse.class);
-
-        SessionManager session = SessionManager.getInstance();
-        session.setToken("token");
-        session.setFirstName("Logan");
-        session.setLastName("Sen");
-        session.setFullName(session.getFirstName()+" "+session.getLastName());
-        session.setEmail(email);
-        session.setRole("Admin");
-        session.setUserId("0");
-    }
 
     // ── Signup ───────────────────────────────────────────────────────
 

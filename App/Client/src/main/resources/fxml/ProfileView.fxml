@@ -7,8 +7,7 @@
 <?import javafx.geometry.Insets?>
 
 <VBox
-    xmlns="http://javafx.com/javafx"
-    xmlns:fx="http://javafx.com/fxml/1"
+    xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx"
     fx:controller="com.campusdocs.client.controller.ProfileViewController"
     styleClass="profile-root"
     fx:id="rootPane"
@@ -180,7 +179,7 @@
                 ═══════════════════════════════ -->
                 <HBox styleClass="profile-footer" alignment="CENTER_RIGHT" spacing="12">
                     <Button styleClass="btn-secondary" onAction="#handleCancel" text="Annuler"/>
-                    <Button styleClass="action-btn" onAction="#handleSave" text="  Enregistrer les modifications"/>
+                    <Button fx:id="btnSave"  styleClass="action-btn" onAction="#handleSave" text="  Enregistrer les modifications"/>
                 </HBox>
 
             </VBox>

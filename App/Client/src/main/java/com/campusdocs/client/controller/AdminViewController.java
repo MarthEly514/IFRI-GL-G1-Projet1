@@ -29,10 +29,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import javafx.scene.control.ScrollPane;
  
 public class AdminViewController implements Initializable {
  
-    @FXML private VBox rootPane;
+    @FXML private ScrollPane rootPane;
     
     @FXML private Label welcomeTitle;
     @FXML private Label currentDateLabel;
@@ -179,7 +180,7 @@ public class AdminViewController implements Initializable {
         StackPane avatar = new StackPane();
         Circle c = new Circle(16);
         c.getStyleClass().add("stat-card-accent");
-        String initials = Arrays.stream(u.getName().split(" "))
+        String initials = Arrays.stream(u.getNom().split(" "))
             .filter(p -> !p.isEmpty())
             .map(p -> String.valueOf(p.charAt(0)))
             .collect(Collectors.joining())
@@ -191,13 +192,13 @@ public class AdminViewController implements Initializable {
  
         VBox info = new VBox(2);
         HBox.setHgrow(info, Priority.ALWAYS);
-        Label name = new Label(u.getName());
+        Label name = new Label(u.getNom());
         name.getStyleClass().add("table-cell");
         Label email = new Label(u.getEmail());
         email.getStyleClass().add("table-cell-muted");
         info.getChildren().addAll(name, email);
  
-        Label badge = new Label(u.getRole().toString());
+        Label badge = new Label(u.getRole());
         badge.getStyleClass().add(u.getRoleBadgeClass());
  
         row.getChildren().addAll(avatar, info, badge);
@@ -215,30 +216,30 @@ public class AdminViewController implements Initializable {
     @FXML
     private void handleViewUsers() {
         DashboardViewControllerRegistry.getInstance()
-            .loadSubView("UserManagementView", "Gestion des utilisateurs");
+            .handleNavUsers();
     }
  
     @FXML
     private void handleViewDemandes() {
         DashboardViewControllerRegistry.getInstance()
-            .loadSubView("AgentDemandeView", "Gestion des demandes");
+            .handleNavDemandes();
     }
  
     @FXML
     private void handleViewActes() {
         DashboardViewControllerRegistry.getInstance()
-            .loadSubView("AgentActView", "Actes générés");
+            .handleNavActes();
     }
  
     @FXML
     private void handleViewStats() {
         DashboardViewControllerRegistry.getInstance()
-            .loadSubView("StatsView", "Statistiques système");
+            .handleNavStats();
     }
  
     @FXML
     private void handleCreateAgent() {
         DashboardViewControllerRegistry.getInstance()
-            .loadSubView("UserManagementView", "Gestion des utilisateurs");
+            .loadSubView("UsersManagementView", "Gestion des utilisateurs");
     }
 }

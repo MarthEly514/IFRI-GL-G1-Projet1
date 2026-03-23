@@ -6,8 +6,11 @@
 package com.campusdocs.client.controller;
 
 import com.campusdocs.client.SessionManager;
+import com.campusdocs.client.api.ApiException;
 import com.campusdocs.client.model.User;
+import com.campusdocs.client.service.UserService;
 import com.campusdocs.client.util.CssLoader;
+import com.campusdocs.client.util.TaskRunner;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
@@ -26,6 +29,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 
 public class ProfileViewController implements Initializable {
@@ -56,6 +60,9 @@ public class ProfileViewController implements Initializable {
     @FXML private PasswordField newPwdField;
     @FXML private PasswordField confirmPwdField;
     @FXML private Label pwdErrorLabel;
+    
+    // Buttons
+    @FXML private Button btnSave;
 
     // ── Toast ──
     @FXML private StackPane toastContainer;
@@ -87,18 +94,18 @@ public class ProfileViewController implements Initializable {
         avatarInitials.setText(initials);
 
         // Academic info — replace with real session fields when available
-        matriculeField.setText("20210001");
-        filiereField.setText("Génie Logiciel");
-        niveauField.setText("Licence 3");
-        anneeField.setText("2025 - 2026");
+        matriculeField.setText(session.getMatricule());
+        filiereField.setText(session.getFiliere());
+        niveauField.setText(session.getNiveau());
+        anneeField.setText(session.getAnnee());
 
         // Role
-        String role = session.getRole() != null ? session.getRole().toString() : "Étudiant";
+        String role = session.getRole() != null ? session.getRole() : "Étudiant";
         roleLabel.setText(role);
         applyRoleBadge(role);
         
         //hide academic level if role is not usager/etudiant
-        boolean isUsager = session.getRole().equals("Usager");
+        boolean isUsager = !session.getRole().equalsIgnoreCase("ADMIN") && !session.getRole().equalsIgnoreCase("AGENT");
         academicLevelRow1.setVisible(isUsager);
         academicLevelRow1.setManaged(isUsager);
         academicLevelRow2.setVisible(isUsager);
@@ -186,7 +193,7 @@ public class ProfileViewController implements Initializable {
         String newPwd  = newPwdField.getText().trim();
         String confirm = confirmPwdField.getText().trim();
 
-        // Validation
+        // Client-side validation first
         if (current.isEmpty() || newPwd.isEmpty() || confirm.isEmpty()) {
             showError("Veuillez remplir tous les champs.");
             return;
@@ -200,11 +207,34 @@ public class ProfileViewController implements Initializable {
             return;
         }
 
-        // TODO: call API to change password
-        passwordForm.setVisible(false);
-        passwordForm.setManaged(false);
-        clearPasswordForm();
-        showToast("Mot de passe mis à jour avec succès !");
+        UserService.ChangePasswordRequest request =
+            new UserService.ChangePasswordRequest(current, newPwd);
+
+        TaskRunner.run(
+            () -> { UserService.changePassword(request); return null; },
+
+            ignored -> {
+                passwordForm.setVisible(false);
+                passwordForm.setManaged(false);
+                clearPasswordForm();
+                showToast("Mot de passe mis à jour avec succès !");
+            },
+
+            ex -> {
+                if (ex instanceof ApiException) {
+                    ApiException apiEx = (ApiException) ex;
+                    if (apiEx.isUnauthorized()) {
+                        showError("Mot de passe actuel incorrect.");
+                    } else if (apiEx.isNetworkError()) {
+                        showError("Impossible de joindre le serveur.");
+                    } else {
+                        showError(apiEx.getMessage());
+                    }
+                } else {
+                    showError("Une erreur inattendue s'est produite.");
+                }
+            }
+        );
     }
 
     private void showError(String message) {
@@ -225,6 +255,7 @@ public class ProfileViewController implements Initializable {
     // SAVE / CANCEL
     // ─────────────────────────────────────────
     @FXML
+    
     private void handleSave() {
         String firstName = firstNameField.getText().trim();
         String lastName  = lastNameField.getText().trim();
@@ -234,23 +265,61 @@ public class ProfileViewController implements Initializable {
             showToast("Prénom et nom sont obligatoires.");
             return;
         }
-
-        // Update session
-        SessionManager.getInstance().setFullName(firstName + " " + lastName);
-        SessionManager.getInstance().setEmail(email);
-
-        // Update avatar initials
-        String initials = String.valueOf(firstName.charAt(0)).toUpperCase()
-                        + String.valueOf(lastName.charAt(0)).toUpperCase();
-        avatarInitials.setText(initials);
-
-        // Update topbar labels in dashboard
-        DashboardViewController dashboard = DashboardViewControllerRegistry.getInstance();
-        if (dashboard != null) {
-            dashboard.refreshUserLabels();
+        if (!email.contains("@")) {
+            showToast("Adresse email invalide.");
+            return;
         }
 
-        showToast("Profil mis à jour avec succès !");
+        // Disable button while saving
+        btnSave.setText("Enrégistrement en cours..");
+        btnSave.setDisable(true);
+
+        UserService.UpdateProfileRequest request =
+            new UserService.UpdateProfileRequest(firstName, lastName, email);
+
+        TaskRunner.run(
+            () -> { UserService.updateProfile(request); return null; },
+
+            ignored -> {
+                // ✅ Update session with new values
+                SessionManager.getInstance().setFullName(firstName + " " + lastName);
+                SessionManager.getInstance().setEmail(email);
+
+                // ✅ Update avatar initials
+                String initials = String.valueOf(firstName.charAt(0)).toUpperCase()
+                                + String.valueOf(lastName.charAt(0)).toUpperCase();
+                avatarInitials.setText(initials);
+
+                // ✅ Refresh topbar in dashboard
+                DashboardViewController dashboard =
+                    DashboardViewControllerRegistry.getInstance();
+                if (dashboard != null) {
+                    dashboard.refreshUserLabels();
+                }
+                btnSave.setDisable(false);
+                btnSave.setText("Enregistrer les modifications");
+
+                showToast("Profil mis à jour avec succès !");
+            },
+
+            ex -> {
+                if (ex instanceof ApiException) {
+                    ApiException apiEx = (ApiException) ex;
+                    if (apiEx.getStatusCode() == 409) {
+                        showToast("Cette adresse email est déjà utilisée.");
+                    } else if (apiEx.isNetworkError()) {
+                        showToast("Impossible de joindre le serveur.");
+                    } else {
+                        showToast("Erreur : " + apiEx.getMessage());
+                    }
+                } else {
+                    showToast("Une erreur inattendue s'est produite.");
+                }
+                
+                btnSave.setDisable(false);
+                btnSave.setText("Enregistrer les modifications");
+            }
+        );
     }
 
     @FXML

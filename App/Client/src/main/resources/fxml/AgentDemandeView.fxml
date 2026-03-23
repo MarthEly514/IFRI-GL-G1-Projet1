@@ -13,7 +13,7 @@
 
     <VBox styleClass="page-header" spacing="4">
         <Label text="Gestion des demandes" styleClass="page-title"/>
-        <Label text="Examinez et traitez les demandes soumises par les étudiants." styleClass="page-subtitle"/>
+        <Label text="Examinez les demandes soumises par les étudiants." styleClass="page-subtitle"/>
     </VBox>
 
     <!-- Search + filter -->
@@ -49,7 +49,9 @@
                         <Label text="" styleClass="table-header-label" HBox.hgrow="ALWAYS"/>
                     </HBox>
 
-                    <VBox fx:id="demandeList" spacing="0"/>
+                    <VBox fx:id="demandeList" minHeight="50" alignment="CENTER"  spacing="0"/>
+                     
+                    <!--To fill in with the controller-->
 
                     <VBox fx:id="emptyState" styleClass="empty-state" alignment="CENTER" spacing="8" visible="false" managed="false">
                         <Label text="Aucune demande trouvée." styleClass="empty-title"/>

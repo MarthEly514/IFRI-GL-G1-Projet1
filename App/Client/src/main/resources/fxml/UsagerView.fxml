@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
 <?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
 
-
-<!-- Dashboard View (default) -->
 <VBox 
     xmlns="http://javafx.com/javafx"
     xmlns:fx="http://javafx.com/fxml/1"
@@ -22,10 +16,10 @@
     <!-- Welcome banner -->
     <HBox styleClass="welcome-banner" alignment="CENTER_LEFT" spacing="0">
         <VBox spacing="6" HBox.hgrow="ALWAYS">
-            <Label text="Bonjour, Usager !" styleClass="welcome-title" fx:id="welcomeTitle"/>
+            <Label fx:id="welcomeTitle" text="Bonjour !" styleClass="welcome-title"/>
             <Label text="Bienvenue sur votre portail CampusDocs." styleClass="welcome-sub"/>
         </VBox>
-        <ImageView fx:id="bannerImage" fitHeight="100" preserveRatio="true"/>
+        <ImageView fx:id="bannerImage" fitHeight="150" preserveRatio="true"/>
     </HBox>
 
     <!-- Stats row -->
@@ -34,19 +28,19 @@
         <HBox spacing="16">
             <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
                 <Label text="DEMANDES EN COURS" styleClass="stat-label"/>
-                <Label text="3" styleClass="stat-value"/>
+                <Label fx:id="statDemandesEnCours" text="—" styleClass="stat-value"/>
             </VBox>
             <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
                 <Label text="ACTES DISPONIBLES" styleClass="stat-label"/>
-                <Label text="7" styleClass="stat-value"/>
+                <Label fx:id="statActesDisponibles" text="—" styleClass="stat-value"/>
             </VBox>
             <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="4">
-                <Label text="DOCUMENTS TÉLÉCHARGÉS" styleClass="stat-label"/>
-                <Label text="12" styleClass="stat-value"/>
+                <Label text="DEMANDES TOTALES" styleClass="stat-label"/>
+                <Label fx:id="statDemandesTotales" text="—" styleClass="stat-value"/>
             </VBox>
             <VBox styleClass="stat-card, stat-card-accent" HBox.hgrow="ALWAYS" spacing="4">
-                <Label text="NOTIFICATIONS" styleClass="stat-label"/>
-                <Label text="2" styleClass="stat-value-accent"/>
+                <Label text="ACTES TOTAUX" styleClass="stat-label"/>
+                <Label fx:id="statActesTotaux" text="—" styleClass="stat-value-accent"/>
             </VBox>
         </HBox>
     </VBox>
@@ -54,31 +48,8 @@
     <!-- Recent activity -->
     <VBox spacing="12">
         <Label text="Activité récente" styleClass="section-title"/>
-        <VBox spacing="8">
-            <HBox styleClass="activity-row" alignment="CENTER_LEFT" spacing="12">
-                <Circle radius="6" styleClass="activity-dot-green"/>
-                <VBox HBox.hgrow="ALWAYS" spacing="2">
-                    <Label text="Attestation de scolarité" styleClass="activity-name"/>
-                    <Label text="Disponible au téléchargement" styleClass="activity-sub"/>
-                </VBox>
-                <Label text="Aujourd'hui" styleClass="activity-date"/>
-            </HBox>
-            <HBox styleClass="activity-row" alignment="CENTER_LEFT" spacing="12">
-                <Circle radius="6" styleClass="activity-dot-amber"/>
-                <VBox HBox.hgrow="ALWAYS" spacing="2">
-                    <Label text="Relevé de notes S5" styleClass="activity-name"/>
-                    <Label text="En cours de traitement" styleClass="activity-sub"/>
-                </VBox>
-                <Label text="15 Mars" styleClass="activity-date"/>
-            </HBox>
-            <HBox styleClass="activity-row" alignment="CENTER_LEFT" spacing="12">
-                <Circle radius="6" styleClass="activity-dot-teal"/>
-                <VBox HBox.hgrow="ALWAYS" spacing="2">
-                    <Label text="Demande d'inscription" styleClass="activity-name"/>
-                    <Label text="Soumise avec succès" styleClass="activity-sub"/>
-                </VBox>
-                <Label text="10 Mars" styleClass="activity-date"/>
-            </HBox>
+        <VBox fx:id="activityContainer" spacing="8">
+            <!-- Injected by controller -->
         </VBox>
     </VBox>
 

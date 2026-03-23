@@ -37,7 +37,7 @@
                         <Label text="" styleClass="table-header-label" HBox.hgrow="ALWAYS"/>
                     </HBox>
 
-                    <VBox fx:id="actList" spacing="0"/>
+                    <VBox fx:id="actList" minHeight="50" alignment="CENTER" spacing="0"/>
 
                     <VBox fx:id="emptyState" styleClass="empty-state" alignment="CENTER" spacing="8" visible="false" managed="false">
                         <Label text="Aucun acte généré pour le moment." styleClass="empty-title"/>

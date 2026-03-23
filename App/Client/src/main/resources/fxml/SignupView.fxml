@@ -69,13 +69,13 @@
                         AnchorPane.leftAnchor="0"
                     >
                         <ImageView
-                            fitWidth="220"
-                            fitHeight="160"
+                            fx:id="leftPaneImage" 
+                            fitHeight="300"
                             preserveRatio="true"
                             
                         >
-                            <image>
-                                <Image url="@/images/girl_holding_document.png" />
+                            <image>                             
+                                <Image url="/images/girl_holding_document.png" />
                             </image>
                         </ImageView>
                         

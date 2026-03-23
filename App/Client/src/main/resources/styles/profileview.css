@@ -97,7 +97,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
    UPLOAD / REMOVE BUTTONS
 ════════════════════════════════ */
 .upload-btn {
-    -fx-background-color: #2cc295;
+    -fx-background-color: #3cc3bd;
     -fx-text-fill: #ffffff;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
@@ -108,7 +108,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 }
 
 .upload-btn:hover {
-    -fx-background-color: #25a87f;
+    -fx-background-color: #2ea09a;
 }
 
 .remove-btn {
@@ -261,7 +261,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
    BUTTONS
 ════════════════════════════════ */
 .action-btn {
-    -fx-background-color: #2cc295;
+    -fx-background-color: #3cc3bd;
     -fx-text-fill: #ffffff;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
@@ -272,7 +272,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 }
 
 .action-btn:hover {
-    -fx-background-color: #25a87f;
+    -fx-background-color: #2ea09a;
 }
 
 .btn-secondary {

@@ -8,8 +8,13 @@ import com.campusdocs.client.api.ApiClient;
 import com.campusdocs.client.api.ApiException;
 import com.campusdocs.client.model.AgentDemande;
 import com.campusdocs.client.model.Demande;
+import com.campusdocs.client.model.Piece;
  
 public class DemandeService {
+    
+    public static Piece[] getPieces(String demandeId) throws ApiException {
+        return ApiClient.get("/demandes/" + demandeId + "/pieces", Piece[].class);
+    }
  
     // Student: get own demandes
     public static Demande[] getMyDemandes() throws ApiException {

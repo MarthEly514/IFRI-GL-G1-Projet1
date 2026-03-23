@@ -5,7 +5,9 @@
 package com.campusdocs.client.controller;
  
 import com.campusdocs.client.model.User;
+import com.campusdocs.client.service.UserService;
 import com.campusdocs.client.util.CssLoader;
+import com.campusdocs.client.util.TaskRunner;
 import javafx.animation.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -38,26 +40,28 @@ public class UsersManagementViewController implements Initializable {
         //load css
         CssLoader.loadCssFiles(rootPane, "adminshared", "globalStyles", "usersmanagementview");
         
-        allUsers = Arrays.asList(
-            new User("U001", "Dupont Jean",    "jean@test.com",    User.Role.Usager, "Actif"),
-            new User("U002", "Koné Awa",       "awa@test.com",     User.Role.Usager, "Actif"),
-            new User("U003", "Agent Martin",   "martin@camp.com",  User.Role.Agent,    "Actif"),
-            new User("U004", "Agent Dubois",   "dubois@camp.com",  User.Role.Agent,    "Inactif"),
-            new User("U005", "Admin Root",     "admin@camp.com",   User.Role.Admin,    "Actif"),
-            new User("U006", "Mbaye Fatou",    "fatou@test.com",   User.Role.Usager, "Actif"),
-            new User("U007", "Traoré Moussa",  "moussa@test.com",  User.Role.Usager, "Inactif")
-        );
- 
-        roleFilter.setItems(FXCollections.observableArrayList("Tous les rôles", "Étudiant", "Agent", "Admin"));
+//        allUsers = Arrays.asList(
+//            new User("U001", "Dupont Jean",    "jean@test.com",    "Usager", "Actif"),
+//            new User("U002", "Koné Awa",       "awa@test.com",     "Usager", "Actif"),
+//            new User("U003", "Agent Martin",   "martin@camp.com",  "Usager",    "Actif"),
+//            new User("U004", "Agent Dubois",   "dubois@camp.com",  "Usager",    "Inactif"),
+//            new User("U005", "Admin Root",     "admin@camp.com",   "Admin",    "Actif"),
+//            new User("U006", "Mbaye Fatou",    "fatou@test.com",   "Agent", "Actif"),
+//            new User("U007", "Traoré Moussa",  "moussa@test.com",  "Agent", "Inactif")
+//        );
+
+        roleFilter.setItems(FXCollections.observableArrayList(
+            "Tous les rôles", "Étudiant", "Agent", "Admin"));
         roleFilter.getSelectionModel().selectFirst();
-        statusFilter.setItems(FXCollections.observableArrayList("Tous les statuts", "Actif", "Inactif"));
+        statusFilter.setItems(FXCollections.observableArrayList(
+            "Tous les statuts", "Actif", "Inactif"));
         statusFilter.getSelectionModel().selectFirst();
- 
+
         searchField.textProperty().addListener((obs, o, n) -> applyFilters());
         roleFilter.valueProperty().addListener((obs, o, n) -> applyFilters());
         statusFilter.valueProperty().addListener((obs, o, n) -> applyFilters());
- 
-        applyFilters();
+
+        loadUsers();
     }
  
     private void applyFilters() {
@@ -66,8 +70,8 @@ public class UsersManagementViewController implements Initializable {
         String status = statusFilter.getValue();
  
         List<User> filtered = allUsers.stream().filter(u -> {
-            boolean mq = u.getName().toLowerCase().contains(q) || u.getEmail().toLowerCase().contains(q);
-            boolean mr = role == null || role.equals("Tous les rôles") || u.getRole().toString().equals(role);
+            boolean mq = u.getNom().toLowerCase().contains(q) || u.getEmail().toLowerCase().contains(q);
+            boolean mr = role == null || role.equals("Tous les rôles") || u.getRole().equals(role);
             boolean ms = status == null || status.equals("Tous les statuts") || u.getStatus().equals(status);
             return mq && mr && ms;
         }).collect(Collectors.toList());
@@ -80,6 +84,28 @@ public class UsersManagementViewController implements Initializable {
             for (User u : filtered) userList.getChildren().add(buildUserRow(u));
         }
     }
+    
+    private void loadUsers() {
+    // Show loading state while fetching
+    userList.getChildren().clear();
+    Label loading = new Label("Chargement des utilisateurs...");
+    loading.getStyleClass().add("table-cell-muted");
+    userList.getChildren().add(loading);
+
+    TaskRunner.run(
+        () -> UserService.getAllUsers(),
+        users -> {
+            allUsers = Arrays.asList(users);
+            applyFilters();
+        },
+        ex -> {
+            userList.getChildren().clear();
+            Label error = new Label("Erreur : " + ex.getMessage());
+            error.getStyleClass().add("badge-rejected");
+            userList.getChildren().add(error);
+        }
+    );
+}
  
     private HBox buildUserRow(User u) {
         HBox row = new HBox(0);
@@ -92,17 +118,17 @@ public class UsersManagementViewController implements Initializable {
         nameCell.setPrefWidth(230);
         StackPane avatar = new StackPane();
         Circle c = new Circle(16); c.getStyleClass().add("stat-card-accent");
-        String initials = Arrays.stream(u.getName().split(" ")).map(p -> p.isEmpty() ? "" : String.valueOf(p.charAt(0))).collect(Collectors.joining()).toUpperCase();
+        String initials = Arrays.stream(u.getNom().split(" ")).map(p -> p.isEmpty() ? "" : String.valueOf(p.charAt(0))).collect(Collectors.joining()).toUpperCase();
         if (initials.length() > 2) initials = initials.substring(0, 2);
         Label ini = new Label(initials); ini.setStyle("-fx-font-size:11px;-fx-font-weight:bold;-fx-text-fill:white;");
         avatar.getChildren().addAll(c, ini);
         VBox nameBox = new VBox(2);
-        Label nm = new Label(u.getName()); nm.getStyleClass().add("table-cell");
+        Label nm = new Label(u.getNom()); nm.getStyleClass().add("table-cell");
         Label em = new Label(u.getEmail()); em.getStyleClass().add("table-cell-muted");
         nameBox.getChildren().addAll(nm, em);
         nameCell.getChildren().addAll(avatar, nameBox);
  
-        Label roleBadge = new Label(u.getRole().toString()); roleBadge.getStyleClass().add(u.getRoleBadgeClass()); roleBadge.setPrefWidth(110);
+        Label roleBadge = new Label(u.getRole()); roleBadge.getStyleClass().add(u.getRoleBadgeClass()); roleBadge.setPrefWidth(110);
         Label statusBadge = new Label(u.getStatus()); statusBadge.getStyleClass().add(u.getStatusBadgeClass()); statusBadge.setPrefWidth(110);
  
         Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -111,13 +137,13 @@ public class UsersManagementViewController implements Initializable {
         HBox actions = new HBox(6);
         actions.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
  
-        if (!u.getRole().toString().equals("Admin")) {
+        if (!u.getRole().equals("Admin")) {
             Button btnToggle = new Button(u.getStatus().equals("Actif") ? "Désactiver" : "Activer");
             btnToggle.getStyleClass().add(u.getStatus().equals("Actif") ? "btn-warn" : "btn-small");
             btnToggle.setOnAction(e -> toggleUserStatus(u, btnToggle));
             actions.getChildren().add(btnToggle);
  
-            if (!u.getRole().toString().equals("Étudiant")) {
+            if (!u.getRole().equals("Usager")) {
                 Button btnDelete = new Button("Supprimer");
                 btnDelete.getStyleClass().add("btn-danger");
                 btnDelete.setOnAction(e -> deleteUser(u));
@@ -130,19 +156,34 @@ public class UsersManagementViewController implements Initializable {
     }
  
     private void toggleUserStatus(User u, Button btn) {
-        // API call to toggle status
-        boolean isActive = u.getStatus().equals("Actif");
-        u.setStatus(isActive ? "Inactif" : "Actif");
-        btn.setText(isActive ? "Activer" : "Désactiver");
-        showToast("Statut de " + u.getName() + " mis à jour.");
-        applyFilters();
+        String newStatus = u.isActif() ? "INACTIF" : "ACTIF";
+
+        TaskRunner.run(
+            () -> { UserService.toggleUserStatus(u.getId(), !u.isActif()); return null; },
+            ignored -> {
+                u.toggleStatus();
+                btn.setText(u.isActif() ? "Désactiver" : "Activer");
+                btn.getStyleClass().removeAll("btn-warn", "btn-small");
+                btn.getStyleClass().add(u.isActif() ? "btn-warn" : "btn-small");
+                showToast("Statut de " + u.getNom() + " mis à jour.");
+                applyFilters();
+            },
+            ex -> showToast("Erreur : " + ex.getMessage())
+        );
     }
- 
+
     private void deleteUser(User u) {
-        // API call to delete
-        allUsers = allUsers.stream().filter(x -> !x.getId().equals(u.getId())).collect(Collectors.toList());
-        showToast("Compte de " + u.getName() + " supprimé.");
-        applyFilters();
+        TaskRunner.run(
+            () -> { UserService.deleteUser(u.getId()); return null; },
+            ignored -> {
+                allUsers = allUsers.stream()
+                    .filter(x -> !x.getId().equals(u.getId()))
+                    .collect(Collectors.toList());
+                showToast("Compte de " + u.getNom() + " supprimé.");
+                applyFilters();
+            },
+            ex -> showToast("Erreur : " + ex.getMessage())
+        );
     }
  
     @FXML private void handleCreateAgent() {
@@ -159,18 +200,32 @@ public class UsersManagementViewController implements Initializable {
         String ln = agentLastName.getText().trim();
         String em = agentEmail.getText().trim();
         String pw = agentPassword.getText();
- 
+
         if (fn.isEmpty() || ln.isEmpty() || em.isEmpty() || pw.isEmpty()) {
             modalError.setText("Veuillez remplir tous les champs.");
             modalError.setVisible(true); modalError.setManaged(true);
             return;
         }
-        // API call: create agent account
-        User newAgent = new User("U" + System.currentTimeMillis(), fn + " " + ln, em, User.Role.Agent, "Actif");
-        // allUsers would be mutable in real impl
-        modalOverlay.setVisible(false); modalOverlay.setManaged(false);
-        clearModal();
-        showToast("Compte agent créé pour " + fn + " " + ln + " !");
+
+        UserService.CreateAgentRequest request = new UserService.CreateAgentRequest();
+        request.firstName = fn;
+        request.lastName  = ln;
+        request.email     = em;
+        request.password  = pw;
+
+        TaskRunner.run(
+            () -> UserService.createAgent(request),
+            newUser -> {
+                modalOverlay.setVisible(false); modalOverlay.setManaged(false);
+                clearModal();
+                showToast("Compte agent créé pour " + fn + " " + ln + " !");
+                loadUsers(); // refresh the list
+            },
+            ex -> {
+                modalError.setText("Erreur : " + ex.getMessage());
+                modalError.setVisible(true); modalError.setManaged(true);
+            }
+        );
     }
  
     private void clearModal() {
