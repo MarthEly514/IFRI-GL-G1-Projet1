@@ -1,10 +1,12 @@
 package com.campusdocs.server.services;
 
 import com.campusdocs.server.models.*;
+import com.campusdocs.server.security.PasswordUtils;
 import com.campusdocs.server.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -24,6 +26,20 @@ public class UserService {
 
     //Créer un agent
     public AgentAdministratif creerAgent(AgentAdministratif agent) {
+        // 1. Date de création
+        agent.setDateCreation(LocalDateTime.now());
+
+        // 2. Génerer le sel
+        String salt = PasswordUtils.generateSalt();
+
+        // 3. Hacher le mot de passe avec le sel
+        String hashedPassword = PasswordUtils.hashPassword(agent.getPassword(), salt);
+
+        // 4. Stocker le hash et le sel (jamais le mot de passe en clair)
+        agent.setPassword(hashedPassword);
+        agent.setPasswordSalt(salt);
+
+        // Sauvegarder
         return agentRepository.save(agent);
     }
 

@@ -8,6 +8,8 @@ import com.campusdocs.server.dto.response.DemandeResponse;
 import com.campusdocs.server.models.Demande;
 import com.campusdocs.server.models.User;
 import com.campusdocs.server.models.Usager;
+import com.campusdocs.server.models.ActeAdministratif;
+import com.campusdocs.server.repositories.ActeRepository;
 import com.campusdocs.server.repositories.DemandeRepository;
 import com.campusdocs.server.repositories.UserRepository;
 import com.campusdocs.server.repositories.UsagerRepository;
@@ -32,6 +34,9 @@ public class DemandeService {
 
     @Autowired
     private pdfService pdfService;
+
+    @Autowired
+    private ActeRepository acteRepository;
 
     // ── Générer une référence unique ──
     private String generateRef() {
@@ -120,16 +125,31 @@ public class DemandeService {
             Usager usager = usagerRepository.findById(demande.getUserId()).orElse(null);
             if (usager != null) {
                 String reference = "ACT-" + demande.getId() + "-" + System.currentTimeMillis();
+                String pdfPath = null;
+
                 if ("BULLETIN".equals(demande.getType())) {
-                    int semestre = demande.getDetails() != null ?
-                            Integer.parseInt(demande.getDetails()) : 1;
-                    pdfService.generateBulletin(usager, reference, semestre,
-                            null, null, null);
+                    int semestre = demande.getDetails() != null
+                            ? Integer.parseInt(demande.getDetails()) : 1;
+                    pdfPath = pdfService.generateBulletin(
+                            usager, reference, semestre, null, null, null);
+
                 } else if ("ATTESTATION_INSCRIPTION".equals(demande.getType())) {
-                    pdfService.generateAttestationInscription(usager, reference,
-                            demande.getAnnee());
+                    pdfPath = pdfService.generateAttestationInscription(
+                            usager, reference, demande.getAnnee());
+
                 } else if ("RELEVE_NOTES".equals(demande.getType())) {
-                    pdfService.generateReleveDeNotes(usager, null, reference);
+                    pdfPath = pdfService.generateReleveDeNotes(usager, null, reference);
+                }
+
+                if (pdfPath != null) {
+                    // ✅ Créer et sauvegarder l'acte lié à la demande
+                    ActeAdministratif acte = new ActeAdministratif();
+                    acte.setType(demande.getType());
+                    acte.setNumeroDocument(reference);
+                    acte.setDateCreation(LocalDateTime.now());
+                    acte.setEnvoye(false);
+                    acte.setDemandeId(demande.getId());
+                    acteRepository.save(acte);
                 }
             }
         } catch (Exception e) {

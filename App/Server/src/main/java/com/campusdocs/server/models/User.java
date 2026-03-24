@@ -2,6 +2,7 @@ package com.campusdocs.server.models;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "user")
@@ -16,11 +17,17 @@ public class User {
 
     @Column(unique = true, nullable = false)
     protected String email;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     protected String password;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     protected String passwordSalt;
+
     protected String role;
     protected boolean actif;
     protected LocalDateTime dateCreation;
+
 
     public User() {}
 
