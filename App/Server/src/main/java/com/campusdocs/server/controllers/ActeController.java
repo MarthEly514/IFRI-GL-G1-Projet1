@@ -1,12 +1,12 @@
 package com.campusdocs.server.controllers;
 
+import com.campusdocs.server.models.ActeAdministratif;
 import com.campusdocs.server.models.Demande;
 import com.campusdocs.server.models.Piece;
 import com.campusdocs.server.models.Usager;
-import com.campusdocs.server.models.ActeAdministratif;
 import com.campusdocs.server.repositories.ActeRepository;
-import com.campusdocs.server.repositories.UserRepository;
 import com.campusdocs.server.repositories.DemandeRepository;
+import com.campusdocs.server.repositories.UserRepository;
 import com.campusdocs.server.security.JwtUtils;
 import com.campusdocs.server.services.ActeService;
 import com.campusdocs.server.services.pdfService;
@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/actes")
@@ -42,7 +43,7 @@ public class ActeController {
     @Autowired
     private DemandeRepository demandeRepository;
 
-    // ── Génération PDF ──
+    // ── Génération PDF directe ──
 
     @GetMapping("/bulletin/{usagerId}/{semestre}")
     public ResponseEntity<byte[]> getBulletin(
@@ -93,29 +94,29 @@ public class ActeController {
         }
     }
 
-    // ── Gestion des actes ──
+    // ── Gestion des demandes ──
 
-    // GET tous les actes
-    @GetMapping
-    public ResponseEntity<List<Demande>> getActes() {
+    // GET toutes les demandes
+    @GetMapping("/demandes")
+    public ResponseEntity<List<Demande>> getDemandes() {
         return ResponseEntity.ok(acteService.getDemandes());
     }
 
-    // GET actes par statut
-    @GetMapping("/statut/{statut}")
-    public ResponseEntity<List<Demande>> getByStatut(@PathVariable String statut) {
+    // GET demandes par statut
+    @GetMapping("/demandes/statut/{statut}")
+    public ResponseEntity<List<Demande>> getDemandesByStatut(@PathVariable String statut) {
         return ResponseEntity.ok(acteService.getDemandesByStatut(statut));
     }
 
-    // GET actes d'un usager
-    @GetMapping("/usager/{usagerId}")
-    public ResponseEntity<List<Demande>> getByUsager(@PathVariable int usagerId) {
+    // GET demandes d'un usager
+    @GetMapping("/demandes/usager/{usagerId}")
+    public ResponseEntity<List<Demande>> getDemandesByUsager(@PathVariable int usagerId) {
         return ResponseEntity.ok(acteService.getDemandesByUsager(usagerId));
     }
 
-    // GET un acte par id
-    @GetMapping("/{id}")
-    public ResponseEntity<Demande> getById(@PathVariable int id) {
+    // GET une demande par id
+    @GetMapping("/demandes/{id}")
+    public ResponseEntity<Demande> getDemandeById(@PathVariable int id) {
         try {
             return ResponseEntity.ok(acteService.getById(id));
         } catch (RuntimeException e) {
@@ -123,8 +124,8 @@ public class ActeController {
         }
     }
 
-    // POST soumettre un acte
-    @PostMapping
+    // POST soumettre une demande
+    @PostMapping("/demandes/soumettre")
     public ResponseEntity<Demande> soumettre(@RequestBody Map<String, Object> body) {
         try {
             int usagerId = (int) body.get("usagerId");
@@ -135,8 +136,8 @@ public class ActeController {
         }
     }
 
-    // PATCH avancer un acte dans le workflow
-    @PatchMapping("/{id}/avancer")
+    // PATCH avancer une demande dans le workflow
+    @PatchMapping("/demandes/{id}/avancer")
     public ResponseEntity<Demande> avancer(
             @PathVariable int id,
             @RequestBody Map<String, String> body) {
@@ -148,8 +149,8 @@ public class ActeController {
         }
     }
 
-    // PATCH valider une pièce d'un acte
-    @PatchMapping("/pieces/{pieceId}/valider")
+    // PATCH valider une pièce
+    @PatchMapping("/demandes/pieces/{pieceId}/valider")
     public ResponseEntity<Piece> validerPiece(
             @PathVariable int pieceId,
             @RequestBody Map<String, String> body) {
@@ -161,8 +162,8 @@ public class ActeController {
         }
     }
 
-    // POST générer le PDF d'un acte
-    @PostMapping("/{id}/generer")
+    // POST générer le PDF d'une demande → enregistré dans acteAdministratif
+    @PostMapping("/demandes/{id}/generer")
     public ResponseEntity<String> genererDocument(@PathVariable int id) {
         try {
             String pdfPath = acteService.genererDocument(id);
@@ -172,14 +173,59 @@ public class ActeController {
         }
     }
 
+    // ── Gestion des actes ──
+
+    // GET tous les actes
+    @GetMapping
+    public ResponseEntity<List<ActeAdministratif>> getActes() {
+        return ResponseEntity.ok(acteService.getAllActes());
+    }
+
+    // GET un acte par id
+    @GetMapping("/acte/{acteId}")
+    public ResponseEntity<ActeAdministratif> getActeById(@PathVariable int acteId) {
+        try {
+            return ResponseEntity.ok(acteService.getActeById(acteId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // GET actes par type
+    @GetMapping("/acte/type/{type}")
+    public ResponseEntity<List<ActeAdministratif>> getActesByType(@PathVariable String type) {
+        return ResponseEntity.ok(acteService.getActesByType(type));
+    }
+
+    // GET actes d'une demande
+    @GetMapping("/acte/demande/{demandeId}")
+    public ResponseEntity<List<ActeAdministratif>> getActesByDemande(@PathVariable int demandeId) {
+        return ResponseEntity.ok(acteService.getActesByDemande(demandeId));
+    }
+
+    // GET actes d'un usager
+    @GetMapping("/acte/usager/{usagerId}")
+    public ResponseEntity<List<ActeAdministratif>> getActesByUsager(@PathVariable int usagerId) {
+        return ResponseEntity.ok(acteService.getActesByUsager(usagerId));
+    }
+
+    // PATCH marquer un acte comme envoyé
+    @PatchMapping("/acte/{acteId}/envoye")
+    public ResponseEntity<ActeAdministratif> marquerEnvoye(@PathVariable int acteId) {
+        try {
+            return ResponseEntity.ok(acteService.marquerEnvoye(acteId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     // GET stats de l'agent
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getStats() {
         return ResponseEntity.ok(acteService.getStats());
     }
 
-    // Get /api/actes/me - Actes consultables par l'étudiant connecté
-    // GET /api/actes/me - Actes consultables par l'étudiant connecté
+    // GET actes de l'étudiant connecté
     @GetMapping("/me")
     public ResponseEntity<?> getMesActes(
             @RequestHeader("Authorization") String authHeader) {
@@ -188,16 +234,14 @@ public class ActeController {
             int userId = jwtUtils.getUserIdFromToken(token);
             List<ActeAdministratif> actes = acteRepository.findAll()
                     .stream()
-                    .filter(a -> {
-                        // Retrouver la demande liée pour vérifier le userId
-                        return demandeRepository.findById(a.getDemandeId())
-                                .map(d -> d.getUserId() == userId)
-                                .orElse(false);
-                    })
-                    .collect(java.util.stream.Collectors.toList());
+                    .filter(a -> demandeRepository.findById(a.getDemandeId())
+                            .map(d -> d.getUserId() == userId)
+                            .orElse(false))
+                    .collect(Collectors.toList());
             return ResponseEntity.ok(actes);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 }
+

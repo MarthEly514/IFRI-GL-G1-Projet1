@@ -65,6 +65,17 @@ public class pdfService {
         }
     }
 
+    private String loadImageAsBase64(String relativePath) {
+        try {
+            Path path = Paths.get(relativePath);
+            if (!Files.exists(path)) return null;
+            byte[] bytes = Files.readAllBytes(path);
+            return Base64.getEncoder().encodeToString(bytes);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     // ── Calculer la cote ──
     private String getCote(double note) {
         if (note >= 16) return "A+";
@@ -196,7 +207,7 @@ public class pdfService {
         return sb.toString();
     }
 
-    // ── Construire le HTML du bulletin ──
+    // ── Construire le HTML du bulletin / relevé de notes ──
     private String buildBulletinHtml(Usager etudiant, String reference, int semestre,
                                      String anneeAcademique, String qrBase64,
                                      String directeurNom, String directeurAdjointNom,
@@ -219,6 +230,23 @@ public class pdfService {
                 ? "<img src='" + qrBase64 + "' class='qr-img' alt='QR Code'/>"
                 : "<div class='qr-placeholder'>QR Code</div>";
 
+        // ── Charger les tampons depuis le dossier assets ──
+        String daBase64 = loadImageAsBase64("assets/DA.png");
+        String dirBase64 = loadImageAsBase64("assets/DIR.png");
+
+        String tampanDA = daBase64 != null
+                ? "<img src='data:image/png;base64," + daBase64 + "' class='stamp-img' alt='Tampon DA'/>"
+                : "";
+        String tampanDIR = dirBase64 != null
+                ? "<img src='data:image/png;base64," + dirBase64 + "' class='stamp-img' alt='Tampon DIR'/>"
+                : "";
+
+        // ── Charger le logo IFRI ──
+        String ifriBase64 = loadImageAsBase64("assets/IFRI.png");
+        String logoIfri = ifriBase64 != null
+                ? "<img src='data:image/png;base64," + ifriBase64 + "' class='logo-img' alt='IFRI'/>"
+                : "<div class='header-left-text'>IFRI</div>";
+
         return "<?xml version='1.0' encoding='UTF-8'?>" +
                 "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' " +
                 "'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>" +
@@ -227,14 +255,22 @@ public class pdfService {
                 "* { margin: 0; padding: 0; }" +
                 "body { width: 210mm; font-family: Times New Roman, serif; color: #111; font-size: 8.5pt; background: #ffc8c8; }" +
                 ".page { width: 210mm; min-height: 297mm; padding: 5mm 7mm 4mm 7mm; background: #ffc8c8; }" +
+
+                // Header
                 ".header { display: table; width: 100%; margin-bottom: 2mm; }" +
-                ".header-left, .header-right { display: table-cell; width: 25mm; vertical-align: middle; text-align: center; }" +
+                ".header-left, .header-right { display: table-cell; width: 22mm; vertical-align: middle; text-align: center; }" +
                 ".header-center { display: table-cell; text-align: center; vertical-align: middle; padding: 0 3mm; }" +
+                ".logo-img { width: 20mm; height: 20mm; object-fit: contain; }" +
+                ".header-left-text { font-size: 8pt; font-weight: bold; }" +
                 ".univ-name { font-size: 13pt; font-weight: bold; text-transform: uppercase; }" +
                 ".ifri-name { font-size: 9pt; font-weight: bold; text-transform: uppercase; margin-top: 1mm; }" +
                 ".header-addr { font-size: 7.5pt; margin-top: 1mm; }" +
+
+                // Document number
                 ".doc-number-line { text-align: center; font-size: 8pt; margin: 2mm 0 1.5mm 0; font-style: italic; }" +
                 ".doc-ref { font-weight: bold; border: 1px solid #555; padding: 0.3mm 2.5mm; font-size: 8.5pt; }" +
+
+                // Student block
                 ".student-block { display: table; width: 100%; margin: 1.5mm 0; padding: 2mm 2.5mm; border: 1px solid #ccc; }" +
                 ".qr-box { display: table-cell; width: 20mm; vertical-align: middle; text-align: center; }" +
                 ".qr-img { width: 20mm; height: 20mm; }" +
@@ -244,38 +280,51 @@ public class pdfService {
                 ".info-lbl { display: table-cell; width: 46mm; color: #222; }" +
                 ".info-sep { display: table-cell; width: 5mm; text-align: center; }" +
                 ".info-val { display: table-cell; color: #111; }" +
+
+                // Title
                 ".releve-title { text-align: center; font-size: 10.5pt; font-weight: bold; font-style: italic; text-decoration: underline; margin: 2.5mm 0 1.5mm 0; }" +
-                ".notes { width: 100%; border-collapse: collapse; font-size: 7.5pt; }" +
+
+                // Table - CORRECTION COUPURE DROITE (10+38+8+12+6+26=100%)
+                ".notes { width: 100%; border-collapse: collapse; font-size: 7pt; table-layout: fixed; word-wrap: break-word; }" +
                 ".notes thead tr { background-color: #1a3a5c; color: #ffffff; }" +
-                ".notes thead th { padding: 1.8mm 1mm; text-align: center; font-weight: bold; border: 0.5px solid #4a6a8c; font-size: 7.5pt; }" +
-                ".row-ue td { background-color: #b8cce4; font-weight: bold; padding: 1.2mm; border: 0.5px solid #7a9ec0; font-size: 7.5pt; }" +
-                ".row-ecu td { background-color: #dce6f1; padding: 0.9mm 1.2mm; border: 0.5px solid #aac4e0; font-size: 7.2pt; }" +
-                ".cell-code { text-align: center; width: 11%; font-size: 7pt; }" +
-                ".cell-code-ecu { text-align: center; width: 11%; font-size: 7pt; background-color: #dce6f1; border: 0.5px solid #aac4e0; padding: 0.9mm 1.2mm; }" +
-                ".cell-intitule { text-align: left; width: 37%; }" +
-                ".ecu-indent { padding-left: 6mm; font-style: italic; }" +
-                ".cell-num { text-align: center; width: 9%; }" +
-                ".cell-num-ecu { text-align: center; width: 9%; background-color: #dce6f1; border: 0.5px solid #aac4e0; padding: 0.9mm 1.2mm; }" +
-                ".cell-cote { text-align: center; width: 7%; font-weight: bold; }" +
-                ".cell-result { text-align: center; width: 26%; font-size: 7pt; }" +
+                ".notes thead th { padding: 1.2mm 0.5mm; text-align: center; font-weight: bold; border: 0.5px solid #4a6a8c; font-size: 6.8pt; overflow: hidden; word-wrap: break-word; }" +
+                ".row-ue td { background-color: #b8cce4; font-weight: bold; padding: 1mm 0.5mm; border: 0.5px solid #7a9ec0; font-size: 6.8pt; overflow: hidden; word-wrap: break-word; }" +
+                ".row-ecu td { background-color: #dce6f1; padding: 0.8mm 0.5mm; border: 0.5px solid #aac4e0; font-size: 6.5pt; overflow: hidden; word-wrap: break-word; }" +
+                ".cell-code { text-align: center; width: 10%; }" +
+                ".cell-code-ecu { text-align: center; width: 10%; background-color: #dce6f1; border: 0.5px solid #aac4e0; padding: 0.8mm; }" +
+                ".cell-intitule { text-align: left; width: 38%; }" +
+                ".ecu-indent { padding-left: 4mm; font-style: italic; }" +
+                ".cell-num { text-align: center; width: 8%; }" +
+                ".cell-num-ecu { text-align: center; width: 8%; background-color: #dce6f1; border: 0.5px solid #aac4e0; padding: 0.8mm; }" +
+                ".cell-cote { text-align: center; width: 6%; font-weight: bold; }" +
+                ".cell-result { text-align: center; width: 26%; font-size: 6.5pt; word-wrap: break-word; overflow: hidden; }" +
                 ".cell-empty { background-color: #dce6f1; border: 0.5px solid #aac4e0; }" +
+
+                // Summary bar
                 ".summary-bar { display: table; width: 100%; background-color: #1a3a5c; color: #ffffff; padding: 2mm 3mm; }" +
                 ".sum-item { display: table-cell; text-align: center; padding: 1mm; }" +
                 ".sum-label { font-size: 6.8pt; display: block; }" +
                 ".sum-val { font-size: 9pt; font-weight: bold; display: block; }" +
+
+                // Legend
                 ".legend { font-size: 5.5pt; color: #333; margin-top: 1.5mm; line-height: 1.5; }" +
+
+                // Date
                 ".date-line { text-align: right; font-size: 8pt; margin: 2mm 0 1mm 0; font-style: italic; }" +
+
+                // Signatures
                 ".signatures { display: table; width: 100%; margin-top: 1mm; }" +
-                ".sig-block { display: table-cell; text-align: center; width: 50%; }" +
+                ".sig-block { display: table-cell; text-align: center; width: 50%; vertical-align: top; }" +
                 ".sig-title { font-size: 8.5pt; font-weight: bold; }" +
                 ".sig-subtitle { font-size: 7.5pt; font-style: italic; color: #444; margin-bottom: 1mm; }" +
                 ".sig-name { font-size: 8pt; font-weight: bold; margin-top: 0.5mm; }" +
+                ".stamp-img { width: 28mm; height: 28mm; object-fit: contain; margin: 1mm auto; display: block; }" +
                 "</style></head><body>" +
                 "<div class='page'>" +
 
-                // En-tête
+                // ── En-tête avec logo IFRI ──
                 "<div class='header'>" +
-                "<div class='header-left'>IFRI</div>" +
+                "<div class='header-left'>" + logoIfri + "</div>" +
                 "<div class='header-center'>" +
                 "<div class='univ-name'>Universite d'Abomey-Calavi</div>" +
                 "<div class='ifri-name'>Institut de Formation et de Recherche en Informatique</div>" +
@@ -309,12 +358,12 @@ public class pdfService {
                 // Tableau
                 "<table class='notes'>" +
                 "<thead><tr>" +
-                "<th style='width:11%'>Code UE</th>" +
-                "<th style='width:37%'>Intitule de l UE/ECU</th>" +
-                "<th style='width:7%'>Credit</th>" +
+                "<th style='width:10%'>Code UE</th>" +
+                "<th style='width:38%'>Intitule UE/ECU</th>" +
+                "<th style='width:8%'>Credit</th>" +
                 "<th style='width:12%'>Moy. UE/ECU</th>" +
                 "<th style='width:6%'>Cote</th>" +
-                "<th style='width:27%'>Resultat</th>" +
+                "<th style='width:26%'>Resultat</th>" +
                 "</tr></thead>" +
                 "<tbody>" + tableRows + "</tbody>" +
                 "</table>" +
@@ -335,16 +384,16 @@ public class pdfService {
                 // Date
                 "<div class='date-line'>Abomey-Calavi, le <b>" + dateGeneration + "</b></div>" +
 
-                // Signatures
+                // ── Signatures avec tampons ──
                 "<div class='signatures'>" +
                 "<div class='sig-block'>" +
                 "<div class='sig-title'>Le Directeur-Adjoint,</div>" +
                 "<div class='sig-subtitle'>" + (directeurAdjointTitre != null ? directeurAdjointTitre : "Charge des affaires academiques") + "</div>" +
-                "<div class='sig-name'>" + (directeurAdjointNom != null ? directeurAdjointNom : "Le Directeur Adjoint") + "</div>" +
+                tampanDA +
                 "</div>" +
                 "<div class='sig-block'>" +
                 "<div class='sig-title'>Le Directeur,</div>" +
-                "<div class='sig-name'>" + (directeurNom != null ? directeurNom : "Le Directeur") + "</div>" +
+                tampanDIR +
                 "</div>" +
                 "</div>" +
 
@@ -386,64 +435,32 @@ public class pdfService {
         return outputPath;
     }
 
-    // ── Générer relevé de notes (iText) ──
+    // ── Générer relevé de notes — identique au bulletin (logo IFRI + tampons + coupure corrigée) ──
     public String generateReleveDeNotes(Usager etudiant, ActeAdministratif acte, String reference)
             throws IOException, WriterException {
         ensureOutputDir();
 
+        int annee = LocalDate.now().getYear();
+        String anneeAcademique = (annee - 1) + "-" + annee;
+        String qrBase64 = generateQRBase64("https://campusdocs.com/verifier/" + reference);
+
+        // Semestre par défaut : 1 (peut être adapté si tu stockes le semestre dans ActeAdministratif)
+        int semestre = 1;
+
+        String html = buildBulletinHtml(etudiant, reference, semestre, anneeAcademique,
+                qrBase64, "Le Directeur", "Le Directeur Adjoint", "Charge des affaires academiques");
+
         String outputPath = storageConfig.getPdfsDir() + "/" + reference + ".pdf";
-        PdfWriter writer = new PdfWriter(outputPath);
-        PdfDocument pdf = new PdfDocument(writer);
-        Document document = new Document(pdf);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String dateGeneration = LocalDate.now().format(formatter);
-
-        document.add(new Paragraph("Universite d'Abomey-Calavi")
-                .setFontSize(14).setBold().setTextAlignment(TextAlignment.CENTER));
-        document.add(new Paragraph("Institut de Formation et de Recherche en Informatique")
-                .setFontSize(10).setTextAlignment(TextAlignment.CENTER));
-        document.add(new LineSeparator(new com.itextpdf.kernel.pdf.canvas.draw.SolidLine()));
-        document.add(new Paragraph("N " + reference).setFontSize(9)
-                .setTextAlignment(TextAlignment.CENTER).setItalic());
-        document.add(new Paragraph("Nom et Prenoms : " + etudiant.getNom() + " " + etudiant.getPrenom()).setFontSize(10));
-        document.add(new Paragraph("Matricule : " + etudiant.getMatricule()).setFontSize(10));
-        document.add(new Paragraph("Filiere : " + etudiant.getFiliere()).setFontSize(10));
-        document.add(new Paragraph("Niveau : " + etudiant.getNiveau()).setFontSize(10));
-        document.add(new Paragraph("RELEVE DE NOTES").setFontSize(12).setBold()
-                .setUnderline().setItalic().setTextAlignment(TextAlignment.CENTER));
-
-        Table table = new Table(UnitValue.createPercentArray(new float[]{15, 40, 10, 15, 10, 10}))
-                .useAllAvailableWidth();
-        String[] headers = {"Code UE", "Intitule", "Credit", "Moyenne", "Cote", "Resultat"};
-        for (String h : headers) {
-            table.addHeaderCell(new Cell()
-                    .add(new Paragraph(h).setBold().setFontColor(ColorConstants.WHITE))
-                    .setBackgroundColor(BLEU_FONCE).setTextAlignment(TextAlignment.CENTER));
+        try (OutputStream os = new FileOutputStream(outputPath)) {
+            ITextRenderer renderer = new ITextRenderer();
+            renderer.setDocumentFromString(html);
+            renderer.layout();
+            renderer.createPDF(os);
+        } catch (com.lowagie.text.DocumentException e) {
+            throw new RuntimeException(e);
         }
-        document.add(table);
 
-        Table summary = new Table(3).useAllAvailableWidth();
-        summary.setBackgroundColor(BLEU_FONCE);
-        summary.addCell(new Cell().add(new Paragraph("Credits capitalises").setFontColor(ColorConstants.WHITE).setFontSize(8)));
-        summary.addCell(new Cell().add(new Paragraph("Moyenne semestrielle").setFontColor(ColorConstants.WHITE).setFontSize(8)));
-        summary.addCell(new Cell().add(new Paragraph("Decision du jury").setFontColor(ColorConstants.WHITE).setFontSize(8)));
-        document.add(summary);
-
-        byte[] qrBytes = generateQRBytes("https://campusdocs.com/verifier/" + reference);
-        Image qrImage = new Image(ImageDataFactory.create(qrBytes));
-        qrImage.setWidth(60).setHeight(60);
-        document.add(qrImage);
-
-        document.add(new Paragraph("Abomey-Calavi, le " + dateGeneration)
-                .setTextAlignment(TextAlignment.RIGHT).setItalic().setFontSize(9));
-
-        Table signatures = new Table(2).useAllAvailableWidth();
-        signatures.addCell(new Cell().add(new Paragraph("Le Directeur-Adjoint").setBold()));
-        signatures.addCell(new Cell().add(new Paragraph("Le Directeur").setBold()));
-        document.add(signatures);
-
-        document.close();
         return outputPath;
     }
 
