@@ -1,6 +1,7 @@
 package com.campusdocs.server.controllers;
 
 import com.campusdocs.server.models.AgentAdministratif;
+import com.campusdocs.server.models.Usager;
 import com.campusdocs.server.models.User;
 import com.campusdocs.server.repositories.UserRepository;
 import com.campusdocs.server.services.UserService;
@@ -79,6 +80,17 @@ public class UserController {
             return ResponseEntity.ok(userService.toggleActif(id));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    // POST créer un usager
+    @PostMapping("/usager")
+    public ResponseEntity<Usager> creerUsager(@RequestBody Usager usager) {
+        try {
+            Usager nouvelUsager = userService.creerUsager(usager);
+            return ResponseEntity.ok(nouvelUsager);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 

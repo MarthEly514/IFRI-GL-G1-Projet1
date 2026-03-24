@@ -46,4 +46,9 @@ public class UserService {
         }
         throw new RuntimeException("Type utilisateur inconnu");
     }
+
+    // Créer un usager
+    public Usager creerUsager(Usager usager) {
+        return usagerRepository.save(usager);
+    }
 }
