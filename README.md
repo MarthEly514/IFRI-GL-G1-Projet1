@@ -1,4 +1,4 @@
-# CampusDocs — Guide d'installation et d'utilisation
+# IFRI-GL-G1-Projet1 -- CampusDocs — Guide d'installation et d'utilisation
 
 **CampusDocs** est une application Java (Spring Boot + JavaFX) permettant de gérer efficacement les actes administratifs au sein des universités, notamment à l'IFRI, en respectant les principes du génie logiciel et en suivant la méthode agile Scrum.
 
