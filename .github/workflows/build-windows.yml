@@ -1,0 +1,49 @@
+name: Build Windows Executable
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Java with JavaFX
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'zulu'
+        java-package: jdk+fx
+    
+    - name: Build with Maven
+      run: mvn clean package
+    
+    - name: Create Windows Executable
+      run: |
+        jpackage --input target `
+                 --name CampusDocsClient `
+                 --main-jar Client-1.0-SNAPSHOT.jar `
+                 --main-class com.campusdocs.client.Launcher `
+                 --type exe `
+                 --dest dist `
+                 --win-console `
+                 --win-dir-chooser `
+                 --win-menu `
+                 --win-shortcut
+    
+    - name: Upload Executable
+      uses: actions/upload-artifact@v3
+      with:
+        name: CampusDocsClient-Windows
+        path: dist/*.exe
+    
+    - name: Upload Installer (Optional)
+      uses: actions/upload-artifact@v3
+      with:
+        name: CampusDocsClient-Installer
+        path: dist/*.msi
