@@ -1,2 +1,12 @@
 /App/Client/target/
 /App/Server/target/
+target/
+*.class
+*.jar
+*.war
+*.ear
+.idea/
+*.iml
+nbproject/private/
+build/
+dist/
