@@ -23,9 +23,9 @@ public class Usager extends User {
         this.niveau = niveau;
     }
 
-    public long getMatricule() {return matricule;}
-    public String getFiliere() {return filiere;}
-    public String getNiveau() {return niveau;}
+    public long getMatricule() {return matricule ;}
+    public String getFiliere() {return filiere != null ? filiere : ""; }
+    public String getNiveau() {return niveau != null ? niveau : ""; }
 
     public void setMatricule(long matricule) {this.matricule = matricule;}
     public void setFiliere(String filiere) {this.filiere = filiere;}

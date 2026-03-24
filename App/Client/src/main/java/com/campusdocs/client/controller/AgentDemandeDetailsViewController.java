@@ -106,7 +106,7 @@ public class AgentDemandeDetailsViewController implements Initializable {
  
         // Sample fields
         demandFieldsContainer.getChildren().clear();
-        addFieldRow("Motif", "Banque / Visa");
+        addFieldRow("Motif", d.getMotif());
         addFieldRow("Année académique", "2025 - 2026");
  
         // Timeline

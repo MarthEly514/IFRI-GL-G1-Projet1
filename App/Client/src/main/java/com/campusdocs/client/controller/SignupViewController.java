@@ -99,9 +99,9 @@ public class SignupViewController extends BaseViewController {
  
             ignored -> {
                 setLoading(false);
-                // Signup successful — redirect to login
+                // Signup successful — redirect to completing page
                 try {
-                    navigate("LoginView", "CampusDocs - Connexion");
+                    navigate("CompleteProfileView", "CampusDocs - Compléter votre profil");
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

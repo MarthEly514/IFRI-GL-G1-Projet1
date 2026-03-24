@@ -25,11 +25,11 @@ public class Piece {
     }
     public int getId() {return id;}
     public void setId(int id) {this.id = id;}
-    public String getType() {return type;}
+    public String getType() {return type != null ? type : "";}
     public void setType(String type) {this.type = type;}
-    public String getNomFichier() {return nomFichier;}
+    public String getNomFichier() {return nomFichier != null ? nomFichier : ""; }
     public void setNomFichier(String nomFichier) {this.nomFichier = nomFichier;}
-    public String getCheminFichier() {return cheminFichier;}
+    public String getCheminFichier() {return cheminFichier != null ? cheminFichier : ""; }
     public void setCheminFichier(String cheminFichier) {this.cheminFichier = cheminFichier;}
     public LocalDateTime getDateUpload() {return dateUpload;}
     public void setDateUpload(LocalDateTime dateUpload) {this.dateUpload = dateUpload;}

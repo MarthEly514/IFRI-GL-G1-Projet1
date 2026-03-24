@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.image.*?>
+
+<AnchorPane
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.campusdocs.client.controller.CompleteProfileViewController"
+    id="AnchorPane"
+    fx:id="rootPane" 
+>
+
+    <GridPane
+        AnchorPane.topAnchor="0"
+        AnchorPane.bottomAnchor="0"
+        AnchorPane.leftAnchor="0"
+        AnchorPane.rightAnchor="0"
+        prefHeight="720" prefWidth="1080"
+        minHeight="720" minWidth="1080"
+        xmlns="http://javafx.com/javafx">
+
+        <columnConstraints>
+            <ColumnConstraints percentWidth="40"/>
+            <ColumnConstraints percentWidth="60"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="ALWAYS"/>
+        </rowConstraints>
+
+        <!-- ── Left decorative panel ── -->
+        <AnchorPane GridPane.columnIndex="0" styleClass="left-pane" fx:id="leftPane" >
+                <children>
+
+                    <Circle
+                        styleClass="left-pane-overlay"
+                        radius="180"
+                        fill="rgba(255,255,255,0.12)"
+                        AnchorPane.topAnchor="-40"
+                        AnchorPane.leftAnchor="-60"
+                    />
+                    
+                    <Circle
+                        styleClass="left-pane-overlay"
+                        radius="80"
+                        fill="rgba(255,255,255,0.12)"
+                        AnchorPane.bottomAnchor="-40"
+                        AnchorPane.rightAnchor="-60"
+                    />
+
+                    <!-- "Welcome" vertical text -->
+                    <Label
+                        text="Bienvenue"
+                        styleClass="left-pane-title"
+                        AnchorPane.topAnchor="160"
+                        AnchorPane.leftAnchor="-40"
+                    />
+                    <VBox 
+                        alignment="CENTER"
+                        AnchorPane.topAnchor="100"
+                        AnchorPane.rightAnchor="0"
+                        AnchorPane.bottomAnchor="0"
+                        AnchorPane.leftAnchor="0"
+                    >
+                        <ImageView
+                            fx:id="leftPaneImage" 
+                            fitHeight="300"
+                            preserveRatio="true"
+                            
+                        >
+                            <image>                             
+                                <Image url="/images/girl_holding_document.png" />
+                            </image>
+                        </ImageView>
+                        
+                    </VBox>
+
+
+                    <!-- Bottom subtitle text -->
+                    <VBox 
+                        alignment="CENTER_LEFT" 
+                        spacing="5"
+                        prefWidth="300"
+                        AnchorPane.bottomAnchor="30"
+                        AnchorPane.leftAnchor="30"
+                    >
+                        <Label text="CAMPUS DOCS" styleClass="left-pane-subtitle,title-bold"/>
+
+                        <Label text="GÉRÉZ VOS DOCUMENTS ADMINISTRATIFS AUTREMENT" 
+                              styleClass="left-pane-subtitle"
+                              wrapText="true"
+                              prefWidth="300" 
+                        />
+                    </VBox>
+
+                </children>
+            </AnchorPane>
+
+        <!-- ── Right: complete profile form ── -->
+        <VBox GridPane.columnIndex="1" alignment="CENTER" spacing="16"
+              styleClass="right-pane">
+
+            <!-- Progress indicator -->
+            <HBox alignment="CENTER" spacing="8">
+                <Circle radius="8" style="-fx-fill:#2cc295;"/>
+                <Label text="─────" style="-fx-text-fill:#2cc295;-fx-font-size:12px;"/>
+                <Circle radius="8" style="-fx-fill:#2cc295;"/>
+                <Label text="─────" style="-fx-text-fill:#2cc295;-fx-font-size:12px;"/>
+                <Circle radius="8" style="-fx-fill:#2cc295;"/>
+            </HBox>
+            <Label text="Étape 3 sur 3" style="-fx-font-size:11px;-fx-text-fill:#a0aab4;"/>
+
+            <Label text="Complétez votre profil" styleClass="title"/>
+            <Label text="Ces informations permettront de personnaliser&#10;vos demandes administratives."
+                   styleClass="sub-title" prefWidth="340" wrapText="true"/>
+
+            <!-- Matricule -->
+            <VBox spacing="6" maxWidth="400">
+                <Label text="Numéro matricule" styleClass="field-label-form"/>
+                <TextField fx:id="matriculeField" promptText="ex: 20210001"
+                           styleClass="input-field" maxWidth="400"/>
+            </VBox>
+
+            <!-- Filière -->
+            <VBox spacing="6" maxWidth="400">
+                <Label text="Filière" styleClass="field-label-form"/>
+                <ComboBox fx:id="filiereCombo" promptText="Sélectionnez votre filière"
+                          styleClass="input-field" maxWidth="400"/>
+            </VBox>
+
+            <!-- Niveau -->
+            <VBox spacing="6" maxWidth="400">
+                <Label text="Niveau" styleClass="field-label-form"/>
+                <ComboBox fx:id="niveauCombo" promptText="Sélectionnez votre niveau"
+                          styleClass="input-field" maxWidth="400"/>
+            </VBox>
+
+            <!-- Année académique -->
+            <VBox spacing="6" maxWidth="400">
+                <Label text="Année académique" styleClass="field-label-form"/>
+                <TextField fx:id="anneeField" promptText="ex: 2025-2026"
+                           styleClass="input-field" maxWidth="400"/>
+            </VBox>
+
+            <!-- Error label -->
+            <Label fx:id="errorLabel" text="" styleClass="error-label"
+                   visible="false" managed="false" prefWidth="400" wrapText="true"/>
+
+            <!-- Submit button -->
+            <Button fx:id="submitBtn" text="Finaliser mon inscription"
+                    styleClass="create-btn, action-btn"
+                    onAction="#handleSubmit" maxWidth="400"/>
+
+            <!-- Skip link -->
+            <HBox alignment="CENTER" spacing="4">
+                <Label text="Je compléterai plus tard —"/>
+                <Hyperlink styleClass="link" text="Aller à la connexion"
+                           fx:id="skipLink" onAction="#handleSkip"/>
+            </HBox>
+
+        </VBox>
+    </GridPane>
+</AnchorPane>

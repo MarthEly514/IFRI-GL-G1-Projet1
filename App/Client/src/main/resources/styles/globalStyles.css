@@ -126,3 +126,38 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 }
 
 
+/* ── Add to loginview.css or globalStyles.css ──────────────────────── */
+
+/* Field label inside forms */
+.field-label-form {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5a6a7a;
+}
+
+/* Error label */
+.error-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #e05252;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+/* ComboBox styled like input-field */
+.input-field .combo-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e8ecf0;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-pref-height: 44;
+    -fx-font-size: 13px;
+}
+.input-field.combo-box:focused {
+    -fx-border-color: #2cc295;
+}
+.input-field.combo-box .list-cell {
+    -fx-font-size: 13px;
+    -fx-text-fill: #1a2332;
+}
+

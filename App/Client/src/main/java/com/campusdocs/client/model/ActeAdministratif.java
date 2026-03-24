@@ -28,12 +28,12 @@ public class ActeAdministratif {
         this.status = status;
     }
  
-    public String getRef()    { return ref; }
-    public String getName()   { return name; }
-    public String getIcon()   { return icon; }
-    public String getDate()   { return date; }
-    public String getType()   { return type; }
-    public String getStatus() { return status; }
+    public String getRef()    { return ref != null ? ref : ""; }
+    public String getName()   { return name != null ? name : "";  }
+    public String getIcon()   { return icon != null ? icon : "";  }
+    public String getDate()   { return date != null ? date : "";  }
+    public String getType()   { return type != null ? type : "";  }
+    public String getStatus() { return status != null ? status : "";  }
  
     public String getFormattedDate() {
         try {

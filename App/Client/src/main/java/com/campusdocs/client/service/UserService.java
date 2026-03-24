@@ -60,6 +60,10 @@ public class UserService {
     public static void changePassword(ChangePasswordRequest request) throws ApiException {
         ApiClient.put("/users/me/password", request, Void.class);
     }
+    
+    public static void completeProfile(CompleteProfileRequest request) throws ApiException {
+        ApiClient.put("/users/me/profile", request, Void.class);
+    }
  
     // ── DTOs ──
     public static class CreateAgentRequest {
@@ -67,6 +71,9 @@ public class UserService {
         public String prenom;    
         public String email;
         public String motDePasse;
+        public String dateCreation;
+        public boolean actif;
+        public String role;
     }
     
     public static class UpdateProfileRequest {
@@ -90,9 +97,25 @@ public class UserService {
             this.newPassword     = newPassword;
         }
     }
+    
+    public static class CompleteProfileRequest {
+        public String matricule;
+        public String filiere;
+        public String niveau;
+        public String annee;
+
+        public CompleteProfileRequest(String matricule, String filiere,
+                                       String niveau, String annee) {
+            this.matricule = matricule;
+            this.filiere   = filiere;
+            this.niveau    = niveau;
+            this.annee     = annee;
+        }
+    }
  
     private static class ToggleStatusRequest {
         boolean active;
         ToggleStatusRequest(boolean active) { this.active = active; }
     }
+
 }

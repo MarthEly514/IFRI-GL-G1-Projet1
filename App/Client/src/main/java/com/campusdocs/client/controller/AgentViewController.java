@@ -71,23 +71,24 @@ public class AgentViewController implements Initializable {
     
     private void loadStats() {
         TaskRunner.run(
-            () -> StatsService.getStats(),
+            () -> StatsService.getAgentStats(),
             stats -> {
                 if (stats == null) {
                     showLoadError("Impossible de charger les statistiques.");
                     return;
                 }
-                statTotalDemands.setText(String.valueOf(stats.totalDemandes));
-                statPendingDemands.setText(String.valueOf(stats.pendingDemandes));
-                statActes.setText(String.valueOf(stats.totalActes));
-                statApprovalRate.setText(stats.approvalRate + "%");
-                statTodayProcessed.setText(String.valueOf(stats.approvedDemandes));
-                statTodayRejected.setText(String.valueOf(stats.rejectedDemandes));
-                statMonthApproved.setText(String.valueOf(stats.approvedDemandes));
+                statTotalDemands.setText(String.valueOf(stats.statTotalDemands));
+                statPendingDemands.setText(String.valueOf(stats.statPendingDemands));
+                statActes.setText(String.valueOf(stats.statTotalActes));
+                statApprovalRate.setText(
+                    stats.statApprovalRate != null ? stats.statApprovalRate : "0%");
+                statTodayProcessed.setText(String.valueOf(stats.statApprovedDemands));
+                statTodayRejected.setText(String.valueOf(stats.statRejectedDemands));
+                statMonthApproved.setText(String.valueOf(stats.statApprovedDemands));
             },
             ex -> {
                 showLoadError("Erreur stats : " + ex.getMessage());
-                System.err.println("Stats error: " + ex.getMessage());
+                System.err.println("Agent stats error: " + ex.getMessage());
             }
         );
     }
@@ -174,24 +175,31 @@ public class AgentViewController implements Initializable {
         HBox row = new HBox(12);
         row.getStyleClass().add("activity-row");
         row.setAlignment(Pos.CENTER_LEFT);
- 
+
+        // ✅ Use getStatut() to match server field name
+        String statut = d.getStatus() != null ? d.getStatus() : "";
         Circle dot = new Circle(6);
         dot.getStyleClass().add(
-            d.getStatus().equals("EN_ATTENTE") ? "activity-dot-amber" :
-            d.getStatus().equals("APPROUVEE")  ? "activity-dot-green" : "activity-dot-red"
+            statut.equals("EN_ATTENTE") ? "activity-dot-amber" :
+            statut.equals("APPROUVEE")  ? "activity-dot-green" : "activity-dot-red"
         );
- 
+
         VBox info = new VBox(2);
         HBox.setHgrow(info, Priority.ALWAYS);
-        Label name = new Label(d.getStudentName() + " — " + d.getDocType());
+
+        // ✅ Null-safe student name and doc type
+        String studentName = d.getStudentName() != null ? d.getStudentName() : "—";
+        String docType     = d.getDocType()     != null ? d.getDocType()     : "—";
+        Label name = new Label(studentName + " — " + docType);
         name.getStyleClass().add("activity-name");
-        Label date = new Label(d.getDate());
+
+        Label date = new Label(d.getDate() != null ? d.getDate() : "—");
         date.getStyleClass().add("activity-sub");
         info.getChildren().addAll(name, date);
- 
+
         Label badge = new Label(d.getStatusLabel());
         badge.getStyleClass().add(d.getStatusBadgeClass());
- 
+
         row.getChildren().addAll(dot, info, badge);
         return row;
     }
@@ -200,18 +208,23 @@ public class AgentViewController implements Initializable {
         HBox row = new HBox(12);
         row.getStyleClass().add("activity-row");
         row.setAlignment(Pos.CENTER_LEFT);
- 
+
         Circle dot = new Circle(6);
         dot.getStyleClass().add("activity-dot-green");
- 
+
         VBox info = new VBox(2);
         HBox.setHgrow(info, Priority.ALWAYS);
-        Label name = new Label(a.getName());
+
+        Label name = new Label(a.getName() != null ? a.getName() : "—");
         name.getStyleClass().add("activity-name");
-        Label date = new Label(a.getFormattedDate() + "  •  " + a.getRef());
+
+        String dateStr = (a.getFormattedDate() != null ? a.getFormattedDate() : "—")
+                       + "  •  "
+                       + (a.getRef() != null ? a.getRef() : "—");
+        Label date = new Label(dateStr);
         date.getStyleClass().add("activity-sub");
+
         info.getChildren().addAll(name, date);
- 
         row.getChildren().addAll(dot, info);
         return row;
     }

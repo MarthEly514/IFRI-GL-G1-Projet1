@@ -6,14 +6,14 @@
 package com.campusdocs.client.model;
  
 public class AgentDemande {
-    private final String ref, nomEtudiant, prenomEtudiant, type, date;
+    private final String ref, nomEtudiant, prenomEtudiant, type, date, motif;
     private String statut;
     private final int id;
  
     public AgentDemande(int id, String ref, String nomEtudiant, String prenomEtudiant,
-                        String type, String date, String statut) {
+                        String type, String date, String statut, String motif) {
         this.id = id; this.ref = ref; this.nomEtudiant = nomEtudiant; this.prenomEtudiant = prenomEtudiant;
-        this.type = type; this.date = date; this.statut = statut;
+        this.type = type; this.date = date; this.statut = statut; this.motif = motif;
     }
     
 //    id": 3,
@@ -39,6 +39,7 @@ public class AgentDemande {
     public String getDocType()      { return type; }
     public String getDate()         { return date; }
     public String getStatus()       { return statut; }
+    public String getMotif()       { return motif; }
     public void   setStatus(String s) { this.statut = s; }
  
     public String getStatusLabel() {

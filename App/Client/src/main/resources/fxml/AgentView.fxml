@@ -69,27 +69,33 @@
             <Label fx:id="statMonthApproved" text="—" styleClass="stat-value"/>
         </VBox>
     </HBox>
+    
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="agent-scroll" hbarPolicy="NEVER">
+        <content>
+            <VBox spacing="20" styleClass="agent-scroll-content">
+                <!-- ── Recent demands ── -->
+                <VBox spacing="12">
+                    <VBox alignment="CENTER_LEFT" spacing="10" >
+                        <Label text="Dernières demandes reçues" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+                        <Button styleClass="btn-small-teal" onAction="#handleViewAllDemandes" text="Voir tout →"/>
+                    </VBox>
+                    <VBox fx:id="recentDemandesContainer" spacing="8">
+                        <!-- Injected by controller -->
+                    </VBox>
+                </VBox>
 
-    <!-- ── Recent demands ── -->
-    <VBox spacing="12">
-        <VBox alignment="CENTER_LEFT" spacing="10" >
-            <Label text="Dernières demandes reçues" styleClass="section-title" HBox.hgrow="ALWAYS"/>
-            <Button styleClass="btn-small-teal" onAction="#handleViewAllDemandes" text="Voir tout →"/>
-        </VBox>
-        <VBox fx:id="recentDemandesContainer" spacing="8">
-            <!-- Injected by controller -->
-        </VBox>
-    </VBox>
-
-    <!-- ── Recent actes ── -->
-    <VBox spacing="12">
-        <VBox alignment="CENTER_LEFT" spacing="10" >
-            <Label text="Derniers actes générés" styleClass="section-title" HBox.hgrow="ALWAYS"/>
-            <Button styleClass="btn-small-teal" onAction="#handleViewAllActes" text="Voir tout"/>
-        </VBox>
-        <VBox fx:id="recentActesContainer" spacing="8">
-            <!-- Injected by controller -->
-        </VBox>
-    </VBox>
+                <!-- ── Recent actes ── -->
+                <VBox spacing="12">
+                    <VBox alignment="CENTER_LEFT" spacing="10" >
+                        <Label text="Derniers actes générés" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+                        <Button styleClass="btn-small-teal" onAction="#handleViewAllActes" text="Voir tout"/>
+                    </VBox>
+                    <VBox fx:id="recentActesContainer" spacing="8">
+                        <!-- Injected by controller -->
+                    </VBox>
+                </VBox>
+            </VBox>
+        </content>        
+    </ScrollPane>
 
 </VBox>

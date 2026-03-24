@@ -53,12 +53,7 @@ public class AgentActeViewController implements Initializable {
         sortFilter.valueProperty().addListener((obs, o, n) -> applyFilters());
         
         loadActes();
- 
-        if (allActes != null) {
-            applyFilters();
-        } else {
-            System.err.println("allActes is null - cannot apply filters");
-        }
+
     }
  
     private void applyFilters() {

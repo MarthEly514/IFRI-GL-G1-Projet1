@@ -18,6 +18,7 @@ import javafx.scene.shape.Circle;
 import javafx.util.Duration;
  
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -68,6 +69,9 @@ public class UsersManagementViewController implements Initializable {
         String q = searchField.getText().trim().toLowerCase();
         String role = roleFilter.getValue();
         String status = statusFilter.getValue();
+        
+        System.out.println(allUsers);
+
  
         List<User> filtered = allUsers.stream().filter(u -> {
             boolean mq = u.getNom().toLowerCase().contains(q) || u.getEmail().toLowerCase().contains(q);
@@ -212,8 +216,11 @@ public class UsersManagementViewController implements Initializable {
         UserService.CreateAgentRequest request = new UserService.CreateAgentRequest();
         request.prenom = fn;
         request.nom  = ln;
-        request.email     = em;
+        request.email  = em;
         request.motDePasse  = pw;
+        request.actif = true;
+        request.dateCreation = LocalDateTime.now().toString();
+        request.role = "AGENT";
 
         TaskRunner.run(
             () -> UserService.createAgent(request),

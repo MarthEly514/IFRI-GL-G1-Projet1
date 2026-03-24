@@ -25,14 +25,14 @@ public class Demande {
 
     // ── Getters ──
     public int getId()             { return id; }
-    public String getDocumentType()   { return type; }   
-    public String getType()           { return type; }
-    public String getDate()           { return date; }
-    public String getStatut()         { return statut; }
-    public String getDateTraitement() { return dateTraitement; }
-    public String getCommentaire()    { return commentaire; }
-    public String getUserId()         { return userId; }
-    public String getRef()            { return ref; }
+    public String getDocumentType()   { return type != null ? type : "";  }   
+    public String getType()           { return type != null ? type : "";  }
+    public String getDate()           { return date != null ? date : "";  }
+    public String getStatut()         { return statut != null ? statut : "";  }
+    public String getDateTraitement() { return dateTraitement != null ? dateTraitement : "";  }
+    public String getCommentaire()    { return commentaire != null ? commentaire : "";  }
+    public String getUserId()         { return userId != null ? userId : "";  }
+    public String getRef()            { return ref != null ? ref : "";  }
 
     // ── UI helpers ──
     public String getStatusLabel() {

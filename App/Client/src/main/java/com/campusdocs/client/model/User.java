@@ -38,13 +38,13 @@ public class User {
     }
 
     // ── Getters ──────────────────────────────────────────────────────
-    public int  getId()          { return id; }
-    public String  getNom()         { return nom; }
-    public String  getPrenom()      { return prenom; }
+    public int  getId()          { return id ; }
+    public String  getNom()         { return nom != null ? nom : ""; }
+    public String  getPrenom()      { return prenom != null ? prenom : ""; }
     public String  getEmail()       { return email; }
-    public String  getRole()        { return role; }
-    public String  getStatus()      { return status; }
-    public String  getMemberSince() { return memberSince; }
+    public String  getRole()        { return role!= null ? role : "";  }
+    public String  getStatus()      { return status != null ? status : ""; }
+    public String  getMemberSince() { return memberSince != null ? memberSince : "";  }
 
     public String  getFullName()     { return nom + " " + prenom; }
 

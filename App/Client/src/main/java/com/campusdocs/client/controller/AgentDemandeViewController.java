@@ -68,14 +68,7 @@ public class AgentDemandeViewController implements Initializable {
         typeFilter.valueProperty().addListener((obs, o, n) -> applyFilters());
         
         loadDemandes();
-        
-        
- 
-        if (allDemandes != null) {
-            applyFilters();
-        } else {
-            System.err.println("allDemandes is null - cannot apply filters");
-        }
+
     }
  
     private void applyFilters() {

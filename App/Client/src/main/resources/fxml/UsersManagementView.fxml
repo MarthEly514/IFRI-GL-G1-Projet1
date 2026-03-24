@@ -65,7 +65,7 @@
 
     <!-- ✅ Modal overlay — second child of StackPane, renders on top -->
     <StackPane fx:id="modalOverlay" styleClass="modal-overlay" visible="false" managed="false" alignment="CENTER" >
-        <VBox styleClass="modal-card" spacing="18" maxWidth="440" alignment="CENTER">
+        <VBox styleClass="modal-card" spacing="18" maxWidth="440" maxHeight="600"  alignment="CENTER">
             <Label text="Créer un compte agent" styleClass="modal-title"/>
             <Label text="Remplissez les informations pour créer un nouveau compte agent."
                    styleClass="modal-subtitle"/>

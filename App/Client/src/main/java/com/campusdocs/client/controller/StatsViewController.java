@@ -55,18 +55,18 @@ public void initialize(URL url, ResourceBundle rb) {
  
     // Load stats from API
     TaskRunner.run(
-        () ->  StatsService.getStats(),
+        () ->  StatsService.getAdminStats(),
             
         stats -> {
-            statTotalUsers.setText(String.valueOf(stats.totalUsers));
-            statStudents.setText(String.valueOf(stats.totalStudents));
-            statAgents.setText(String.valueOf(stats.totalAgents));
-            statAdmins.setText(String.valueOf(stats.totalAdmins));
-            statTotalDemands.setText(String.valueOf(stats.totalDemandes));
-            statPendingDemands.setText(stats.pendingDemandes + " en attente");
-            statApprovedDemands.setText(stats.approvedDemandes + " approuvées");
-            statTotalActes.setText(String.valueOf(stats.totalActes));
-            statApprovalRate.setText(stats.approvalRate + "%");
+            statTotalUsers.setText(String.valueOf(stats.statTotalUsers));
+            statStudents.setText(String.valueOf(stats.statStudents));
+            statAgents.setText(String.valueOf(stats.statAgents));
+            statAdmins.setText(String.valueOf(stats.statAdmins));
+            statTotalDemands.setText(String.valueOf(stats.statTotalDemands));
+            statPendingDemands.setText(stats.statPendingDemands + " en attente");
+            statApprovedDemands.setText(stats.statApprovedDemands + " approuvées");
+            statTotalActes.setText(String.valueOf(stats.statTotalActes));
+            statApprovalRate.setText(stats.statApprovalRate);
         },
         ex -> System.err.println("Stats load error: " + ex.getMessage())
     );

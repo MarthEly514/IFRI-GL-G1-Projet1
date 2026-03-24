@@ -1,0 +1,52 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+
+}
+
+
+.left-pane {
+    -fx-background-color: #3cc3bd;
+}
+
+.left-pane-overlay {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-background-radius: 50%;
+}
+
+.right-pane {
+    -fx-background-color: #faffff;
+    -fx-padding: 40;
+}
+
+.title {
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+}
+
+.sub-title {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-opacity: 0.6;
+}
+
+.social-btn {
+    -fx-background-color: #faffff;
+    -fx-padding: 10;
+}
+
+.create-btn {
+    -fx-margin: 40 0 0 0;
+}
+
+.create-btn:hover {
+    -fx-effect: dropshadow(gaussian, #58d2533f, 10, 0, 0, 0);
+}
+
+.link {
+    -fx-text-fill: #3498db;
+    -fx-cursor: hand;
+}
+
