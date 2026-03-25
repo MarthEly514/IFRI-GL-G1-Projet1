@@ -226,176 +226,205 @@ public class pdfService {
             default -> "Sixieme";
         };
 
+        // ── QR Code ──
         String qrSrc = qrBase64 != null
-                ? "<img src='" + qrBase64 + "' class='qr-img' alt='QR Code'/>"
-                : "<div class='qr-placeholder'>QR Code</div>";
+                ? "<img src='" + qrBase64 + "' style='width:18mm;height:18mm;' alt='QR'/>"
+                : "<div style='width:18mm;height:18mm;border:1px solid #aaa;font-size:5pt;text-align:center;color:#666;'>QR</div>";
 
-        // ── Charger les tampons depuis le dossier assets ──
-        String daBase64 = loadImageAsBase64("assets/DA.png");
+        // ── Assets (tampons + logos) ──
+        String daBase64  = loadImageAsBase64("assets/DA.png");
         String dirBase64 = loadImageAsBase64("assets/DIR.png");
+        String ifriBase64= loadImageAsBase64("assets/IFRI.png");
+        String uacBase64 = loadImageAsBase64("assets/UAC.png");
 
         String tampanDA = daBase64 != null
-                ? "<img src='data:image/png;base64," + daBase64 + "' class='stamp-img' alt='Tampon DA'/>"
-                : "";
-        String tampanDIR = dirBase64 != null
-                ? "<img src='data:image/png;base64," + dirBase64 + "' class='stamp-img' alt='Tampon DIR'/>"
-                : "";
+                ? "<img src='data:image/png;base64," + daBase64 + "' style='width:26mm;height:26mm;display:block;margin:1mm auto;' alt='Tampon DA'/>"
+                : "<div style='width:26mm;height:26mm;border:1px dashed #999;margin:1mm auto;font-size:6pt;color:#888;text-align:center;'>Tampon DA</div>";
 
-        // ── Charger le logo IFRI ──
-        String ifriBase64 = loadImageAsBase64("assets/IFRI.png");
-        String logoIfri = ifriBase64 != null
-                ? "<img src='data:image/png;base64," + ifriBase64 + "' class='logo-img' alt='IFRI'/>"
-                : "<div class='header-left-text'>IFRI</div>";
+        String tampanDIR = dirBase64 != null
+                ? "<img src='data:image/png;base64," + dirBase64 + "' style='width:26mm;height:26mm;display:block;margin:1mm auto;' alt='Tampon DIR'/>"
+                : "<div style='width:26mm;height:26mm;border:1px dashed #999;margin:1mm auto;font-size:6pt;color:#888;text-align:center;'>Tampon DIR</div>";
+
+        // Logo gauche : IFRI
+        String logoLeft = ifriBase64 != null
+                ? "<img src='data:image/png;base64," + ifriBase64 + "' style='width:18mm;height:18mm;object-fit:contain;' alt='IFRI'/>"
+                : "<span style='font-size:8pt;font-weight:bold;'>IFRI</span>";
+
+        // Logo droite : UAC
+        String logoRight = uacBase64 != null
+                ? "<img src='data:image/png;base64," + uacBase64 + "' style='width:18mm;height:18mm;object-fit:contain;' alt='UAC'/>"
+                : "<span style='font-size:8pt;font-weight:bold;'>UAC</span>";
+
+        // ────────────────────────────────────────────────────────────────
+        // CSS — Flying Saucer (ITextRenderer) compatible
+        // • @page supprime toutes les marges du moteur PDF
+        // • .page occupe exactement 210mm × 297mm, padding interne 5mm/6mm
+        // • table-layout:fixed + word-wrap:break-word évite les débordements
+        // ────────────────────────────────────────────────────────────────
+        String css =
+                "@page { size: 210mm 297mm; margin: 0; }" +
+                        "* { margin: 0; padding: 0; box-sizing: border-box; }" +
+                        "html, body { width: 210mm; margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; color: #111; font-size: 8pt; background: #ffc8c8; }" +
+                        ".page { width: 210mm; padding: 5mm 6mm 5mm 6mm; background: #ffc8c8; }" +
+
+                        /* ── En-tête ── */
+                        ".hdr { width: 100%; border-collapse: collapse; margin-bottom: 2mm; }" +
+                        ".hdr td { vertical-align: middle; }" +
+                        ".hdr-left  { width: 22mm; text-align: center; }" +
+                        ".hdr-center { text-align: center; padding: 0 2mm; }" +
+                        ".hdr-right { width: 22mm; text-align: center; }" +
+                        ".univ-name { font-size: 11pt; font-weight: bold; text-transform: uppercase; }" +
+                        ".ifri-name { font-size: 8pt; font-weight: bold; text-transform: uppercase; margin-top: 1mm; }" +
+                        ".hdr-addr  { font-size: 6.5pt; margin-top: 0.5mm; }" +
+
+                        /* ── Numéro document ── */
+                        ".doc-num { text-align: center; font-size: 7.5pt; margin: 1.5mm 0; font-style: italic; }" +
+                        ".doc-ref  { font-weight: bold; font-style: normal; border: 1px solid #555; padding: 0.2mm 2mm; font-size: 7.5pt; font-family: 'Courier New', Courier, monospace; }" +
+
+                        /* ── Bloc étudiant ── */
+                        ".stud { width: 100%; border-collapse: collapse; border: 1px solid #ccc; margin: 1.5mm 0; }" +
+                        ".stud td { vertical-align: top; padding: 1.5mm; }" +
+                        ".stud-qr  { width: 22mm; vertical-align: middle; text-align: center; }" +
+                        ".stud-info { }" +
+                        ".info-row { margin-bottom: 0.8mm; font-size: 7.5pt; }" +
+                        ".info-lbl { display: inline-block; width: 46mm; color: #222; }" +
+                        ".info-val { color: #111; }" +
+                        ".info-val-bold { color: #111; font-weight: bold; }" +
+
+                        /* ── Titre relevé ── */
+                        ".releve-title { text-align: center; font-size: 9.5pt; font-weight: bold; font-style: italic; text-decoration: underline; margin: 2mm 0 1.5mm 0; }" +
+
+            /* ── Tableau des notes ──
+               CLEF : table-layout fixed + word-wrap + overflow hidden
+               Les largeurs de colonnes sont exprimées en % et totalisent 100 % ── */
+                        ".notes { width: 100%; border-collapse: collapse; font-size: 6.8pt; table-layout: fixed; }" +
+                        ".notes thead tr { background-color: #1a3a5c; color: #fff; }" +
+                        ".notes th { padding: 1mm 0.5mm; text-align: center; font-weight: bold; border: 0.5px solid #4a6a8c; font-size: 6.5pt; overflow: hidden; word-wrap: break-word; }" +
+                        ".row-ue td { background-color: #b8cce4; font-weight: bold; padding: 1mm 0.5mm; border: 0.5px solid #7a9ec0; font-size: 6.8pt; overflow: hidden; word-wrap: break-word; }" +
+                        ".row-ecu td { background-color: #dce6f1; padding: 0.7mm 0.5mm; border: 0.5px solid #aac4e0; font-size: 6.3pt; overflow: hidden; word-wrap: break-word; }" +
+
+                        /* Colonnes — total = 100 % */
+                        ".c-code { text-align: center; width: 11%; }" +
+                        ".c-intit { text-align: left;   width: 36%; }" +
+                        ".c-cred  { text-align: center; width:  7%; }" +
+                        ".c-moy   { text-align: center; width: 12%; }" +
+                        ".c-cote  { text-align: center; width:  6%; font-weight: bold; }" +
+                        ".c-res   { text-align: center; width: 28%; font-size: 6.3pt; word-wrap: break-word; }" +
+
+                        /* Cellules ECU (alignement intitulé + colonnes vides) */
+                        ".cell-code     { text-align: center; overflow: hidden; word-wrap: break-word; }" +
+                        ".cell-code-ecu { text-align: center; overflow: hidden; word-wrap: break-word; font-style: italic; }" +
+                        ".cell-intitule { text-align: left;   overflow: hidden; word-wrap: break-word; }" +
+                        ".ecu-indent    { padding-left: 3mm !important; font-style: italic; }" +
+                        ".cell-num      { text-align: center; overflow: hidden; word-wrap: break-word; }" +
+                        ".cell-num-ecu  { text-align: center; overflow: hidden; word-wrap: break-word; }" +
+                        ".cell-cote     { text-align: center; font-weight: bold; overflow: hidden; }" +
+                        ".cell-result   { text-align: center; overflow: hidden; word-wrap: break-word; font-size: 6.3pt; }" +
+                        ".cell-empty    { background-color: #dce6f1; border: 0.5px solid #aac4e0; }" +
+
+                        /* ── Barre récapitulative ── */
+                        ".sum-bar { width: 100%; border-collapse: collapse; background-color: #1a3a5c; color: #fff; }" +
+                        ".sum-bar td { text-align: center; padding: 1.5mm 1mm; width: 33%; }" +
+                        ".sum-label { font-size: 6pt; display: block; }" +
+                        ".sum-val   { font-size: 9pt; font-weight: bold; display: block; }" +
+
+                        /* ── Légende ── */
+                        ".legend { font-size: 5pt; color: #333; margin-top: 1.5mm; line-height: 1.4; }" +
+
+                        /* ── Date ── */
+                        ".date-line { text-align: right; font-size: 7pt; margin: 1.5mm 0 1mm 0; font-style: italic; }" +
+
+                        /* ── Signatures ── */
+                        ".sigs { width: 100%; border-collapse: collapse; margin-top: 1mm; }" +
+                        ".sigs td { text-align: center; vertical-align: top; width: 50%; padding: 0 2mm; }" +
+                        ".sig-title    { font-size: 8pt; font-weight: bold; }" +
+                        ".sig-subtitle { font-size: 7pt; font-style: italic; color: #444; margin-bottom: 1mm; }" +
+                        ".sig-name     { font-size: 7.5pt; font-weight: bold; margin-top: 0.5mm; }";
 
         return "<?xml version='1.0' encoding='UTF-8'?>" +
-                "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' " +
-                "'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>" +
+                "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>" +
                 "<html xmlns='http://www.w3.org/1999/xhtml' lang='fr'>" +
-                "<head><meta charset='UTF-8'/><style>" +
-                "* { margin: 0; padding: 0; }" +
-                "body { width: 210mm; font-family: Times New Roman, serif; color: #111; font-size: 8.5pt; background: #ffc8c8; }" +
-                ".page { width: 210mm; min-height: 297mm; padding: 5mm 7mm 4mm 7mm; background: #ffc8c8; }" +
-
-                // Header
-                ".header { display: table; width: 100%; margin-bottom: 2mm; }" +
-                ".header-left, .header-right { display: table-cell; width: 22mm; vertical-align: middle; text-align: center; }" +
-                ".header-center { display: table-cell; text-align: center; vertical-align: middle; padding: 0 3mm; }" +
-                ".logo-img { width: 20mm; height: 20mm; object-fit: contain; }" +
-                ".header-left-text { font-size: 8pt; font-weight: bold; }" +
-                ".univ-name { font-size: 13pt; font-weight: bold; text-transform: uppercase; }" +
-                ".ifri-name { font-size: 9pt; font-weight: bold; text-transform: uppercase; margin-top: 1mm; }" +
-                ".header-addr { font-size: 7.5pt; margin-top: 1mm; }" +
-
-                // Document number
-                ".doc-number-line { text-align: center; font-size: 8pt; margin: 2mm 0 1.5mm 0; font-style: italic; }" +
-                ".doc-ref { font-weight: bold; border: 1px solid #555; padding: 0.3mm 2.5mm; font-size: 8.5pt; }" +
-
-                // Student block
-                ".student-block { display: table; width: 100%; margin: 1.5mm 0; padding: 2mm 2.5mm; border: 1px solid #ccc; }" +
-                ".qr-box { display: table-cell; width: 20mm; vertical-align: middle; text-align: center; }" +
-                ".qr-img { width: 20mm; height: 20mm; }" +
-                ".qr-placeholder { width: 20mm; height: 20mm; border: 1px solid #aaa; font-size: 6pt; text-align: center; color: #666; }" +
-                ".info-table { display: table-cell; vertical-align: top; padding-left: 3mm; }" +
-                ".info-row { display: table; width: 100%; margin-bottom: 0.9mm; font-size: 8pt; }" +
-                ".info-lbl { display: table-cell; width: 46mm; color: #222; }" +
-                ".info-sep { display: table-cell; width: 5mm; text-align: center; }" +
-                ".info-val { display: table-cell; color: #111; }" +
-
-                // Title
-                ".releve-title { text-align: center; font-size: 10.5pt; font-weight: bold; font-style: italic; text-decoration: underline; margin: 2.5mm 0 1.5mm 0; }" +
-
-                // Table - CORRECTION COUPURE DROITE (10+38+8+12+6+26=100%)
-                ".notes { width: 100%; border-collapse: collapse; font-size: 7pt; table-layout: fixed; word-wrap: break-word; }" +
-                ".notes thead tr { background-color: #1a3a5c; color: #ffffff; }" +
-                ".notes thead th { padding: 1.2mm 0.5mm; text-align: center; font-weight: bold; border: 0.5px solid #4a6a8c; font-size: 6.8pt; overflow: hidden; word-wrap: break-word; }" +
-                ".row-ue td { background-color: #b8cce4; font-weight: bold; padding: 1mm 0.5mm; border: 0.5px solid #7a9ec0; font-size: 6.8pt; overflow: hidden; word-wrap: break-word; }" +
-                ".row-ecu td { background-color: #dce6f1; padding: 0.8mm 0.5mm; border: 0.5px solid #aac4e0; font-size: 6.5pt; overflow: hidden; word-wrap: break-word; }" +
-                ".cell-code { text-align: center; width: 10%; }" +
-                ".cell-code-ecu { text-align: center; width: 10%; background-color: #dce6f1; border: 0.5px solid #aac4e0; padding: 0.8mm; }" +
-                ".cell-intitule { text-align: left; width: 38%; }" +
-                ".ecu-indent { padding-left: 4mm; font-style: italic; }" +
-                ".cell-num { text-align: center; width: 8%; }" +
-                ".cell-num-ecu { text-align: center; width: 8%; background-color: #dce6f1; border: 0.5px solid #aac4e0; padding: 0.8mm; }" +
-                ".cell-cote { text-align: center; width: 6%; font-weight: bold; }" +
-                ".cell-result { text-align: center; width: 26%; font-size: 6.5pt; word-wrap: break-word; overflow: hidden; }" +
-                ".cell-empty { background-color: #dce6f1; border: 0.5px solid #aac4e0; }" +
-
-                // Summary bar
-                ".summary-bar { display: table; width: 100%; background-color: #1a3a5c; color: #ffffff; padding: 2mm 3mm; }" +
-                ".sum-item { display: table-cell; text-align: center; padding: 1mm; }" +
-                ".sum-label { font-size: 6.8pt; display: block; }" +
-                ".sum-val { font-size: 9pt; font-weight: bold; display: block; }" +
-
-                // Legend
-                ".legend { font-size: 5.5pt; color: #333; margin-top: 1.5mm; line-height: 1.5; }" +
-
-                // Date
-                ".date-line { text-align: right; font-size: 8pt; margin: 2mm 0 1mm 0; font-style: italic; }" +
-
-                // Signatures
-                ".signatures { display: table; width: 100%; margin-top: 1mm; }" +
-                ".sig-block { display: table-cell; text-align: center; width: 50%; vertical-align: top; }" +
-                ".sig-title { font-size: 8.5pt; font-weight: bold; }" +
-                ".sig-subtitle { font-size: 7.5pt; font-style: italic; color: #444; margin-bottom: 1mm; }" +
-                ".sig-name { font-size: 8pt; font-weight: bold; margin-top: 0.5mm; }" +
-                ".stamp-img { width: 28mm; height: 28mm; object-fit: contain; margin: 1mm auto; display: block; }" +
-                "</style></head><body>" +
+                "<head><meta charset='UTF-8'/><style>" + css + "</style></head>" +
+                "<body>" +
                 "<div class='page'>" +
 
-                // ── En-tête avec logo IFRI ──
-                "<div class='header'>" +
-                "<div class='header-left'>" + logoIfri + "</div>" +
-                "<div class='header-center'>" +
+                /* ── En-tête : IFRI | Texte centré | UAC ── */
+                "<table class='hdr'><tr>" +
+                "<td class='hdr-left'>" + logoLeft + "</td>" +
+                "<td class='hdr-center'>" +
                 "<div class='univ-name'>Universite d'Abomey-Calavi</div>" +
                 "<div class='ifri-name'>Institut de Formation et de Recherche en Informatique</div>" +
-                "<div class='header-addr'>BP: 526 COTONOU - TEL : (+229) 55-028-070</div>" +
-                "<div class='header-addr'>Site web : https://www.ifri-uac.bj - Courriel : contact@ifri.uac.bj</div>" +
-                "</div>" +
-                "<div class='header-right'>UAC</div>" +
-                "</div>" +
+                "<div class='hdr-addr'>BP: 526 COTONOU - TEL : (+229) 55-028-070</div>" +
+                "<div class='hdr-addr'>Site web : https://www.ifri-uac.bj - Courriel : contact@ifri.uac.bj</div>" +
+                "</td>" +
+                "<td class='hdr-right'>" + logoRight + "</td>" +
+                "</tr></table>" +
 
-                // Numéro document
-                "<div class='doc-number-line'>N : <span class='doc-ref'>" + reference + "</span></div>" +
+                /* ── Numéro document ── */
+                "<div class='doc-num'>N : <span class='doc-ref'>" + reference + "</span></div>" +
 
-                // Bloc étudiant
-                "<div class='student-block'>" +
-                "<div class='qr-box'>" + qrSrc + "</div>" +
-                "<div class='info-table'>" +
-                buildInfoRow("Annee academique", anneeAcademique) +
-                buildInfoRow("Domaine", "Sciences et Technologies") +
-                buildInfoRow("Grade", "Licence") +
-                buildInfoRow("Mention", "Informatique") +
-                buildInfoRow("Specialite", etudiant.getFiliere() != null ? etudiant.getFiliere() : "-") +
-                buildInfoRow("Nom et Prenoms", etudiant.getNom() + " " + etudiant.getPrenom()) +
-                buildInfoRow("Numero matricule", String.valueOf(etudiant.getMatricule())) +
-                buildInfoRow("Niveau", etudiant.getNiveau() != null ? etudiant.getNiveau() : "-") +
-                "</div>" +
-                "</div>" +
+                /* ── Bloc étudiant ── */
+                "<table class='stud'><tr>" +
+                "<td class='stud-qr'>" + qrSrc + "</td>" +
+                "<td class='stud-info'>" +
+                "<div class='info-row'><span class='info-lbl'>Annee academique</span>: <span class='info-val'>" + anneeAcademique + "</span></div>" +
+                "<div class='info-row'><span class='info-lbl'>Domaine</span>: <span class='info-val'>Sciences et Technologies</span></div>" +
+                "<div class='info-row'><span class='info-lbl'>Grade</span>: <span class='info-val'>Licence</span></div>" +
+                "<div class='info-row'><span class='info-lbl'>Mention</span>: <span class='info-val'>Informatique</span></div>" +
+                "<div class='info-row'><span class='info-lbl'>Specialite</span>: <span class='info-val'>" + (etudiant.getFiliere() != null ? etudiant.getFiliere() : "Non renseignee") + "</span></div>" +
+                "<div class='info-row'><span class='info-lbl'>Nom et Prenoms</span>: <span class='info-val-bold'>" + etudiant.getNom().toUpperCase() + " " + etudiant.getPrenom() + "</span></div>" +
+                "<div class='info-row'><span class='info-lbl'>Numero matricule</span>: <span class='info-val'>" + (String.valueOf(etudiant.getMatricule())) + "</span></div>" +
+                "<div class='info-row'><span class='info-lbl'>Niveau</span>: <span class='info-val'>" + (etudiant.getNiveau() != null ? etudiant.getNiveau() : "Non renseignee") + "</span></div>" +
+                "</td>" +
+                "</tr></table>" +
 
-                // Titre
+                /* ── Titre ── */
                 "<div class='releve-title'>Releve de notes du " + semestreLabel + " semestre</div>" +
 
-                // Tableau
+                /* ── Tableau des notes ── */
                 "<table class='notes'>" +
                 "<thead><tr>" +
-                "<th style='width:10%'>Code UE</th>" +
-                "<th style='width:38%'>Intitule UE/ECU</th>" +
-                "<th style='width:8%'>Credit</th>" +
-                "<th style='width:12%'>Moy. UE/ECU</th>" +
-                "<th style='width:6%'>Cote</th>" +
-                "<th style='width:26%'>Resultat</th>" +
+                "<th class='c-code'>Code UE</th>" +
+                "<th class='c-intit'>Intitule UE/ECU</th>" +
+                "<th class='c-cred'>Credit</th>" +
+                "<th class='c-moy'>Moy. UE/ECU</th>" +
+                "<th class='c-cote'>Cote</th>" +
+                "<th class='c-res'>Resultat</th>" +
                 "</tr></thead>" +
                 "<tbody>" + tableRows + "</tbody>" +
                 "</table>" +
 
-                // Barre récapitulative
-                "<div class='summary-bar'>" +
-                "<div class='sum-item'><span class='sum-label'>Credits capitalises</span><span class='sum-val'>" + String.format("%.2f", lastCreditsCapitalises) + " %</span></div>" +
-                "<div class='sum-item'><span class='sum-label'>Moyenne semestrielle ponderee</span><span class='sum-val'>" + String.format("%.2f", lastMoyenne) + " / 20</span></div>" +
-                "<div class='sum-item'><span class='sum-label'>Decision du jury</span><span class='sum-val'>" + lastDecision + "</span></div>" +
-                "</div>" +
+                /* ── Barre récapitulative ── */
+                "<table class='sum-bar'><tr>" +
+                "<td><span class='sum-label'>Credits capitalises</span><span class='sum-val'>" + String.format("%.2f", lastCreditsCapitalises) + " %</span></td>" +
+                "<td><span class='sum-label'>Moyenne semestrielle ponderee</span><span class='sum-val'>" + String.format("%.2f", lastMoyenne) + " / 20</span></td>" +
+                "<td><span class='sum-label'>Decision du jury</span><span class='sum-val'>" + lastDecision + "</span></td>" +
+                "</tr></table>" +
 
-                // Légende
+                /* ── Légende ── */
                 "<div class='legend'>" +
                 "(UE = Unite d Enseignement) et (ECU = Element Constitutif d Unite d Enseignement) " +
                 "|16,20|=A+ / 16=A / |15,16|=A- / 14=B+ / |13,14|=B- / |12,13|=C+ / 12=C / |11,12|=C- / |10,11|=D+ / |05,10|=D / |00,05|=F" +
                 "</div>" +
 
-                // Date
+                /* ── Date ── */
                 "<div class='date-line'>Abomey-Calavi, le <b>" + dateGeneration + "</b></div>" +
 
-                // ── Signatures avec tampons ──
-                "<div class='signatures'>" +
-                "<div class='sig-block'>" +
+                /* ── Signatures ── */
+                "<table class='sigs'><tr>" +
+                "<td>" +
                 "<div class='sig-title'>Le Directeur-Adjoint,</div>" +
                 "<div class='sig-subtitle'>" + (directeurAdjointTitre != null ? directeurAdjointTitre : "Charge des affaires academiques") + "</div>" +
                 tampanDA +
-                "</div>" +
-                "<div class='sig-block'>" +
+                "<div class='sig-name'>" + (directeurAdjointNom != null ? directeurAdjointNom : "Le Directeur Adjoint") + "</div>" +
+                "</td>" +
+                "<td>" +
                 "<div class='sig-title'>Le Directeur,</div>" +
+                "<div class='sig-subtitle'>&#160;</div>" +
                 tampanDIR +
-                "</div>" +
-                "</div>" +
+                "<div class='sig-name'>" + (directeurNom != null ? directeurNom : "Le Directeur") + "</div>" +
+                "</td>" +
+                "</tr></table>" +
 
                 "</div></body></html>";
     }
