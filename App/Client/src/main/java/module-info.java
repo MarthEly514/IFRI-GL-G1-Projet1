@@ -20,6 +20,7 @@ module com.campusdocs.client {
     requires flying.saucer.pdf;
     requires itext;
     requires jakarta.persistence;
+    requires com.fasterxml.jackson.annotation;
 
     opens com.campusdocs.client to javafx.fxml;
     exports com.campusdocs.client;
