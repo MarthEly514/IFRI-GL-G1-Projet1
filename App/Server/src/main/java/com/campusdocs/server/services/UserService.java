@@ -41,6 +41,9 @@ public class UserService {
         agent.setPassword(hashedPassword);
         agent.setPasswordSalt(salt);
 
+        // 5. Mettre le compte sur actif
+        agent.setActif(true);
+
         // Sauvegarder
         return agentRepository.save(agent);
     }

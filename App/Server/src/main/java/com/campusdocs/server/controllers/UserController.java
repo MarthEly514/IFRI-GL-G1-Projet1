@@ -67,6 +67,8 @@ public class UserController {
 
     @PostMapping("/agent")
     public ResponseEntity<AgentAdministratif> creerAgent(@RequestBody AgentAdministratif agent) {
+        System.out.println("Agent reçu : " + agent);
+        System.out.println("Mot de passe reçu : " + agent.getPassword());
         AgentAdministratif nouvelAgent = userService.creerAgent(agent);
         return ResponseEntity.ok(nouvelAgent);
     }
