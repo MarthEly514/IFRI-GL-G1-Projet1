@@ -73,6 +73,7 @@ public class UserService {
     // Récupérer le profil complet d'un utilisateur
     public Map<String, Object> getProfil(int userId) {
         User user = userRepository.findById(userId)
+
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
 
         Map<String, Object> profil = new HashMap<>();
